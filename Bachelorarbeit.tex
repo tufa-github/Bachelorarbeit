@@ -1,0 +1,393 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Contents: Bachelorarbeit, HS Fulda        %
+%                          06.02.2023                        %
+%---------------------------------------------------------%
+%                       Bachelorarbeit.tex                 %
+%                        by Fangfang Tan                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%PDF Metadaten
+\begin{filecontents*}[overwrite]{\jobname.xmpdata}
+\Title{Low code Applikation Entwicklung mit SAP AppGyver im Vergleich zu nativen Fiori Entwicklung}
+\Author{Fangfang Tan}
+%\Author{anonyme Version} %für die anonyme Version das hier verwenden und den Namen auskommentieren... 
+\Language{de-DE}
+\Subject{In dieser Arbeit werden Lösungsansätze entwickelt, implementiert und evaluiert, um auf möglichst effektive und generische Art Daten von Medizinprodukten in Excel-Dateien zu schreiben. Die Vorlagen für die Excel-Dateien entstammen dem regulatorischen Umfeld und sind fest vorgegeben, während die Produktdaten im JSON-Format vorliegen. Die Transformation wird über eine Abbildung zwischen den Produktdaten und den Excel-Zellen definiert und mit einer geeigneten JSON-Abfragesprache realisiert. Die Transformationsengine stellt dabei einen kleinen Teil des Prozesses zur UDI-Konformität dar.} %AbstractText
+\Keywords{Transformationsengine\sep JSON\sep Excel\sep UDI\sep generisch}
+\end{filecontents*}
+
+%Hier gehts erst wirklich los
+\documentclass[11pt,notitlepage,a4paper,oneside,openright]{report}   %twoside für beidseitig
+\usepackage{a4}
+\usepackage[T1]{fontenc}  % Silbentrennung insb bei Wörtern mit umlauten
+\usepackage[utf8]{inputenc} % Umlaute 
+\usepackage[ngerman]{babel}  % neue deutsche Rechtschreibung
+\usepackage[UTF8]{ctex} % Chinesisch (~ for non breaking space is redefined here, so use \nbs instead)
+\usepackage{lmodern} % latin modern font (weniger pixelig als Standardfont im pdf)
+\usepackage[scaled=0.85]{beramono} % tt font for code
+%\usepackage{tgcursor} % tt font for code; also possible: courier; doesnt look good
+\usepackage[pass]{geometry} % pass = nimmt layout von documentclass
+\usepackage{parskip} % kein Absatzeinzug
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{listings} % Quellcode einbinden
+\usepackage{mdframed} %grauer Hintergrund bei Quellcode Workaround für EscapeSequenzen
+% Platzierung / Gleitumgebung für Bilder, Tabellen usw: [!htbp] !=less-restrictive here top bottom extra-page
+\usepackage{float} % weitere Option: [H] - direkt an dieser Stelle einbinden
+\usepackage{caption} % Bild/Tabellen/Code/...-Unterschriften
+%\usepackage[german]{datetime2} %pdfcomment braucht das -> Region auf deutsch umstellen für \today
+%\usepackage{pdfcomment} % Kommentare im PDF
+%\usepackage{coffee} %kaffeeflecken for fun
+%\usepackage[german]{varioref} %intelligente Querverweise - x auf seite y \vref
+\usepackage{moreverb} %zeilen bei listings?! 
+\usepackage{amsmath, amsfonts, amssymb, dsfont} 
+\usepackage[table]{xcolor} %vordefinierte farben, insb für tabellen(linien)
+\usepackage{multirow} % für tabellen
+%\usepackage{array} %für tabellen adjustierung, wird implizit geladen
+\usepackage{hhline} %fancy linien bei tabellen
+\usepackage{makecell} %mehrzeilig in tabellen zelle
+\usepackage{enumitem} %fancy labels bei aufzählungen
+\usepackage{fancyhdr} 
+\usepackage{colorprofiles}
+\usepackage{tikz} %zum kreis zeichnen
+\usepackage[perpage, hang]{footmisc} %Fußnoten nicht direkt unter Text -> unten auf Seite, counter pro page 
+\usepackage{censor} %zum einschwärzen, anonymisieren
+\usepackage[nottoc]{tocbibind} %Abbildungsverzeichnis im Inhaltsverzeichnis, aber toc selbst nicht
+\usepackage[nohyperlinks, smaller]{acronym} %Abkürzungsverzeichnis
+\usepackage[a-1b, mathxmp]{pdfx} %pdf/a-1b konformität
+\usepackage{xurl} %url package mit automatischen trennungen an jeder stelle
+\hypersetup{linktoc=all,colorlinks=false,linkcolor=black,urlcolor=black, pdfborder={0 0 0}} %links ohne rahmen, sondern ganz normal in schwarz
+
+%anonyme Version
+\newtoggle{anonym}
+%\toggletrue{anonym}	%für anonyme Version das hier einkommentieren
+\togglefalse{anonym}	%für richtige Version das hier einkommentieren
+\StopCensoring		%für richtige Version das hier einkommentieren
+
+% verschiedene Farben für CodeAbschnitte
+\definecolor{mygrey}{rgb}{0.46,0.45,0.48}
+\definecolor{mygrey1}{RGB}{160, 160, 165}
+\definecolor{mygrey2}{RGB}{245, 245, 244}
+\definecolor{mygreen1}{rgb}{0,0.4,0}
+\definecolor{mygreen2}{rgb}{0,0.7,0}
+\definecolor{mypurple}{RGB}{108, 48, 130}
+\definecolor{myblue}{RGB}{20,105,176}
+\definecolor{rot}{RGB}{239,108,108} %{HTML}{EF6C6C}
+\definecolor{gelb}{RGB}{255,222,57} %{HTML}{FFDE39}
+\definecolor{grun}{RGB}{47,221,79} %{HTML}{2FDD4F}
+
+%ampelsystem: rot orange grüne kreise
+\newcommand{\good}[1][5pt]{\tikz[baseline=-0.12cm] \draw[black,fill=grun,radius=#1] (0,0) circle ;}
+\newcommand{\okay}[1][5pt]{\tikz[baseline=-0.12cm]\draw[black,fill=gelb,radius=#1] (0,0) circle ;}
+\newcommand{\bad}[1][5pt]{\tikz[baseline=-0.12cm]\draw[black,fill=rot,radius=#1] (0,0) circle ;}
+\newcommand{\bgood}[1][5pt]{\tikz\draw[black,fill=grun,radius=#1] (0,0) circle ;}
+\newcommand{\bokay}[1][5pt]{\tikz\draw[black,fill=gelb,radius=#1] (0,0) circle ;}
+\newcommand{\bbad}[1][5pt]{\tikz\draw[black,fill=rot,radius=#1] (0,0) circle ;}
+
+%Tabellen extra Abstände für hübsche vertikale Zentrierung "Struts"
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}       % "top" strut
+\newcommand\Bstrut{\rule[-0.9ex]{0pt}{0pt}} % "bottom" strut
+\newcommand{\TBstrut}{\Tstrut\Bstrut} % top&bottom struts
+
+%\usepackage[hidelinks]{hyperref} %nicht zusammen mit pdfx, das lädt es eh schon
+%\usepackage{pdfpages} %pdfs einbinden
+%\usepackage{svg} %svgs einbinden - inkscape muss installiert sein
+%\usepackage[clearempty]{titlesec} %leere Seite nach Titel ... nur bei book?
+
+%BibLaTex für Literaturverzeichnis
+%\usepackage[backend=bibtex,citestyle=alphabetic,bibstyle=authoryear]{biblatex}
+%\addbibresource{Literatur.bib}
+
+
+% footnotes
+%\renewcommand{\footnoterule}{\vfill\kern 0pt \hrule width 0.4\columnwidth \kern 2.6pt}
+%\setlength{\skip\footins}{1cm}
+\newlength\margintomarker
+\setlength\margintomarker{10pt}  % Abstand zu Zahl/Note rechts
+\setlength{\footnotemargin}{6pt}  % Abstand zu Fußnoten-Text rechts
+\addtolength{\skip\footins}{8pt}   % Abstand zu normaler Text oben
+%der ganze abschnitt macht den einzug für die fußnoten hübsch... ist irgendwo aus dem internet kopiert ohne dass ich das kapiert hab
+\makeatletter
+\long\def\@makefntext#1{%
+\ifFN@hangfoot
+\bgroup
+\setbox\@tempboxa\hbox{%
+\ifdim\footnotemargin>0pt
+\hb@xt@\footnotemargin{\@makefnmark\hss}%
+\else
+\@makefnmark
+\fi
+}%
+\leftmargin\wd\@tempboxa
+\addtolength\leftmargin{\margintomarker}% NEW
+\rightmargin\z@
+\linewidth \columnwidth
+\advance \linewidth -\leftmargin
+\parshape \@ne \leftmargin \linewidth
+\footnotesize
+\@setpar{{\@@par}}%
+\leavevmode
+\llap{\box\@tempboxa}%
+\parskip\hangfootparskip\relax
+\parindent\hangfootparindent\relax
+\else
+\parindent1em
+\noindent
+\ifdim\footnotemargin>\z@
+\hb@xt@ \footnotemargin{\hss\@makefnmark}%
+\else
+\ifdim\footnotemargin=\z@
+\llap{\@makefnmark}%
+\else
+\llap{\hb@xt@ -\footnotemargin{\@makefnmark\hss}}%
+\fi
+\fi
+\fi
+\footnotelayout#1%
+\ifFN@hangfoot
+\par\egroup
+\fi
+}
+\makeatother
+
+%eigene shortcuts zb wenn man nicht immer \texttt usw tippen will - 
+\newcommand*{\co}[1]{\texttt{#1}}		%Typewriter Schriftart für Code
+\newcommand*{\bib}[1]{\textsf{#1}}		%Sans Serif Schriftart für Biblioteksnamen
+\newcommand*{\ka}[1]{\textsc{#1}}		%Kapitälchen
+\newcommand*{\ku}[1]{\textit{#1}}		%kursiv
+\newcommand*{\fe}[1]{\textbf{#1}}		%fett
+
+% setting for java code listings / basic setting
+% am besten auf javascript umstellen und dann noch anpassen... musste da auch wild rumspielen, bis es mir gefallen hat
+\lstset{ 
+  language=Java,             				% the language of the code
+  backgroundcolor=\color{mygrey2},			% background very light grey
+  basicstyle = \srcsize\ttfamily,				% the size of the fonts that are used
+  breaklines=true,                 				% sets automatic line breaking of very long lines
+  captionpos=b,                    				% sets the caption-position to bottom
+  escapeinside={(*}{*)},          				% escape to LaTeX within your code via (*
+  %frame=single,	                   			% adds a frame around the code
+  %rulecolor=\color{black},         			% frame-color
+  framexleftmargin=3pt,					% frame/background overlap with numbers
+  %aboveskip={1.5\baselineskip},			% white space above the listing
+  keywordstyle=\color{blue},      			% keyword style
+  %keywordsprefix={@},					% treat annotations as keywords
+  %morekeywords={*,...},           			% add more keywords to the set
+  %emph={am, besten, individuell, angeben},	% emphasize special words
+  emphstyle=\color{mypurple},				% emphasized words style
+  %morecomment=*[s][\color{mygreen1}]{/*}{*/}, %redefine comments so that highlighting within is possible (*)
+  commentstyle=\color{mygreen1},    			% comment style (cursiv)
+  numbers=left,                    				% line-numbers; possible values are (none, left, right)
+  numbersep=7pt,                   				% how far the line-numbers are from the code
+  numberstyle=\tiny\color{gray}, 			% line-numbers style
+  stepnumber=1,                    				% the step between line-numbers
+  showstringspaces=false,          			% spaces within strings are not shown with _
+  stringstyle=\color{orange},     				% string literal style
+  tabsize=2,	 						% sets tabsize (default 8)
+  moredelim=[is][\textcolor{mygrey}]{$$}{$$},	% for annotations  
+  % literate replacements as workaround for highlighted words in comments, shorter first always
+  literate={@param}{{\unskip\bgroup\color{mygreen2}}@param{\unskip\egroup}}6
+              {@return}{{\unskip\bgroup\color{mygreen2}}@return{\unskip\egroup}}7
+              {@throws}{{\unskip\bgroup\color{mygreen2}}@throws{\unskip\egroup}}7        				
+}
+
+% extra settings for json code listings
+\lstdefinelanguage{json}{
+  basicstyle=\color{blue}\srcsize \ttfamily,			% assuming a key comes first
+  moredelim=**[il][\color{red}{:}\color{black}]{:},   	% switch to black after :
+  moredelim=[is][\color{black}]{*B}{B*},			% black inside *B B* to escape : in descriptions
+  moredelim=[is][\color{red}]{*R}{R*},			% red inside *R R*
+  %string=[s]{"}{"},
+  %stringstyle=\color{blue},
+  %comment=[s]{:\ "}{"},
+  %commentstyle=\color{black}, 
+  literate=
+      {Ü}{{\"U}}1
+      {]}{{{\color{mypurple}{]}}}}1
+      {[}{{{\color{mypurple}{[}}}}1
+      {\{}{{{\color{mypurple}{\{}}}}1
+      {\}}{{{\color{mypurple}{\}}}}}1
+      {\},}{{{\color{mypurple}{\}}\color{red},}}}2
+      {",}{{{\color{black}"\color{red},}}}2
+      {],}{{{\color{mypurple}]\color{red},}}}2,
+}
+
+% extra settings for yaml code listings
+\lstdefinelanguage{yaml}{ 
+  basicstyle=\color{blue}\srcsize \ttfamily,			% assuming a key comes first
+  moredelim=**[il][\color{red}{:}\color{black}]{:},   	% switch to black after :
+  moredelim=[il][\color{black}]{*B*},				% switch to black after *B* (needs to be inserted)
+  comment=[l]{\#},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{mygreen1},
+  literate =    {---}{{{\color{cyan}-{-}-}}}3
+                   {>}{{\textcolor{red}{\textgreater}}}1
+                   {>-}{{\textcolor{red}{\textgreater-}}}2     
+                   {|}{{\textcolor{red}{\textbar}}}1
+                   {|-}{{\textcolor{red}{\textbar-}}}2
+                   {\ -\ }{{\textcolor{red}{\ -\ }}}3,
+}
+
+% extra settings for jsonata code listings
+\lstdefinelanguage{jsonata}{ 
+  keywordsprefix={$},
+  %morekeywords={def,add},
+}
+
+%zähler für anforderungen mit automatischen links (package counter)
+\newcounter{anfo}
+%\setcounter{anfo}{1}
+\renewcommand*{\theanfo}{A--\arabic{anfo}}
+\newcommand{\anf}[1]{\refstepcounter{anfo}\theanfo\label{anf:#1}}
+
+%tabelle spaltenbeschriftung zentriert mit fixer breite (package array)
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+\makeatletter %@ wird als buchstabe aufgefasst ab hier
+
+% switch to blue style at EOL for yaml and json code
+\lst@AddToHook{EveryLine}{\ifx\lst@language\language@yaml\color{blue}\fi}
+\lst@AddToHook{EveryLine}{\ifx\lst@language\language@json\color{blue}\fi}
+% richtiges kapitel im header bei kapiteln ohne nummerierung
+\newcommand*{\addchap}[1]{
+  \chapter*{#1}
+  \@mkboth{\MakeUppercase{#1}}{\MakeUppercase{#1}}
+  \addcontentsline{toc}{chapter}{#1} %zu Inhaltsverzeichnis hinzufügen
+}
+% super tiny font size for code
+\newcommand{\srcsize}{\@setfontsize{\srcsize}{10pt}{10pt}}
+%hyperlinks for words within the file are at the baseline, so raise them up
+\newcommand{\hyt}[1]{\Hy@raisedlink{\hypertarget{#1}{}}}
+
+\makeatother %@ wird nicht mehr als buchstabe aufgefasst
+
+%list of listings (lol) in table of contents
+\renewcommand{\lstlistoflistings}{\begingroup
+\tocfile{\lstlistlistingname}{lol}
+\endgroup}
+%change name from Listing to Quelltext
+\renewcommand{\lstlistingname}{Quelltext}
+\renewcommand{\lstlistlistingname}{Quelltextverzeichnis}
+%group listings by chapter
+\let\Chapter\chapter
+\def\chapter{\addtocontents{lol}{\protect\addvspace{10pt}}\Chapter}
+
+%% Header-Layout
+\pagestyle{fancy}
+\addtolength{\headwidth}{\marginparsep}
+\headheight=15pt
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+\rhead{\thepage}
+\lhead{\textit{\nouppercase{\leftmark}}}
+\renewcommand{\headrulewidth}{0.4pt}
+% footer
+%\cfoot{\thepage}
+
+%redefine plain pagestyle - used for chapter pages
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \cfoot{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+%increase line space
+\renewcommand{\baselinestretch}{1.2}
+
+%Silbentrennung (Bsp: Staats-ver-trag Stau-be-cken)
+% hier alles auflisten, was automatisch an falschen Stellen oder gar nicht getrennt wird
+\hyphenation{JSONata JSONiq JSON-Path JMES-Path Type-Script Java-Script Front-end Hash-ta-bel-le IEEE Funk-tions-de-fi-ni-tio-nen}	%lokal mit \mbox{}
+% (Achtung: TexWorks Einstellung: typographische Anführungszeichen = keine)
+% mit "= trennen: Bindestrich der andere Trennung erlaubt  
+% mit "~ trennen: Bindestrich aber keine Trennung erfolgen soll / "" Trennung ohne Bindestrich Bsp: (Mess"~)""Ergebnisse
+% Anführungszeichen: deutsch: "` und "' 
+\brokenpenalty=50 %Silbentrennung zwischen 2 Seiten, default 100
+
+% vertical space: \, = .16667em --- negativ \!    ///  \: und \; bisschen mehr  /// \phantom{abc}
+
+%Trennung von URLs -> durch package xurl obsolet
+%\newcommand*\oldurlbreaks{}
+%\let\oldurlbreaks=\UrlBreaks
+%\renewcommand{\UrlBreaks}{\oldurlbreaks\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z\do\?\do\&\do\-\do\.\do\/}
+
+%Einrückung Breite in Literaturverzeichnis
+\let\stdthebibliography\thebibliography
+\let\stdendthebibliography\endthebibliography
+\renewenvironment*{thebibliography}[1]{%
+  \stdthebibliography{IMRF19}} %die längste Abkürzung hier angeben als Anhaltspunkt wie weit eingerückt werden soll
+  {\stdendthebibliography}
+
+%section depth
+\setcounter{secnumdepth}{3}  %abschnitte nummerierung bis subsubsection (3) möglich
+\setcounter{tocdepth}{2} % nur sections im inhaltsverzeichnis, subsections (2) nicht
+
+
+%------ the real document begins here ------
+\begin{document}
+
+%------ title, preamble, table of contents etc ------
+%\frontmatter %geht nur bei book nicht bei report
+\pagenumbering{Roman}
+
+\include{1Titelblatt}
+
+\thispagestyle{empty} %keine seitenzahlen
+\clearpage %Seitenumbruch
+\setcounter{page}{2} %bei Seite 2 beginnen
+%\includepdf[pages=-]{Erklaerung.pdf}
+\iftoggle{anonym}{
+}{
+   %\include{2Sperrvermerk}
+   \include{3Erklaerung}
+   \include{4Danksagung}
+}
+\include{5Abstrakt}
+\tableofcontents %Inhaltsverzeichnis
+\clearpage
+%\addcontentsline{toc}{chapter}{\listfigurename} %das übernimmt das package tocbibind
+\listoffigures %Abbildungsverzeichnis
+\clearpage
+\listoftables %Tabellenverzeichnis
+\clearpage
+\lstlistoflistings %Quelltextverzeichnis
+\clearpage
+\include{6Acronyms} %Abkürzungsverzeichnis
+\clearpage
+
+
+%------ main part of bachelor thesis ------
+%\mainmatter %nur bei book möglich
+\pagenumbering{arabic} %in mainmatter enthalten
+%\setlength{\parindent}{0pt} %keine Einrückung bei erster Zeile nach Absatz
+%\setlength{\parskip}{1.5ex} %Abstand nach Absatz
+%besser is es package parskip zu verwenden, so werden bei listen die abstände nicht verändert
+
+\include{7Einleitung}
+%\thispagestyle{empty} \cleardoublepage %leere Seite
+\include{8Grundlagen}
+\include{9Konzept}
+\include{10Implementierung}
+
+%\input{TransformationsEngine} %input statt include (neue Seite) für subsections
+%\input{ExcelDateiAnsatz}
+%\input{MappingDateiAnsatz}
+
+\include{11Evaluation}
+%\thispagestyle{empty} \cleardoublepage 
+\include{12Zusammenfassung}
+%\thispagestyle{empty} \cleardoublepage
+
+
+%------ appendix ------
+\appendix                %\backmatter ändert kapitel umstellung nicht
+%\include{Literatur_alt}
+%\bibliographystyle{plaindin} %plain = numbers; alpha = author(3 letters) + year
+%hier wird es kompliziert... mir hat es nicht gefallen, wie das literaturverzeichnis formatiert war, das habe ich dann selbst angepasst
+%also alphadin hab ich dann in alphadin2 angepasst und stattdessen hier verwendet... weiß nicht genau wo die bei dir gespeichert ist
+%bei mir in dem ordner unten aufgeführt, ich schicke dir die modifizierte datei mit... kann man beliebig dran rumspielen...
+%for modifications: C:\Users\CarinaMöller\AppData\Local\Programs\MiKTeX\bibtex\bst\din1505
+\bibliographystyle{alphadin2} %din = capital letters for author, url = normal, mit url
+\bibliography{13Literatur}
+%\printbibliography %mit biblatex
+\include{14Anhang} %Anhang idR nach Literaturverzeichnis, kann aber auch davor
+%------ end of document ------
+\end{document}

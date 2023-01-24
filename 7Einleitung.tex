@@ -1,0 +1,104 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Contents: Bachelorarbeit, HS Fulda              %
+%                          06.02.2023                              %
+%---------------------------------------------------------%
+%                           Einleitung.tex                          %
+%                        by Fangfang Tan                        %
+%         fangfang.tan@informatik.hs-fulda.de          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Einleitung} \label{EL}
+
+\section{Problemstellung und Motivation}
+Seit die Branchenanalysten von Forrester Research im Jahr 2014 erstmals das Konzept von Low-Code erwähnten \cite{lcnc:ndp}, hat sich der zugehörige markt rasant entwickelt. Immer mehr Unternehmen nutzen Low-Code-Plattformen, um Anwendungen schneller zu entwickeln und damit den digitalen Wandeln zu beschleunigen. Die Analysten von Gartner erwarten, dass im Jahr 2025 rund 70\% der von Unternehmen entwickelten Anwendungen auf Low-Code- Technologien basieren werden \cite{lcnc:lcp}. 
+
+Im Bereich der Enterprise Software werden die meisten Low-Code-Plattformen verwendet, um eine bestimmte Anwendungsform in einem spezifischen Kontext zu entwickeln. In der Studie „No-Code/Low-Code 2022“ im Magazin COMPUTERWOCHE, gibt die Mehrheit der gefragten Unternehmen an, dass sie Low-Code hauptsächlich in den Bereichen CRM (34\%) und ERP (31\%) einsetzen. Speziell ausgerichtete Low-Code Plattformen werden ebenfalls im HR-Umfeld (19\%)  verwendet, sowie für die Erstellung digitaler Workflows und Verwaltungsprozesse (jeweils 16\%). Nur 10\% der Befragten nutzen eine universell einsetzbare Plattform, die sich für übergreifende und flexible Geschäftsprozesse eignet. Laut Jürgen Erbeldinger, einem Low-Code-Experten der Low-Code-Plattform ESCRIBA, fehlt den Plattformen hierfür die entsprechende Tiefe \cite{lcnc:nclc}.
+
+AppGyver betrachtet sich selbst als die weltweit erste professionelle Low-Code Plattform, die es ermöglicht, Anwendungen für unterschiedliche Geschäftsprozesse, Anwendungsszenarien und auch Endgeräte zu erstellen \cite{lcnc:appgyv}. Im Februar 2021 wurde AppGyver von dem Marktführer im Bereich Enterprise Software SAP übernommen und wird seitdem in deren Entwicklungsportfolio rund um die SAP Business Technology Plattform eingegliedert \cite{lcnc:ncp}, \cite{lcnc:appgyvint}. Seit dem 15. November 2022 wurde SAP AppGyver in SAP Build App umbenannt und ist nun Teil von SAP Build. AppGyver steht damit in Konkurrenz zu etablierten Tools und Frameworks zur Anwendungsentwicklung: SAPUI5 ist ein JavaScript-Framework und bildet die Grundlage nahezu aller heute entwickelten SAP-Oberflächen. Die Erstellung von SAPUI5-Anwendungen setzt jedoch ein tieferes technisches Verständnis voraus. Basierend auf SAPUI5 steht mit SAP Fiori Elements ein Framework zur Verfügung, welches durch Annotationen die einfache Erstellung von datengetriebenen Oberflächen erlaubt. Dank der guten Integration in die SAP-eigenen Entwicklungsumgebungen, das SAP Business Application Studio, kann SAP Fiori Elements in Kombination mit dem SAP Application Programming Model auch im Bereich der Low-Code Entwicklung platziert werden \cite{lcnc:fiori}. Für Unternehmen ergibt sich in Zukunft nun die Fragestellung, welche Plattform und Tools im SAP-Umfeld eingesetzt werden sollten, um Anwendungen zu entwickeln. Die Aufgabe dieser Bachelorarbeit besteht darin, den Entwicklungsprozess von SAP AppGyver, SAPUI5, sowie Fiori Elements in Kombination mit dem SAP Application Programming Model zu bewerten, Vor- und Nachteile der jeweiligen Lösung herauszuarbeiten und dadurch ein Entscheidungsmatrix zu entwerfen, welche die Wahl zwischen diesen drei Technologien vereinfacht.
+
+Diese wissenschaftliche Arbeit wird dabei unterstützt durch die Firma p36 GmbH. P36, mit dem Sitz im Bad Hersfeld, wurde 2015 von Patrick Pfau und Robin Wennemuth gegründet. Das mit 27 Mitarbeitern noch recht kleine, aber stark wachsende Softwareunternehmen besitzt einen starken Fokus auf die Entwicklung von Cloud-basierten Anwendungen im SAP-Umfeld \cite{lcnc:p36}.  Bei der Umsetzung der Anwendungen setzt p36 überwiegend auf die sehr technische SAPUI5-Entwicklung und evaluiert derzeit den Einsatz von Low-Code-Plattformen. p36 stellt deswegen einen, sich an reellen Kundenanforderungen orientierenden, Anwendungsfall zur Verfügung, der im Rahmen der Arbeit als Grundlage der Evaluierung dienen soll. 
+
+\section{Ziele der Arbeit}
+Die folgenden Fragen werden in der Bachelorarbeit behandelt werden:
+\begin{itemize}[noitemsep]
+\item Was genau verbirgt sich hinter dem Begriff Low-Code und wie grenzt sich Low-Code von bisherigen Arten der Entwicklung ab?
+\item Wie wird eine benutzerspezifische Anwendung mit dem Low-Code/No-Code basierten Tool SAP AppGyver implementiert?
+\item Wie wird eine benutzerspezifische Anwendung mit SAPUI5 implementiert?
+\item Wie wird eine benutzerspezifische Anwendung mit Fiori Elements implementiert?
+\item Welche Vor- und Nachteile dieser drei Technologien lassen sich durch die exemplarische Umsetzung herausstellen?
+\item Welche Technologie eignet sich in Zukunft für welche Umsetzungsszenarien?
+\end{itemize}
+
+
+\section{Beschreibung des Anwendungsfalls}
+In dieser Arbeit werden die drei genannten Technologien verwendet, um eine konkrete Anwendung zu entwickeln. Der Anwendungsfall definiert sich, wie folgt:
+
+\begin{table}[!htbp]
+    \centering
+     \setlength{\leftmargini}{0.4cm}
+    \begin{tabular}{|>{\columncolor[HTML]{C0C0C0}}  m{3cm}  | m{10cm} |}
+        \hline
+        Name: & Applikation zur Verwaltung von Produktinformationen \\
+        \hline
+        Umsetzung in: & 
+        \begin{itemize} 
+            \item SAP Fiori Elements mit SAP Business Application Studio (Backend + UI) 
+            \item SAP AppGyver (UI)
+            \item SAPUI5 (UI)
+        \end{itemize}  \\
+        \hline
+        Anforderungen Backend: & 
+         \begin{itemize} 
+            \item Bereitstellung einer Datenbank-Entität Products mit folgenden Eigeschaften:
+              \begin{itemize} 
+              \item ID; title; materialNumber; description; price; stock
+              \end{itemize} 
+            \item Bereitstellung eines OData-Services zum Auslesen, Erstellen und Aktualisieren (CRUD) der Produkte
+        \end{itemize}  \\
+        \hline
+        Anforderungen Frontend: & 
+         \begin{itemize} 
+            \item Funktionen:
+              \begin{itemize} 
+              \item Listenansicht zur Anzeige aller Produkte
+              \item Einzelansicht für ein Produkt
+              \item Maske zum Pflegen eines einzelnen Produkts
+              \end{itemize} 
+            \item Datenanbindung:
+              \begin{itemize} 
+              \item Anbindung an den OData-Service zum Auslesen und Schreiben von Produkten
+              \end{itemize}
+            \item Look and Feel:
+              \begin{itemize} 
+              \item Implementierung in Anlehnung an die SAP UX-Guideline SAP Fiori
+              \end{itemize}
+        \end{itemize}  \\
+        \hline
+    \end{tabular}
+  \caption{Definition der Anwendungsfall} 
+\end{table}
+
+Zusätzlich zu den umzusetzenden Funktionalitäten wird eine Reihe weiterer Funktionen ohne praktische Umsetzung untersucht, um SAPUI5, Fiori Elements und AppGyver tiefergehend zu evaluieren. Diese Funktionen umfassen:
+\begin{itemize}[noitemsep]
+\item Integration von Suchfilter und Paginierung
+\item Integration von Bild und PDF-Datei
+\item Integration von Barcode-Scanner-Funktionen
+\item Nutzung mobiler Funktionen wie Sensoren
+\item Möglichkeiten zum Deployment für unterschiedliche Endgeräte
+\item Freie Gestaltungsmöglichkeiten
+\end{itemize}
+
+\section{Aufbau der Arbeit}
+Die vorliegende Bachelorarbeit gliedert sich in insgesamt sechs Kapitel. In der Einleitung werden die Problemstellung und Motivation, die Ziele der Arbeit und der umzusetzende Anwendungsfall vorgestellt.
+
+Im 2. Kapitel werden zunächst die grundlegenden Konzepte erläutert. Der erste Abschnitt beschäftigt sich mit dem Low-Code/No-Code (LCNC) Konzept und liefert eine Definition von LCNC und einen Überblick über existierende LCNC-Plattformen. Kapitel 2 beinhaltet ebenfalls einen Überblick über die Architektur von SAP-Anwendungen in der SAP Business Technology Plattform, sowie, im dritten Abschnitt, die Grundlagen von SAP Fiori. Der vierte, fünfte und letzte Abschnitt dieses Kapitels beschreibt die Grundlagen von AppGyver, SAPUI5 und Fiori Elements, sowie die Entwicklungsumgebung, in denen der genannte Anwendungsfall entwickelt wird, nämlich SAP Business Application Studio, Composer Pro und Visual Studio Code.
+
+Kapitel 3 bis 5 bilden den Hauptteil der Bachelorarbeit. Im dritten Kapitel wird der Umsetzungsprozess des Anwendungsfalls mit Fiori Elements, AppGyver und SAPUI5 beschrieben. Die zu beschreibenden Funktionen umfassen: 
+\begin{itemize}[noitemsep]
+\item Bereitstellung eines OData-Services zum Auslesen, Erstellen und Aktualisieren der Produkte
+\item Erstellung einer Listenansicht zur Anzeige aller Produkte
+\item Erstellung einer Einzelansicht für ein Produkt
+\item Erstellung einer Maske zum Pflegen eines einzelnen Produkts
+\end{itemize}
+
+Im 4. Kapitel werden weitere Funktionen, ohne technische Implementierung, untersucht, um Fiori Elements, AppGyver und SAPUI5 eingehender zu bewerten. Basierend auf Kapitel 3 und Kapitel 4 konzentriert sich Kapitel 5 auf die Gegenüberstellung und Bewertung der drei Tools. Hierfür werden die Bewertungsmatrizen definiert, die Bewertung durchgeführt und anschließend die Bewertungsergebnisse diskutiert und interpretiert. Kapitel 6, das letzte Kapitel der Bachelorarbeit, enthält abschließend ein Fazit und einen Ausblick auf die künftige Forschung.

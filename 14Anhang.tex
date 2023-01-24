@@ -1,0 +1,132 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Contents: Bachelorarbeit, HS Fulda        %
+%                          31.08.2022                        %
+%---------------------------------------------------------%
+%                           Anhang.tex                     %
+%                        by Carina Möller                   %
+%                    cary_moeller@gmx.de              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{JSON-Schema} \label{AJS}
+
+JSON"=Schema wird verwendet, um die Struktur von JSON"=Dateien zu validieren. Bei der Transformationsengine wird dieses Prinzip bei der Mapping"=Datei aus Kapitel\nbs\ref{MD} angewendet\nbs--\nbs besonders in Abschnitt\nbs\ref{JSch} wird detailiert auf JSON"=Schema eingegangen. Das verwendete Schema ist in der Datei \texttt{MappingJsonSchema.json} gespeichert und wie folgt definiert: 
+\vspace{0.7em}
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[language=json, caption={JSON-Schema für die Mapping-Datei}, label=code:schema]
+{
+	"$schema": "https*B:B*//json-schema.org/draft-06/schema#",
+	"title": "jsonataExcelMapping",
+	"description": "A mapping for JSONata input into excel template",
+	"type": "object",
+	"properties": {
+		"SheetMappings": {
+			"description": "mappings for the sheets in the excel template",
+			"type": "object",
+			"additionalProperties": {
+				"description": "different sheetNames",
+				"type": "object",
+				"properties": {
+					"row": {
+						"description": "start row in excel sheet where the device data shall be written",
+		 				"type": "integer",
+		 				"minimum": 1
+					},
+					"category": {
+						"description": "category of the sheet (complex data element key)",
+						"type": "string"
+					},
+					"columns": {
+						"description": "different columns to be filled",
+						"type": "object",
+						"patternProperties": {
+							(*"\texttt{\textasciicircum}[a-zA-Z]\{1,2\}\$"*): {
+								"description": "the key is the column letter in excel format, the value is the JSONata expression to filter the right device data for this column",
+								"type": "string"
+							}
+						},
+						"additionalProperties": false*R,R*
+						"minProperties": 1
+					},
+					"mandatoryColumns": {
+						"type": "array",
+						"description": "a list of those columns that are required to be filled",
+						"default": [],
+						"items": {
+							"type": "string",
+							(*"pattern"\color{red}: \color{black}"\texttt{\textasciicircum}[a-zA-Z]\{1,2\}\$"*)
+						}
+					}
+				},
+				"required": [ "row", "columns" ]
+			}
+		},
+		"ElementMappings": {
+			"description": "mappings for booleans, date formats and/or specific data elements",
+			"type": "object",
+			"properties": {
+				"Boolean": {
+					"description": "mapping for boolean values in this template",
+		 			"type": "object",
+					"properties": {
+						"true": {
+							"description": "mapping of true in this agency",
+							"type": ["number", "string", "boolean"]
+						},
+						"false": {
+							"description": "mapping of false in this agency",
+							"type": ["number", "string", "boolean"]
+						}
+					},
+					"additionalProperties": false*R,R*
+					"required": ["false", "true"]
+				},
+				"Date": {
+					"description": "mapping for date or time formats",
+					"type": "object",
+					"additionalProperties": {
+						(*"description"\color{red}: \color{black}"key: date format for \xblackout{p36} / value: date format in excel for agency*)",
+						"type": "string"
+					} 
+				}
+			},
+			"additionalProperties": {
+				"description": "data element key",
+				"type": "object",
+				"additionalProperties": {
+					(*"description"\color{red}: \color{black}"key: element value for \xblackout{p36} / value: element value for agency*)",
+					"type": ["number", "string", "boolean"]
+				}
+			}	
+		}
+	},
+	"required": [ "SheetMappings" ]
+}
+\end{lstlisting}
+\end{mdframed}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -97,6 +97,73 @@ Unter der User-Interfaces-Karte kann die Benutzeroberfläche der Anwendung defin
 \item Der letzte Schritt bei der Erstellung einer UI-Anwendung ist die Auswahl des richtigen Datenobjekts. Hier wird die Datenentität \textit{Products} gewählt und es werden automatisch Tabellenspalten zur Listenseite und ein Abschnitt zur Objektseite eingeschaltet. 
 \end{enumerate}
 
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.7\textwidth]{Bilder/fiori_element/3_7_UI_Konfiguration.jpg}
+ \caption{UI-Konfiguration}
+\end{figure}
+
+Nach dem Klick auf den „Finish“-Button wird die UI-Application automatisch generiert. Auch hier wird im Hintergrund Quellcode abgelegt: Zum einen werden die OData-Annotationen in weiteren cds-Dateien abgelegt. Des Weiteren wird das Grundgerüst einer SAPUI5-Anwendung angelegt und mit der entsprechenden Konfiguration für SAP Fiori Elements versehen. Auch dies ist für den Entwickler nicht direkt in BAS einsehbar, bzw. es ist nicht notwendig sich mit dem Code auseinander zu setzen, es sei denn, man möchte gezielt Funktionen nutzen, die von den Wizards in BAS nicht unterstützt werden.
+Die finale Anwendung besteht aus einer Listenseite und einer Detailseite für jedes Produkt. Die Listenseite zeigt eine Liste aller Produkte. Wird auf ein Listenelement geklickt, so wird die Detailseite für das jeweilige Produkt geöffnet. Zudem kann ein neues Produkt hinzugefügt, ein Produkt gelöscht oder bearbeitet werden.  Während man über die Konfiguration einen Einfluss auf die Tabellenspalten und Inhalte der Einzelansicht nehmen kann, funktionieren Dinge wie Navigation, Daten laden, Datenbindung und auch das Speichern von neuen Datensätzen einfach so, ohne, dass vom Entwickler irgendeine komplexere Konfiguration vorgenommen werden muss. Allerdings kann man von den dem Standardverhalten auch nicht abweichen und jede Anwendung folgt dem grundlegenden Aufbau und Verhalten des ausgewählten Floorplans.
+Mithilfe der Page Map in BAS kann die UI-Anwendung angepasst werden. Zum Beispiel können für die hier vorgestellte Anwendung das initiale Laden aktiviert werden und auch die Properties, die in der Liste angezeigt werden, können je nach Anforderung geändert werden. Dabei sind alle Parameter über UI-Masken konfigurierbar und an keiner Stelle muss ein eigenes Coding erfolgen.
+
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=1.0\textwidth]{Bilder/fiori_element/3_8_Fiori_Element_list.jpg}
+ \caption{Listenseite, Detailseite und „neues Objekt anlegen- Seite der Fiori-Elements-Anwendung}
+\end{figure}
+
+\subsection{Deployment des OData-Services}
+
+Um auf den OData-Service auch aus den anderen Applikationen zuzugreifen und die UI-Anwendung bereitzustellen, muss ein Deployment aus BAS heraus erfolgen. Das Deployment erfolgt direkt auf die SAP BTP. Hierfür muss ein sogenannter „Space“ auf der SAP Business Technology Plattform vorliegen, sowie eine SAP HANA Cloud-Instanz bereitgestellt werden. Nachdem die Anwendungsbenutzeroberfläche in Business Application Studio erstellt worden ist, kann diese direkt aus BAS heraus deployed werden, wiederum ohne notwendiges Coding. Dazu muss man in BAS bei Cloud Foundry anmelden und das Cloud Foundry-Ziel angeben. Abbildung 3.9 zeigt, wie dies geht. 
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.9\textwidth]{Bilder/fiori_element/3_9_cloud_foundry_targets.jpg}
+ \caption{Cloud Foundry Sign In und Targets}
+\end{figure}
+
+Danach lässt sich das Deployment starten und es werden während des Vorgangs alle notwendigen Komponenten (Applikation und notwendige BTP-Servie-Instanzen) erstellt. Nach dem Deployment stehen OData-Service, sowie UI-Applikation dann unter einer URL zur Verfügung.
+Auch das Deployment erfolgt vollständig als No-Code-Ansatz. Die notwendige Konfigurationsdatei (mta.yml) wird im Hintergrund des Projekts abgelegt und beim Deployment ausgelesen. Während der Implementierung gab es jedoch gelegentlich Probleme bei dem Deployment, sodass eine tiefergehende Analyse erforderlich wurde. Insbesondere in solchen Fällen musste die LCNC-Umgebung verlassen werden, damit in den Log-Dateien der Fehler gefunden werden konnte. Zudem waren die Probleme meist sehr technischer Natur und erforderten ein tiefgreifenderes Verständnis der verwendeten Technologien (SAP CAP, SAP BTP).
+
+\section{AppGyver}
+\subsection{Projektaufbau}
+
+Für die Umsetzung des Projekts wird SAP AppGyver Enterprise auf der SAP BTP verwendet. Die notwendigen Services können einfach in der SAP BTP aktiviert werden und nach Zuweisung der entsprechenden Rollen steht die Composer Pro-Entwicklungsplattform bereit.
+
+\subsection{OData Integration}
+
+Seit dem Kauf durch SAP wird SAP AppGyver immer mehr in das Ökosystem der SAP integriert. So ist es in der Enterprise-Edition mittlerweile möglich, Funktionen der SAP BTP zu nutzen, um Daten in AppGyver bereitzustellen. Um die Daten des OData-Services in AppGyver nutzen zu können, muss eine „Destination“ im SAP Business Technology Plattform Cockpit angelegt werden. Der SAP BTP Connectivity Service stellt via Destinations Reverse Proxy- und Authentifizierungsfunktionen zur Verfügung, sodass unter Verwendung der Destination ein einfacherer Zugriff auf einen Remote-Endpunkt erfolgen kann. Die Verbindungsdetails können via Eingabemaske gepflegt werden \cite{shp:dest}. Anzugeben sind Name, eine URL, Authentifizierungsdetails sowie weitere spezifische Konfigurationsparameter. Die Destination wird hier \textit{products-on-trial\_simple} genannt. Die URL bezieht sich auf die OData-Service-Adresse. Die Authentifizierung wird dann als „OAuth Client Credentials Authentication“ definiert. Wichtig ist, dass die „Additional Properties“ gesetzt werden: \textit{AppgyverEnabled} sowie \textit{HTML5.DynamicDestination} müssen auf \textit{true} gesetzt werden, damit der OData-Service in AppGyver eingebunden werden kann.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=1.0\textwidth]{Bilder/appgyver/3_10_destination.jpg}
+ \caption{Destination-Konfiguration in SAP BTP Cockpit}
+\end{figure}
+
+Nachdem die Destination erstellt wurde, ist der Service \textit{products-on-trial\_simple} in SAP AppGyver unter dem Menüpunkt Data – SAP Systems verfügbar und kann importiert werden. AppGyver verfügt über eine Funktionalität zum Auslesen der Metadaten des OData-Services und listet die vorhandenen Entitäten in der UI auf. Die Entität „Products“ kann dann einfach aktiviert werden und steht dann in der Anwendung zur Verfügung. Bereits im Integrations-Wizard lassen sich Dateninhalte und Werte des OData-Services ansehen, bzw. sogar verändern.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.7\textwidth]{Bilder/appgyver/3_11_odata integration_in_AppGyver.jpg}
+ \caption{OData-Integration in AppGyver}
+\end{figure}
+
+\subsection{Listenansicht zur Anzeige aller Produkte}
+
+Um eine Liste aller Produkte anzeigen zu können, muss zunächst eine Listenseite mit dem Namen „The List of Products“ erstellt werden. Diese Seite besteht aus vier Elementen: Einem Titel mit dem Text „Products“, einem Button zum Erstellen eines neuen Produkt-Datensatzes und einem weiteren Button zum Einblenden eines Suchfeldes, sowie einem List Item. Die Erstellung eines Suchfeldes wird in Kapital 4 näher betrachtet werden. Eine Data-Variable mit dem Namen „Product1“ wird erstellt, um die Daten von OData-Service abzurufen. Der Typ der Data-Variablen ist auf „Collection of data records“ eingestellt, wodurch eine Sammlung von Datensätzen geliefert wird. Die Data-Variable verfügt über eine Default-Logik, die bestimmt, wie sie sich mit Daten aus dem Backend füllt. Die Daten werden aus dem Backend über den Ablauffunktionskomponente „Get record collection“ bezogen, wobei die Daten hier nur als ein Ausgangsargument des Knotens existieren. Dann wird den „Set data variable“-Ablauffunktionskomponente verwendet, damit die Daten in die Data-Variable setzen können. Nun steht die Data-Variable Product1 für die Verwendung in View-Componente Binding zur Verfügung.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=1.0\textwidth]{Bilder/appgyver/3_12_Data_Variable_Logik.jpg}
+ \caption{Data-Variable Logik}
+\end{figure}
+
+
+
+
+
 
 
 \begin{lstlisting}[emph={inTemplate, inMapping, deviceData, outExcel, template, mapping, devices, filledTemplate}]

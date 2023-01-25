@@ -1,0 +1,398 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Contents: Bachelorarbeit, HS Fulda        %
+%                          06.09.2022                        %
+%---------------------------------------------------------%
+%                     Implementierung.tex               %
+%                        by Fangfang Tan                    %
+%         fangfang.tan@informatik.hs-fulda.de      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Implementierung des Anwendungsfalls} \label{IM}
+
+
+In Abschnitt 1.3 wurden die Anforderungen an die zu implementierende Anwendung bereits vorgestellt, in diesem Kapitel wird nun die Umsetzung in den einzelnen Technologien (Fiori Elements in Kombination mit SAP CAP, AppGyver und SAPUI5) näher beschrieben. 
+
+\begin{table}[htbp]
+  \centering
+	\begin{tabular}{|l|l|l|} 
+	\hline 
+	\rowcolor{gray!40}
+     Technologie&Frontend&Backend\\
+	\hline  
+	AppGyver&X&-\\
+	\hline
+	SAPUI5&X&-\\
+	\hline
+	Fiori Elements (inkl. SAP CAP)&X&X\\
+	\hline
+	\end{tabular}
+  \caption{Umsetzungsanforderung der Technologie} 
+\end{table}
+
+Dabei ist zu unterscheiden zwischen Backend- und Frontend-Funktionalität. SAPUI5 verfügt grundsätzlich über keine Backend-Funktionalität. Mit SAP AppGyver können lokale Datenstrukturen erzeugt werden. Diese Funktion wird jedoch nicht genutzt, sondern ein zentraler OData-Service inklusive Datenbackend an anderer Stelle bereitgestellt. Hierfür wird auf die „Full Stack“-Anwendungen, bestehend aus Fiori Elements und SAP CAP, im SAP Application Studio zurückgegriffen. Das Fiori Elements-Frontend wird den erstellten OData-Service dann konsumieren. Das gleiche Datenmodell und der gleiche OData-Service werden dann ebenfalls von SAP AppGyver und SAPUI5 verwendet.  
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.7\textwidth]{Bilder/architecture/apps_architektur.jpg}
+ \caption{Umsetzungsarchitektur der Technologie}
+\end{figure}
+
+\section{Fiori Elements}
+\subsection{Dev Space erstellen}
+
+Für die Entwicklung mit Fiori Elements wird das Business Application Studio als Entwicklungsumgebung genutzt. Wie bereits in Abschnitt 2.4.2 erwähnt, stellt das BAS Dev Spaces für unterschiedliche Entwicklungsszenarien bereit. Die komplette Anwendung ließe sich auch als klassisches Entwicklungsprojekt auf- und umsetzen, im Sinne der Arbeit wird jedoch das “Low-Code-Based Full-Stack Cloud-Application” Preset für den Dev Space gewählt, um Zugriff auf die LCNC-Funktionalitäten zu bekommen. 
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.6\textwidth]{Bilder/fiori_element/3_2_create dev space.JPG}
+ \caption{Create a New Dev Space}
+\end{figure}
+
+Nach der Erstellung des Dev Space wird die Entwicklungsumgebung für eine Low-Code-basierte Full-Stack Cloud-Anwendung bereitgestellt. In dieser Umgebung stehen verschiedene „Cards“ zur Verfügung, um den auf Low-Code basierenden Implementierungsprozess durchzuführen.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.8\textwidth]{Bilder/fiori_element/3_3_Cards_von_BAS.JPG}
+ \caption{Grundlegenden Aufbau inkl. der Cards von BAS}
+\end{figure}
+
+\subsection{Datenentitäten und Service definieren}
+Für den Anwendungsfall wird eine Datenentität mit sechs Properties festgelegt. Neue Entitäten können einfach in der Datenmodellkarte hinzugefügt und konfiguriert werden. Der Entitätsname wird als „Products“ definiert und die sechs Properties sind ID, Title, MaterialNumber, Description, Price und Stock. Um die Implementierung des Anwendungsfalls zu erleichtern, wird die ID hier als UUID und alle anderen Properties als String definiert.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.5\textwidth]{Bilder/fiori_element/3_4_Data_Model.JPG}
+ \caption{Datenmodell}
+\end{figure}
+
+Beim Anlegen der Entität über die UI wird im Hintergrund eine Code-Datei erzeugt (model.cds) und die Definition dort abgelegt. Dies ist im LCNC-Modus für den Entwickler nicht sichtbar und er muss sich um das Coding nicht weiter kümmern. Grundsätzlich ist es aber möglich, das Coding manuell anzupassen und die UI reagiert entsprechend auf die Änderungen im Coding. Es ist jedoch herauszustellen, dass die Wizards und UI-Masken von BAS nicht alle Funktionalitäten von SAP CAP unterstützen und so spezielle Dinge ggf. nur über das Coding hinzugefügt werden können. Für den gewählten Use-Case ist dies jedoch nicht von Belang.
+
+Angelegte Datenbank-Entitäten können im Weiteren einfach als OData-Service exponiert werden. Ähnlich wie beim Datenmodell, gibt es dafür eine eigene Karte. Dort wird lediglich die Entität ausgewählt, Name, Namespace und Typ festgelegt, sowie einige weitere Properties konfiguriert und dann kann der Service erstellt werden.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.5\textwidth]{Bilder/fiori_element/3_5_Service.JPG}
+ \caption{Service}
+\end{figure}
+
+Unter der Sample-Data-Karte können Mock-Daten hinterlegt werden, damit man während der Entwicklung direkt Zugriff auf Daten hat. Da die Property-ID als UUID definiert ist, werden die IDs automatisch vom System vergeben. Die anderen Properties wie Title, MaterialNumber, Description, Price und Stock müssen manuell eingetragen werden.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=1.0\textwidth]{Bilder/fiori_element/3_6_Sample_Data.JPG}
+ \caption{Sample Data}
+\end{figure}
+
+Tatsächlich hat man durch die Verwendung der drei Cards mit diesen wenigen Klicks und Eingaben in sehr kurzer Zeit ein eigenes Datenmodell und einen OData-Service definiert, den man in der Preview im BAS auch direkt aufrufen und testen kann.
+
+\subsection{User Interface erstellen }
+
+Die Anforderungen an die Benutzeroberfläche bestehen darin, dass eine Listenansicht für die Anzeige aller Produkte und eine Einzelansicht für ein einzelnes Produkt, sowie eine Maske für die Pflege jedes einzelnen Produkts entworfen werden sollen. SAP Fiori Elements stellt hierfür bereits komplett vorgefertigte Floorplans zur Verfügung, die nahtlos in BAS integriert sind.
+Unter der User-Interfaces-Karte kann die Benutzeroberfläche der Anwendung definiert werden. Dies erfolgt in vier Schritten: 
+
+\begin{enumerate}
+\item Eingabe der Details der UI-Anwendung wie Name und Namespace.
+\item Auswahl des Anwendungstyps. In dem hier vorgestellten Anwendungsfall wird eine \textit{Template-Based, Responsive Application} ausgesucht. Es wäre jedoch auch möglich, eine Freestyle SAPUI5-Anwendung zu erstellen.
+\item Wie in Abschnitt 2.3.3 erwähnt, werden von SAP verschiedene Arten von Floorplans für Fiori Elements bereitgestellt. In diesem Fall wird \textit{List Report Object Page} für UI Application Template verwendet.
+\item Der letzte Schritt bei der Erstellung einer UI-Anwendung ist die Auswahl des richtigen Datenobjekts. Hier wird die Datenentität \textit{Products} gewählt und es werden automatisch Tabellenspalten zur Listenseite und ein Abschnitt zur Objektseite eingeschaltet. 
+\end{enumerate}
+
+
+
+\begin{lstlisting}[emph={inTemplate, inMapping, deviceData, outExcel, template, mapping, devices, filledTemplate}]
+/**(*\label{line:con}*)
+ * constructor for the transformation engine
+ * 
+ * Reads the Excel template of a specific agency via InputStream.
+ * Reads the YAML file via InputStream that contains the mapping between the Excel sheet and the device data given by JSONata expressions.
+ * Reads the device data via String that shall be filled into the template. It needs to be in a JSON format of an array containing a JSON object for each device with all of its data.
+ *
+ * @param inTemplate InputStream of the Excel template given by agency
+ * @param inMapping InputStream of the YAML file describing the mapping between Excel template and device data
+ * @param deviceData String in JSON format of an array of all device objects with their data
+ * @throws TransformationException custom exception for any errors that specifically occur during the transformation
+ */
+public TransformationEngine($$@NonNull$$ InputStream inTemplate, $$@NonNull$$ InputStream inMapping, $$@NonNull$$ String deviceData) throws TransformationException {
+	setTemplate(inTemplate);
+	setMapping(inMapping);
+	setDevices(deviceData);
+}
+\end{lstlisting}
+\begin{lstlisting}[emph={inTemplate, inMapping, deviceData, outExcel, template, mapping, devices, filledTemplate}, firstnumber=last,
+caption=Auszüge aus der Klasse \texttt{TransformationEngine}, label=code:te]
+/** (*\label{line:out}*)
+ * Populates the Excel template with the given device data based on the mapping information in the YAML file.
+ * Writes the Excel workbook to the OutputStream, for example a file.
+ * 
+ * @param outExcel the OutputStream for the filled Excel template
+ * @return OutputStream with the filled Excel template
+ * @throws TransformationException custom exception for any errors that specifically occur during the transformation
+ */
+public OutputStream fillTemplateWithDevices($$@NonNull$$ OutputStream outExcel) throws TransformationException {
+	this.filledTemplate = fillTemplate(template, mapping, devices);
+	return writeExcel(filledTemplate, outExcel);
+}
+\end{lstlisting}
+
+
+\section{Ansatz mit Excel-Datei} \label{IED}
+
+Die Implementierung von Ansatz\nbs\ref{ED} mit der bearbeiteten Excel"=Datei ist im Sequenzdiagramm in Abbildung\nbs\ref{fig:seq1} grob dargestellt.
+
+\begin{figure}[h]
+ \centering
+ \includegraphics[width=0.95\textwidth]{Bilder/Sequenzdiagramm1}
+ \caption[Sequenzdiagramm für Ansatz\nbs\ref{ED}]{Sequenzdiagramm}
+ \label{fig:seq1}
+\end{figure}
+
+Im Konstruktor werden die Produktdaten \texttt{deviceData} eingelesen und als JsonNode abgespeichert. Außerdem wird die Excel"=Arbeitsmappe aus dem InputStream \texttt{inTemplate} mit der Bibliothek \bib{Apache POI} geladen. 
+
+Bevor die Arbeitsblätter mit Daten gefüllt werden können, wird zunächst das Settings"=Arbeitsblatt ausgelesen und nach möglichen Mappings durchsucht. Diese werden in Hashtabellen gespeichert und im Anschluss kann das Settings"=Sheet gelöscht werden. Dies wurde bereits in Abschnitt\nbs\ref{zM} näher beschrieben und ist hier nur kurz skizziert.
+
+Danach wird jedes Arbeitsblatt Zelle für Zelle nach Eingaben durchforstet, die mit \texttt{<} beginnen und \texttt{>} enden, um alle Spalten zu finden, welche mit Produktdaten gefüllt werden sollen. Der Code dafür ist im Quelltext\nbs\ref{code:col} abgebildet. 
+
+\begin{lstlisting}[emph={columns, templateSheet, jmesPath, startRow, mandatory, row, cell, cellValue, message, e, column, colLetter, rowNumber, expression, log},
+caption=Einlesen der Spalteninformationen in \texttt{TemplateReader}, label=code:col]
+public HashMap<String, ColumnInfo> getColumns(Sheet templateSheet, JmesPath<JsonNode> jmesPath) throws TransformationException {
+	HashMap<String, ColumnInfo> columns = new HashMap<String,ColumnInfo>();
+	this.startRow = -1;
+
+	for (Row row : templateSheet) {
+		for (Cell cell : row) {
+			if (cell.getCellType() == CellType.STRING) {
+				String cellValue = cell.getRichStringCellValue().getString();
+				if (cellValue.startsWith("<") && cellValue.endsWith(">")) { (*\label{line:found}*)
+					//entry found
+					cellValue = cellValue.substring(1, cellValue.length() - 1);
+					
+					//check if element is mandatory or cell can be left empty
+					boolean mandatory = false;
+					if (cellValue.statssWith("!")) {
+						mandatory = true;
+						cellValue = cellValue.substring(1, cellValue.length());
+					}
+					
+					//parse JMESPath expression
+					try {
+						Expression<JsonNode> expression = jmesPath.compile(cellValue);
+					} catch (ParseException e) {
+						String colLetter = CellReference.convertNumToColString(cell.getColumnIndex());
+						String message = String.format("JMESPath expression of sheet \"%s\", column %s cannot be parsed.\n%s",
+									templateSheet.getSheetName(), colLetter, e.getMessage());
+						log.error(message);
+						throw new TransformationException(message, e);
+					}
+
+					//save all infos for this column
+					ColumnInfo column = new ColumnInfo(cell.getColumnIndex(), mandatory, expression); (*\label{line:ci}*)
+					columns.put(cellValue, column);
+
+					checkIfRowsAlign(templateSheet, row.getRowNum());  (*\label{line:ra1}*)
+				}
+			}
+		}
+	}
+	return columns;
+}
+\end{lstlisting}
+Sobald eine Zelle gefunden wurde, die ein Spalteneintrag enthält (siehe Zeile\nbs\ref{line:found}), werden die entsprechenden Informationen verarbeitet und abgespeichert.
+Wie man in Zeile\nbs\ref{line:ci} im folgenden Code sieht, wird nicht nur die Spaltennummer gespeichert, sondern auch die Angabe, ob die Spalte verpflichtend ist. Ebenso der kompilierte \bib{JMESPath}"=Ausdruck, mit dem später die geforderten Werte der einzelnen Produkte ermittelt werden können. Falls der Ausdruck fehlerhaft ist und nicht geparst werden kann, wird eine Exception ausgelöst, gefangen und in die eigens definierte \texttt{TransformationException} umgewandelt.\\
+Zum Schluss in Zeile\nbs\ref{line:ra1} wird außerdem in der Methode \texttt{checkIfRowsAlign} die Excel"=Zeilennummer abgeglichen (siehe Quelltext\nbs\ref{code:col2}). Diese beschreibt die Start"=Zeile, in die der Inhalt des ersten Produkts eingetragen wird und womit die \bib{JMESPath}"=Ausdrücke aus der Vorlage überschrieben werden. Unterscheiden sich die Start"=Zeilen innerhalb eines Arbeitsblattes, wird ebenfalls eine \texttt{TransformationException} geworfen, weil die Einträge eines Datensatzes nicht alle in gerader Fluchtlinie (d.\,h. in einer Zeile) angeordnet sind.
+
+\begin{lstlisting}[emph={columns, templateSheet, jmesPath, startRow, mandatory, row, cell, cellValue, message, e, column, colLetter, rowNumber, expression, log},
+caption=Hilfsfunktion beim Einlesen der Spalteninformationen, label=code:col2]
+private checkIfRowsAlign(Sheet templateSheet, int rowNumber) throws TransformationException; (*\label{line:ra2}*)
+	switch (this.startRow) {
+		case -1:				//first entry - initialize
+			this.startRow = rowNumber;
+			break;
+		case rowNumber:	//all good
+			break;
+		default:				//no alignment - error
+			String message = String.format("The starting rows for the different device data fields do not align in sheet \"%s\".",
+						templateSheet.getSheetName());
+			log.error(message);
+			throw new TransformationException(message);
+			break;
+	}
+} (*\label{line:ra3}*)
+\end{lstlisting}
+
+Obwohl über Blätter, Spalten und Zeilen iteriert wird, liegt der Aufwand im Bereich $\mathcal{O}(n)$, wobei $n$ die Anzahl der Spalten beschreibt bzw. umformuliert die Anzahl der von der Behörde geforderten Produktinformationen. Diese Anzahl wird nicht sonderlich groß, sondern bewegt sich im zwei"~ bis unteren dreistelligen Bereich\footnote{Datensatz von Behörden mit UDI"=System in \cite{udi:timelines}: näherungsweise Anzahl an geforderten Datenattributen -- Minimum: 13 (Singapur); Maximum: 130 (EU)}. Die Anzahl der Arbeitsblätter und nicht"=leeren Zeilen in einer unausgefüllten Vorlage ist daher vernachlässigbar klein und entsprechend verbraucht die Suche nach den Spalten, d.\,h. die Ausführung von \texttt{getColumns}, wenig Zeit. 
+
+Nachdem alle Spalten"~ und Mapping"=Informationen vorliegen und ausgewertet sind, werden die einzelnen Produkte in die Vorlage geschrieben. Dies geschieht in der Klasse \texttt{DeviceWriter}. Hierbei wird nochmal über die Spalten iteriert. Die \bib{JMESPath}"=Ausdrücke werden auf das explizite Produkt angewendet und der so erhaltene Wert wird zunächst anhand der vorliegenden Mappings in die behördenspezifische Format"~ oder Formulierungsvorgabe umgewandelt. Der ggf. "`übersetzte"' Wert wird dann entsprechend seines Types in die Excel"=Zelle geschrieben. Dabei werden Wahrheitswerte, Zahlen und Text sowie Datumsangaben unterstützt. Für Letztere ist das Format allerdings aktuell fest vorgegeben\nbs --\nbs hier könnte man durch zusätzliche Angaben im Settings"=Arbeitsblatt behördenspezifische Wünsche inkludieren. 
+
+Wie bereits erwähnt, ist in der Regel pro Spalte und Produkt nur genau ein Wert gefordert, aber es kann auch vorkommen, dass zu einem Produkt mehrere Informationen bzgl. einer Kategorie vorliegen, die in mehrere Excel"=Zeilen geschrieben werden müssen (siehe Abbildung\nbs\ref{fig:t3}). Der \bib{JMESPath}"=Ausdruck liefert in diesem Fall ein Array, deren einzelne Einträge jeweils eine eigene Excel"=Zeile erhalten. Hierbei ist wichtig, dass \texttt{null}"=Werte mitgegeben werden, falls ein Datenelement in einem Array nicht vorhanden sein sollte, sodass für ein Produkt die Länge des Arrays pro Kategorie in jeder Spalte gleich ist. Dadurch wird gewährleistet, dass jeweils alle Werte einer Zeile zueinander gehören. Standardmäßig werden Nullwerte bei einer \bib{JMESPath}"=Projektion allerdings herausgefiltert und nicht berücksichtigt. Um dies zu umgehen, kann man sich Multiselect"=Listen bedienen, die mit dem Pipe"=Operator dann im Nachgang wieder glättet werden. Als Beispiel kann man das komplexe Element \texttt{TradeNames} betrachten.
+\begin{lstlisting}[language=json,caption={Beispiel eines komplexen Datenelements},label=code:comp]
+{
+    "TradeNames": [
+        {
+            "TradeName": "englishName",
+            "TradeNameLanguage": "EN"
+        },
+        {
+(*\label{line:nol}*)            "TradeName": "noLanguageGiven"
+        },
+        {
+            "TradeName": "deutscherName",
+            "TradeNameLanguage": "DE"
+        }
+    ],
+    (*\color{black}$\ldots$*)
+}
+\end{lstlisting}
+Um für jedes Objekt eine neue Zeile zu erzeugen, in der sowohl \texttt{TradeName} als auch \texttt{TradeNameLanguage} in einer eigenen Spalte angegeben werden, bieten sich die folgenden \bib{JMESPath}"=Ausdrücke an:
+\begin{itemize}
+\item{\texttt{<TradeNames[].[TradeName] | []>}}
+\item{\texttt{<TradeNames[].[TradeNameLanguage] | []>}}
+\end{itemize}
+Durch die zusätzlichen eckigen Klammern um die Datenelemente \texttt{TradeName} und \texttt{TradeNameLanguage} wird anstatt einer normalen Projektion eine Multiselect"=Liste erzeugt, die in diesem Fall aus ein"=elementigen Arrays besteht, weil nur ein Datenelement gesucht ist. Jedes Auswertungsteilergebnis ist dabei enthalten, auch wenn es \texttt{null} beträgt\nbs --\nbs in diesem Beispiel die nicht vorhandene Angabe der Sprache im zweiten Objekt (Zeile\nbs\ref{line:nol}). Mit \texttt{|[]} wird das erzeugte Array von Arrays wieder geglättet. Alternativ kann mit der eingebauten Funktion \texttt{map} gearbeitet werden. Der Ausdruck \texttt{map(\&TradeNameLanguage, TradeNames[])} führt zu demselben Ergebnis, da auch hier eine neue Liste erzeugt wird, die die gleiche Länge wie die ursprüngliche Liste hat. Jedes Objekt in \texttt{TradeNames} wird auf die \texttt{TradeNameLanguage} abgebildet, falls vorhanden\nbs --\nbs ansonsten auf \texttt{null}. Im Excel"=Template wird der Nullwert dann als leere Zelle interpretiert. 
+
+Liegen fehlerhafte Produktdaten vor oder können \bib{JMESPath}"=Ausdrücke nicht interpretiert werden, bricht das Programm mit einer Fehlermeldung ab und die Informationen zum Produkt bzw. zur Spalte im Arbeitsblatt werden geloggt. Ursprünglich war die Logik so, dass Produkte mit Datenfehlern (z.\,B. ein fehlender, verpflichtender Wert) aus der Excel"=Vorlage gelöscht und geloggt, alle restlichen Produkte aber eingetragen wurden. Dadurch konnte immer eine valide Excel"=Datei erzeugt werden, die möglicherweise aber nur zu einem Bruchteil ausgefüllt war. Die Rücksprache im Team ergab, dass das erfolgreiche Durchlaufen trotz einzelner Fehler dazu führt, dass diese übersehen werden. Anstatt lediglich Einträge im Log zu hinterlassen, wird nun eine Exception geworfen. 
+
+Die Implementation des \texttt{DeviceWriters}, um die Daten eines Produktes in die Arbeitsmappe zu schreiben, folgt bei beiden Ansätzen identischen Prinzipien. Ansatz\nbs\ref{IMD} ist etwas umfangreicher und es wurden einige Details optimiert, daher wird zur Veranschaulichung an dieser Stelle auf das später folgende Aktivitätsdiagramm\nbs\ref{fig:akt1} verwiesen. 
+
+Konnten alle Produktdaten erfolgreich in die Arbeitsmappe eingetragen werden, wird das ausgefüllte Excel"=Template in der Klasse \texttt{ExcelWriter} in einen OutputStream geschrieben. Dabei kann es sich beispielsweise um eine Datei handeln, die dann erzeugt wird. 
+
+
+
+
+%\clearpage
+
+\section{Ansatz mit Mapping-Datei} \label{IMD}
+
+Die Implementierung für den Ansatz mit der extra YAML"=Datei für die Projektion von Produktdaten in die Excel"=Datei ist in Abbildung\nbs\ref{fig:seq2} in einem Sequenzdiagramm dargestellt. Er ist ähnlich aufgebaut wie Ansatz\nbs\ref{IED}. Im Konstruktor werden wie bisher die Excel"=Vorlage geladen und die Produktdaten deserialisiert. Zusätzlich wird nun die Mapping"=Datei eingelesen und direkt validiert (siehe Abschnitt\nbs\ref{JSch}). Um die Produktdaten in die Arbeitsmappe zu schreiben, wird ebenfalls wieder über die Arbeitsblätter, die Produkte und die einzelnen Spalten iteriert. Dies geschieht in der Klasse \texttt{DeviceWriter}. 
+
+\begin{figure}[h]
+ \centering
+ \includegraphics[width=0.95\textwidth]{Bilder/Sequenzdiagramm2}
+ \caption[Sequenzdiagramm für Ansatz\nbs\ref{MD}]{Sequenzdiagramm}
+ \label{fig:seq2}
+\end{figure}
+
+Eine interne Verbesserung zur Implementierung des vorherigen Ansatzes besteht darin, dass die Produktdaten, die auf behördenspezifische Werte abgebildet werden sollen, direkt als erstes vor den verschiedenen Schleifendurchläufen transformiert werden. Das gilt auch für die Datums"~ und Zeitformate. Dabei wird für jedes gewünschte Excel"=Format ein \texttt{CellStyle} angelegt, in einer Hashtabelle gespeichert und später auf diejenigen Zellen angewendet, die ein Datum im angegebenen Format enthalten (sollen). 
+Für jeden in der Mapping"=Datei angegebenen Arbeitsblatt"=Titel werden die folgenden vier Schritte durchgeführt: 
+\begin{enumerate}
+\item Das zugehörige Arbeitsblatt in der Excel"=Vorlage suchen: Kann kein Arbeitsblatt mit dem angegebenen Namen gefunden werden, wird ein Fehler geworfen und die Transformationsengine bricht ab.
+\item Die Angaben zum Arbeitsblatt aus der Mapping"=Datei per Datenbindung in ein Objekt der Klasse \texttt{SheetMapping} übertragen: Hierauf wird im folgenden Abschnitt\nbs\ref{DB} noch näher eingegangen. 
+\item Die Variablen aus \texttt{SheetMapping} abrufen, unter anderem die Startzeile, die verschiedenen Spaltennamen mit deren \bib{JSONata}"=Ausdrücken sowie eine Liste aller verpflichtenden Spalten: Wurden dabei syntaktisch falsche Werte übergeben, wird ebenfalls ein Fehler geworden. 
+\item Jedes Produkt in eine oder ggf. mehrere Zeilen des Excel"=Arbeitsblatts schreiben: Dabei wird wie in Kapitel\nbs\ref{ED} vorgegangen, indem spaltenweise der \bib{JSONata}"=Ausdruck ermittelt und dann im richtigen Format in die passende Zelle geschrieben wird. Dies wird in Abschnitt\nbs\ref{WOD} erläutert.
+\end{enumerate}
+
+\subsection[Datenbindung]{Datenbindung in SheetMapping}\label{DB}
+Alle JSON"=Daten zu einem Arbeitsblatt werden dank der Bibliothek \bib{Jackson} an eine Instanz der Klasse \texttt{SheetMapping} gebunden, wie der Codeausschnitt\nbs\ref{code:db} zeigt. Man spricht hier von Daten"=Deserialisierung, da JSON"=Knoten in Java"=Objekte umgewandelt werden. 
+Die Datenbindung an ein Objekt hat gegenüber der Speicherung im Baummodell den Vorteil, dass Abfragen deutlich bequemer durchführbar sind und einfacher mit den Daten gearbeitet werden kann. Anstatt wiederholt die Pfade des Baumes abzulaufen, können Parameter direkt referenziert werden.
+
+\begin{lstlisting}[emph={jsonReader}]
+ObjectMapper jsonReader = new ObjectMapper();
+jsonReader
+		.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+\end{lstlisting}
+\begin{lstlisting}[emph={jsonReader, sheetName, injextableValues, e, message, sheetMappings, log}, firstnumber=last, caption={Datenbindung für Arbeitsblätter der Mapping-Datei}, label=code:db]
+private SheetMapping getSheetMapping(ObjectMapper jsonReader, String sheetName) throws TransformationException {
+	InjectableValues injectableValues = (*\label{line:sn}*)
+			new InjectableValues.Std().addValue(String.class, sheetName);
+	try {
+		return jsonReader
+				.reader(injectableValues)
+				.treeToValue(sheetMappings.get(sheetName), SheetMapping.class);
+	} catch (JsonProcessingException | IllegalArgumentException e) {
+		String message = String.format("Sheet called \"%s\" could not be filled, because the mapping cannot be parsed properly.", sheetName);
+		log.error(message);
+		throw new TransformationException(message, e);
+	}
+}
+\end{lstlisting}
+Umgesetzt wird die Anbindung durch Annotationen in der Klasse \texttt{SheetMapping}. Mit \texttt{@JacksonInject} wird der Name des Arbeitsblatts zur Klasse hinzugefügt, um diese Info den Fehlermeldungen mitgeben zu können. Dies wird in Zeile\nbs\ref{line:sn} im Code\nbs\ref{code:db} vorbereitet. Mit \texttt{@JsonProperty} werden alle weiteren Attribute gesetzt, die im Anschluss aufgelistet sind. 
+\begin{itemize}
+\item die Kategorie \texttt{category} als \texttt{String}:\\
+Falls kein komplexes Datenelement angegeben wurde, auf welches sich das Arbeitsblatt bezieht, beträgt der Wert \texttt{null}. 
+\item die Startzeile \texttt{row} als \texttt{Integer}:\\
+Die Zeile muss größer als 0 sein, ansonsten bricht die Transformationsengine mit einer Fehlermeldung ab. Außerdem wird sie um eins reduziert, da die Bibliothek \bib{Apache POI} mit 0"=basierten Zeilennummern arbeitet, während die Zeilen in Excel bei 1 beginnen. 
+\item die Spalten \texttt{columns} als \texttt{HashMap <String, String>} mit dem Spaltennamen als Schlüssel und dem \bib{JSONata}"=Ausdruck als Wert:\\
+In der zugehörigen Getter"=Methode werden die Spaltennamen zunächst auf syntaktische Korrektheit überprüft (1-2 Buchstaben von A bis Z) und dann in die entsprechende 0"=basierte Spaltenzahl umgewandelt, mit welcher \bib{Apache POI} rechnet. Die Funktion ist im Code\nbs\ref{code:sgcol} in Zeile\nbs\ref{line:pc1}--\nbs\ref{line:pc2} dargestellt. Außerdem werden die \bib{JSONata}"=Ausdrücke mittels der Bibliothek \bib{JSONata4Java} geparsed und in \texttt{Expressions} umgewandelt. So wird also der Typ \texttt{Map <Integer, Expressions>} zurückgegeben. Tritt ein Fehler im Spaltennamen oder während des \bib{JSONata} Parsens auf, wird eine \texttt{TransformationException} geworfen.
+\item die verpflichtenden Spalten \texttt{mandatoryColumns} als \texttt{HashSet <String>}:\\
+Bevor die Menge der Spalten herausgegeben wird, werden auch hier die Spaltennamen in Zahlen, beginnend bei 0, umgerechnet und gegebenenfalls ein Fehler geworfen.   
+\end{itemize}
+Im folgenden Codeausschnitt\nbs\ref{code:sgcol} ist exemplarisch die Implementierung für die obligatorischen Spalten dargestellt. Alle gewöhnlichen Setter"~ und Getter"=Methoden ohne besondere Funktionalitäten werden einfachheitshalber mit Hilfe von \bib{Lombok}"=Annotationen deklariert, wie z.\,B. in Zeile\nbs\ref{line:setter}.
+\begin{lstlisting}[emph={mandatoryColumns, columnLetter, mandatoryColumnsParsed, message, columnNumber, sheetName, log},
+caption=Setter / Getter für verbindliche Spalten in \texttt{SheetMapping}, label=code:sgcol]
+$$@JsonProperty$$("mandatoryColumns")
+$$@Setter$$ (*\label{line:setter}*)
+private Set<String> mandatoryColumns = new HashSet<String>();
+
+//Getter
+public Set<Integer> getParsedMandatoryColumns() throws TransformationException {
+	Set<Integer> mandatoryColumnsParsed = new HashSet<Integer>();
+	mandatoryColumns.forEach((columnLetter) -> {
+		mandatoryColumnsParsed.add(parseCol(columnLetter));
+	});
+	return mandatoryColumnsParsed;
+}
+
+private Integer parseCol(String columnLetter) throws TransformationException { (*\label{line:pc1}*)
+	columnLetter = columnLetter.toUpperCase();
+	if (!columnLetter.matches("[A-Z]{1,2}")) {
+		String message = String.format(
+				"Yaml file describing agency template is not filled correctly: in sheet \"%s\", column %s is not a valid excel column name.",
+				sheetName, columnLetter);
+		log.error(message);
+		throw new TransformationException(message);
+	}
+	int columnNumber = 0;
+	for (int i = 0; i < columnLetter.length(); i++) {
+		columnNumber = columnNumber * 26 + columnLetter.charAt(i) - 'A' + 1;
+	}
+	return columnNumber - 1;
+} (*\label{line:pc2}*)
+\end{lstlisting}
+Die \texttt{TransformationException} ist eine benutzerdefinierte Ausnahme (siehe dazu\nbs\cite[S.\,32f]{java:lifesci} und\nbs\cite[S.\,309--338]{java:tut}), welche möglichst alle checked Exceptions zusammenfasst, die bei der Transformation entstehen können. Ausgenommen sind ungeprüfte Laufzeit"=Fehler. NullPointer"=Exceptions werden mittels \bib{Lombok} erzeugt, falls ein Eingabeparameter \texttt{null} ist. Betrachtet man die Transformationsengine im Zusammenspiel mit der restlichen Plattform, wird so direkt ersichtlich, dass ein Fehler innerhalb der Transformationsengine aufgetreten ist und im Log kann die genaue Ursache nachgelesen werden. 
+
+\subsection{Produktdaten schreiben}\label{WOD}
+Die spaltenweise Auswertung des \bib{JSONata}"=Ausdrucks und das Füllen der Zelle in der Excel"=Vorlage funktioniert ganz anlog zu Abschnitt\nbs\ref{IED}. Es ergibt sich das Aktivitätsdiagramm aus Abbildung\nbs\ref{fig:akt1} für die Methode \texttt{writeOneDevice} der Klasse \texttt{DeviceWriter}, um\nbs --\nbs wie der Name schon sagt\nbs --\nbs die Daten zu einem Produkt in ein Arbeitsblatt zu schreiben. 
+
+\begin{figure}[!hbt]
+ \centering
+ \includegraphics[width=\textwidth]{Bilder/Aktivitaetsdiagramm}
+ \caption[Aktivitätsdiagramm für \texttt{writeOneDevice} aus Ansatz\nbs\ref{MD}]{Aktivitätsdiagramm für \texttt{writeOneDevice}}
+ \label{fig:akt1}
+\end{figure}
+
+Um den Prozess im Aktivitätsdiagramm nachvollziehen zu können, wird zunächst der Unterschied zwischen einfachen und komplexen Datenelementen näher erläutert. 
+Einfache Datenelemente stehen in einer 1\,:\,1"=Beziehung zum Produkt, das heißt es liegt nur eine einzige Ausprägung vor, die dem Datenelement zugeordnet ist. Dies kann als String, Zahl oder Wahrheitswert sein. Ein Spezialfall bildet der in Abschnitt\nbs\ref{ED} erwähnte \texttt{ProduktionIdentifier}, welcher in einem Array von Strings unterschiedliche einfache Elemente zusammenfasst. Er wird jedoch bereits über den \bib{JSONata}"=Ausdruck abgefangen und in einen Wahrheitswert umgewandelt, sodass hierfür keine zusätzliche Logik implementiert werden muss. Die komplexen Datenelemente bestehen hingegen aus einem Array von Objekten, welche wiederum einfache Datenelemente enthalten. Ein Beispiel wurde bereits in Quelltext\nbs\ref{code:comp} gegeben. Sie stehen also in einer 1\,:\,$n$"~Beziehung, d.\,h. ein Produkt kann mehrere unterschiedliche Ausprägungen / Einträge für ein komplexes Datenelement haben. In Excel können alle einfachen Elemente in einem Arbeitsblatt in einer Zeile aneinander gereiht werden, da ein Element genau einer Zelle entspricht. Die komplexen Elemente werden in der Regel in zusätzlichen, "`relationalen"' Arbeitsblättern dargestellt, in denen jedes Objekt des Arrays des komplexen Elements einer Zeile entspricht. Ein Produkt füllt in diesem Fall also $n$ Zeilen, wobei $n\geq0$ gilt. Falls für ein Produkt keine Daten bzgl. eines komplexen Elements vorliegen (d.\,h. $n=0$), wird es im entsprechenden relationalen Arbeitsblatt auch nicht aufgelistet, ansonsten wird über alle $n$\nbs Objekte im Array iteriert.
+
+Die Methode \texttt{writeOneDevice} beginnt mit der Initialisierung verschiedener Flags und Counter, die im weiteren Verlauf Verwendung finden. Danach wird zunächst die aktuelle Zeile anhand der \texttt{rowNumber} im aktuellen Arbeitsblatt zur Bearbeitung ausgewählt. 
+Die Liste der Spalten für das jeweilige Arbeitsblatt entsprechend der Mapping"=Datei wird geladen und im Folgenden durchlaufen. Dabei wird spaltenweise der \bib{JSONata}"=Ausdruck evaluiert (falls dies möglich ist), sowie die aktuelle Zelle ausgewählt und gefüllt. Beim Füllen werden zunächst mögliche Wahrheitswerte in behördenspezifische Werte umgewandelt und dann wird per Switch"=Statement über den Datentyp die Zelle typgerecht mit dem Ergebnis der \bib{JSONata}"=Auswertung beschrieben. Es werden primitive Datentypen, wie Booleans und die unterschiedlichen Zahlenwerte, sowie Strings unterstützt. Liegen bei Strings spezielle Datums"~ oder Zeitangaben vor, muss die Excel"=Zelle zusätzlich in ihrem Style formatiert werden. Ansonsten kann die Zelle über die entsprechende \bib{Apache POI}"=Methode \texttt{setCellValueAs<Type>} beschrieben werden. Eine Ausnahme ergibt sich jedoch, wenn der \bib{JSONata}"=Ausdruck ein Array zurückliefert. In dem Fall handelt es sich um ein komplexes Datenelement\nbs --\nbs hier muss überprüft werden, ob überhaupt Einträge vorliegen. Wenn dies der Fall ist, wird über den \texttt{arrayIndex} iteriert und für jeden Eintrag eine neue Zeile geschrieben, bis das gesamte Array durchlaufen ist. Die restlichen simplen Dateneinträge aus anderen Spalten werden einfach wiederholt. Ist das komplexe Datenelement allerdings leer, wird geprüft, ob es mit der Kategorie übereinstimmt und ggf. die Zeile gelöscht. Dies trifft zu, wenn ein Produkt beispielsweise gar nicht sterilisierbar ist, sodass auch keine Sterilisationsmethoden vorliegen können. In diesem Fall soll das entsprechende Produkt auch nicht im zugehörigen Arbeitsblatt aufgelistet werden. Liefert ein \bib{JSONata}"=Ausdruck kein Ergebnis oder beträgt \texttt{null}, obwohl die Spalte verpflichtend ist, kommt es zur Fehlermeldung. Ansonsten werden alle Spalten durchgegangen und beim erfolgreichen Ausfüllen wird die aktualisierte \texttt{rowNumber} für das nächste Produkt zurückgegeben. 
+
+Auch hier ist bei Arrays bei der Wahl des \bib{JSONata}"=Ausdrucks Vorsicht geboten. Es muss bedacht werden, dass nicht vorhandene Datenelemente von komplexen Eltern explizit mit \texttt{null} besetzt werden müssen, anstatt sie implizit wegzulassen. Der \bib{JSONata}"=Ausdruck wird dadurch ein wenig komplizierter, was man in den Zeilen\nbs\ref{line:ml1} und\nbs\ref{line:ml2} des YAML"=Codes\nbs\ref{code:md1} sieht. \texttt{TradeNames.TradeName} muss beispielsweise zu \texttt{TradeNames.(\$exists(TradeName) ? TradeName : null)} erweitert werden. Dadurch wird gewährleistet, dass in jeder Zeile die einander zugehörigen Informationen stehen und sich in den relationalen Arbeitsblättern keine Verschiebungen ergeben, sondern die Zellen der unterschiedlichen Spalten zueinander ausgerichtet sind. 
+
+Sind alle Produktdaten erfolgreich in alle Arbeitsblätter geschrieben worden, wird wie in Abschnitt\nbs\ref{IED} im letzten Schritt die ausgefüllte Excel"=Datei erzeugt und als OutputStream zurückgegeben. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

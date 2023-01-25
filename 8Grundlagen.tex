@@ -59,7 +59,7 @@ Für diese Bachelorarbeit wird ein OData-Service auf der SAP Business Technology
 
 \begin{figure}[htbp]
  \centering
- \includegraphics[width=0.8\textwidth]{Bilder/SAP BTP OData architecture/SAP_Anwendung_Architektur.jpg}
+ \includegraphics[width=0.8\textwidth]{Bilder/architecture/SAP_Anwendung_Architektur.jpg}
  \caption{Architektur einer SAP-Anwendung in der SAP BTP}
 \end{figure}
 
@@ -103,7 +103,7 @@ Eine Entwicklungsumgebung ist eine Zusammenstellung von Funktionen und Werkzeuge
 
 \begin{figure}[htbp]
  \centering
- \includegraphics[width=0.8\textwidth]{Bilder/appgyver/2_2_Pages_in_AppGyver.jpg}
+ \includegraphics[width=0.9\textwidth]{Bilder/appgyver/2_2_Pages_in_AppGyver.jpg}
  \caption{Pages einer AppGyver-Anwendung}
 \end{figure}
 
@@ -126,6 +126,7 @@ Dem LCNC-Ansatz folgend, finden sich in AppGyver keine programmatischen Baustein
   \centering
 	\begin{tabular}{|l|l|} 
 	\hline 
+     \rowcolor{gray!40}
 	Applikations-Schicht&AppGyver-Baustein\\
 	\hline  
 	View&Page; View Component; Properties; Theme\\
@@ -157,7 +158,11 @@ Neben den Daten ist auch die Geschäftslogik ohne oder mit geringen Programmierk
 
 Weiterhin existieren in AppGyver Formeln, die dazu genutzt werden können, um komplexere Logiken abzubilden. Dazu gibt es einen eigenen Formel-Editor, in dem die Logiken hinterlegt werden können. Tatsächlich stehen dort Formel-Typen zur Verfügung, die sich nahe an der richtigen Programmierung bewegen (Logische Operatoren, IF-Statements, etc) \cite{appgyver:logic}.
 
-todo: Abbildung 2.3 Exemplarische Formel in AppGyver 
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.8\textwidth]{Bilder/appgyver/2_5_Formula.jpg}
+ \caption{Exemplarische Formel in AppGyver}
+\end{figure} 
 
 \section{SAPUI5}
 \subsection{Grundlage von SAPUI5}
@@ -203,7 +208,11 @@ SAP Fiori als gestalterische Richtlinie lässt sich mit SAPUI5 technisch umsetze
 
 Ein List Report wird verwendet, wenn Elemente in einer Tabelle oder Liste dargestellt werden sollen. Mit dem List Report können die Objekte angezeigt, gefiltert und bearbeitet werden. Der List Report wird in der Regel in Verbindung mit der Objekt Page verwendet. Auf die Objekt Page kann der Nutzer durch Klicken auf ein einzelnes Element in der Liste gelangen und dort detaillierte Informationen über einzelne Objekte angezeigt bekommen und es bearbeiten.
 
-todo: Abbildung 2.4 List Report und Object Page
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=1.0\textwidth]{Bilder/fiori_element/list_object_page.png}
+ \caption{List Report und Object Page (Quelle: SAP Fiori Design Guidelines. URL: https://experience.sap.com/fiori-design-web/smart-templates)}
+\end{figure} 
 
 \begin{itemize}[noitemsep]
 \item Worklist
@@ -217,7 +226,11 @@ Eine Worklist zeigt ebenfalls eine Liste von Elementen an, die von Benutzer bear
 
 Ein Overview Page ermöglicht es, den Nutzern eine große Menge unterschiedlicher Informationen für einen Überblick bereitzustellen. Unterschiedliche Informationen werden in verschiedenen Cards visualisiert. Eine Card zeigt die Details zu einem bestimmten Geschäftsobjekt. Mit der Overview Page können Anzeigen, Filtern und Verarbeiten von Daten einfach und effizient gemacht werden.
 
-todo: Abbildung 2.5 Overview Page
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.6\textwidth]{Bilder/fiori_element/Overview-page.png}
+ \caption{Overview Page (Quelle: SAP Fiori Design Guidelines. URL: https://experience.sap.com/fiori-design-web/smart-templates)}
+\end{figure} 
 
 \begin{itemize}[noitemsep]
 \item Analytical List Page

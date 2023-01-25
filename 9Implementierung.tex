@@ -151,7 +151,6 @@ Nachdem die Destination erstellt wurde, ist der Service \textit{products-on-tria
 \end{figure}
 
 \subsection{Listenansicht zur Anzeige aller Produkte}
-
 Um eine Liste aller Produkte anzeigen zu können, muss zunächst eine Listenseite mit dem Namen „The List of Products“ erstellt werden. Diese Seite besteht aus vier Elementen: Einem Titel mit dem Text „Products“, einem Button zum Erstellen eines neuen Produkt-Datensatzes und einem weiteren Button zum Einblenden eines Suchfeldes, sowie einem List Item. Die Erstellung eines Suchfeldes wird in Kapital 4 näher betrachtet werden. Eine Data-Variable mit dem Namen „Product1“ wird erstellt, um die Daten von OData-Service abzurufen. Der Typ der Data-Variablen ist auf „Collection of data records“ eingestellt, wodurch eine Sammlung von Datensätzen geliefert wird. Die Data-Variable verfügt über eine Default-Logik, die bestimmt, wie sie sich mit Daten aus dem Backend füllt. Die Daten werden aus dem Backend über den Ablauffunktionskomponente „Get record collection“ bezogen, wobei die Daten hier nur als ein Ausgangsargument des Knotens existieren. Dann wird den „Set data variable“-Ablauffunktionskomponente verwendet, damit die Daten in die Data-Variable setzen können. Nun steht die Data-Variable Product1 für die Verwendung in View-Componente Binding zur Verfügung.
 
 \begin{figure}[htbp]
@@ -160,293 +159,280 @@ Um eine Liste aller Produkte anzeigen zu können, muss zunächst eine Listenseit
  \caption{Data-Variable Logik}
 \end{figure}
 
+Zur Anzeige der Produkteliste muss die View-Component „List item“ mit dem erstellten Data-Variable Product1 verbunden und  wiederholt werden. Das Primary  und das Secondary Label bestimmen, welcher Property-Wert in der Liste angezeigt werden soll. In dieser AppGyver-Anwendung sollen der Produkttitel und der Produktpreis angezeigt werden. Deshalb sollten das Primary Label mit dem Wert \textit{current.Title} und das Secondary Label mit \textit{current.Price} verbunden werden. Nach dem Speichern wird dann die Liste mit allen Produkten angezeigt.  
 
-
-
-
-
-
-\begin{lstlisting}[emph={inTemplate, inMapping, deviceData, outExcel, template, mapping, devices, filledTemplate}]
-/**(*\label{line:con}*)
- * constructor for the transformation engine
- * 
- * Reads the Excel template of a specific agency via InputStream.
- * Reads the YAML file via InputStream that contains the mapping between the Excel sheet and the device data given by JSONata expressions.
- * Reads the device data via String that shall be filled into the template. It needs to be in a JSON format of an array containing a JSON object for each device with all of its data.
- *
- * @param inTemplate InputStream of the Excel template given by agency
- * @param inMapping InputStream of the YAML file describing the mapping between Excel template and device data
- * @param deviceData String in JSON format of an array of all device objects with their data
- * @throws TransformationException custom exception for any errors that specifically occur during the transformation
- */
-public TransformationEngine($$@NonNull$$ InputStream inTemplate, $$@NonNull$$ InputStream inMapping, $$@NonNull$$ String deviceData) throws TransformationException {
-	setTemplate(inTemplate);
-	setMapping(inMapping);
-	setDevices(deviceData);
-}
-\end{lstlisting}
-\begin{lstlisting}[emph={inTemplate, inMapping, deviceData, outExcel, template, mapping, devices, filledTemplate}, firstnumber=last,
-caption=Auszüge aus der Klasse \texttt{TransformationEngine}, label=code:te]
-/** (*\label{line:out}*)
- * Populates the Excel template with the given device data based on the mapping information in the YAML file.
- * Writes the Excel workbook to the OutputStream, for example a file.
- * 
- * @param outExcel the OutputStream for the filled Excel template
- * @return OutputStream with the filled Excel template
- * @throws TransformationException custom exception for any errors that specifically occur during the transformation
- */
-public OutputStream fillTemplateWithDevices($$@NonNull$$ OutputStream outExcel) throws TransformationException {
-	this.filledTemplate = fillTemplate(template, mapping, devices);
-	return writeExcel(filledTemplate, outExcel);
-}
-\end{lstlisting}
-
-
-\section{Ansatz mit Excel-Datei} \label{IED}
-
-Die Implementierung von Ansatz\nbs\ref{ED} mit der bearbeiteten Excel"=Datei ist im Sequenzdiagramm in Abbildung\nbs\ref{fig:seq1} grob dargestellt.
-
-\begin{figure}[h]
+\begin{figure}[htbp]
  \centering
- \includegraphics[width=0.95\textwidth]{Bilder/Sequenzdiagramm1}
- \caption[Sequenzdiagramm für Ansatz\nbs\ref{ED}]{Sequenzdiagramm}
- \label{fig:seq1}
+ \includegraphics[width=0.7\textwidth]{Bilder/appgyver/3_13_List_Item_mit_Repeat.jpg}
+ \caption{Listenseite und List Item mit Repeat in AppGyver}
 \end{figure}
 
-Im Konstruktor werden die Produktdaten \texttt{deviceData} eingelesen und als JsonNode abgespeichert. Außerdem wird die Excel"=Arbeitsmappe aus dem InputStream \texttt{inTemplate} mit der Bibliothek \bib{Apache POI} geladen. 
+\subsection{Einzelansicht für ein Produkt}
+Die Einzelansicht enthält alle Properties zu einem Produkt, nämlich den Produkttitel, die Beschreibung, die Materialnummer, den Preis, den Bestand und die Produkt-ID. Für die Darstellung der Informationen muss eine Detailseite mit dem Namen „Product Details“ erstellt werden. Eine App-Variable \textit{appVarRecord} mit sechs Properties wird erstellt, damit die Daten an verschiedene Seiten der Anwendung übertragen werden können.
 
-Bevor die Arbeitsblätter mit Daten gefüllt werden können, wird zunächst das Settings"=Arbeitsblatt ausgelesen und nach möglichen Mappings durchsucht. Diese werden in Hashtabellen gespeichert und im Anschluss kann das Settings"=Sheet gelöscht werden. Dies wurde bereits in Abschnitt\nbs\ref{zM} näher beschrieben und ist hier nur kurz skizziert.
-
-Danach wird jedes Arbeitsblatt Zelle für Zelle nach Eingaben durchforstet, die mit \texttt{<} beginnen und \texttt{>} enden, um alle Spalten zu finden, welche mit Produktdaten gefüllt werden sollen. Der Code dafür ist im Quelltext\nbs\ref{code:col} abgebildet. 
-
-\begin{lstlisting}[emph={columns, templateSheet, jmesPath, startRow, mandatory, row, cell, cellValue, message, e, column, colLetter, rowNumber, expression, log},
-caption=Einlesen der Spalteninformationen in \texttt{TemplateReader}, label=code:col]
-public HashMap<String, ColumnInfo> getColumns(Sheet templateSheet, JmesPath<JsonNode> jmesPath) throws TransformationException {
-	HashMap<String, ColumnInfo> columns = new HashMap<String,ColumnInfo>();
-	this.startRow = -1;
-
-	for (Row row : templateSheet) {
-		for (Cell cell : row) {
-			if (cell.getCellType() == CellType.STRING) {
-				String cellValue = cell.getRichStringCellValue().getString();
-				if (cellValue.startsWith("<") && cellValue.endsWith(">")) { (*\label{line:found}*)
-					//entry found
-					cellValue = cellValue.substring(1, cellValue.length() - 1);
-					
-					//check if element is mandatory or cell can be left empty
-					boolean mandatory = false;
-					if (cellValue.statssWith("!")) {
-						mandatory = true;
-						cellValue = cellValue.substring(1, cellValue.length());
-					}
-					
-					//parse JMESPath expression
-					try {
-						Expression<JsonNode> expression = jmesPath.compile(cellValue);
-					} catch (ParseException e) {
-						String colLetter = CellReference.convertNumToColString(cell.getColumnIndex());
-						String message = String.format("JMESPath expression of sheet \"%s\", column %s cannot be parsed.\n%s",
-									templateSheet.getSheetName(), colLetter, e.getMessage());
-						log.error(message);
-						throw new TransformationException(message, e);
-					}
-
-					//save all infos for this column
-					ColumnInfo column = new ColumnInfo(cell.getColumnIndex(), mandatory, expression); (*\label{line:ci}*)
-					columns.put(cellValue, column);
-
-					checkIfRowsAlign(templateSheet, row.getRowNum());  (*\label{line:ra1}*)
-				}
-			}
-		}
-	}
-	return columns;
-}
-\end{lstlisting}
-Sobald eine Zelle gefunden wurde, die ein Spalteneintrag enthält (siehe Zeile\nbs\ref{line:found}), werden die entsprechenden Informationen verarbeitet und abgespeichert.
-Wie man in Zeile\nbs\ref{line:ci} im folgenden Code sieht, wird nicht nur die Spaltennummer gespeichert, sondern auch die Angabe, ob die Spalte verpflichtend ist. Ebenso der kompilierte \bib{JMESPath}"=Ausdruck, mit dem später die geforderten Werte der einzelnen Produkte ermittelt werden können. Falls der Ausdruck fehlerhaft ist und nicht geparst werden kann, wird eine Exception ausgelöst, gefangen und in die eigens definierte \texttt{TransformationException} umgewandelt.\\
-Zum Schluss in Zeile\nbs\ref{line:ra1} wird außerdem in der Methode \texttt{checkIfRowsAlign} die Excel"=Zeilennummer abgeglichen (siehe Quelltext\nbs\ref{code:col2}). Diese beschreibt die Start"=Zeile, in die der Inhalt des ersten Produkts eingetragen wird und womit die \bib{JMESPath}"=Ausdrücke aus der Vorlage überschrieben werden. Unterscheiden sich die Start"=Zeilen innerhalb eines Arbeitsblattes, wird ebenfalls eine \texttt{TransformationException} geworfen, weil die Einträge eines Datensatzes nicht alle in gerader Fluchtlinie (d.\,h. in einer Zeile) angeordnet sind.
-
-\begin{lstlisting}[emph={columns, templateSheet, jmesPath, startRow, mandatory, row, cell, cellValue, message, e, column, colLetter, rowNumber, expression, log},
-caption=Hilfsfunktion beim Einlesen der Spalteninformationen, label=code:col2]
-private checkIfRowsAlign(Sheet templateSheet, int rowNumber) throws TransformationException; (*\label{line:ra2}*)
-	switch (this.startRow) {
-		case -1:				//first entry - initialize
-			this.startRow = rowNumber;
-			break;
-		case rowNumber:	//all good
-			break;
-		default:				//no alignment - error
-			String message = String.format("The starting rows for the different device data fields do not align in sheet \"%s\".",
-						templateSheet.getSheetName());
-			log.error(message);
-			throw new TransformationException(message);
-			break;
-	}
-} (*\label{line:ra3}*)
-\end{lstlisting}
-
-Obwohl über Blätter, Spalten und Zeilen iteriert wird, liegt der Aufwand im Bereich $\mathcal{O}(n)$, wobei $n$ die Anzahl der Spalten beschreibt bzw. umformuliert die Anzahl der von der Behörde geforderten Produktinformationen. Diese Anzahl wird nicht sonderlich groß, sondern bewegt sich im zwei"~ bis unteren dreistelligen Bereich\footnote{Datensatz von Behörden mit UDI"=System in \cite{udi:timelines}: näherungsweise Anzahl an geforderten Datenattributen -- Minimum: 13 (Singapur); Maximum: 130 (EU)}. Die Anzahl der Arbeitsblätter und nicht"=leeren Zeilen in einer unausgefüllten Vorlage ist daher vernachlässigbar klein und entsprechend verbraucht die Suche nach den Spalten, d.\,h. die Ausführung von \texttt{getColumns}, wenig Zeit. 
-
-Nachdem alle Spalten"~ und Mapping"=Informationen vorliegen und ausgewertet sind, werden die einzelnen Produkte in die Vorlage geschrieben. Dies geschieht in der Klasse \texttt{DeviceWriter}. Hierbei wird nochmal über die Spalten iteriert. Die \bib{JMESPath}"=Ausdrücke werden auf das explizite Produkt angewendet und der so erhaltene Wert wird zunächst anhand der vorliegenden Mappings in die behördenspezifische Format"~ oder Formulierungsvorgabe umgewandelt. Der ggf. "`übersetzte"' Wert wird dann entsprechend seines Types in die Excel"=Zelle geschrieben. Dabei werden Wahrheitswerte, Zahlen und Text sowie Datumsangaben unterstützt. Für Letztere ist das Format allerdings aktuell fest vorgegeben\nbs --\nbs hier könnte man durch zusätzliche Angaben im Settings"=Arbeitsblatt behördenspezifische Wünsche inkludieren. 
-
-Wie bereits erwähnt, ist in der Regel pro Spalte und Produkt nur genau ein Wert gefordert, aber es kann auch vorkommen, dass zu einem Produkt mehrere Informationen bzgl. einer Kategorie vorliegen, die in mehrere Excel"=Zeilen geschrieben werden müssen (siehe Abbildung\nbs\ref{fig:t3}). Der \bib{JMESPath}"=Ausdruck liefert in diesem Fall ein Array, deren einzelne Einträge jeweils eine eigene Excel"=Zeile erhalten. Hierbei ist wichtig, dass \texttt{null}"=Werte mitgegeben werden, falls ein Datenelement in einem Array nicht vorhanden sein sollte, sodass für ein Produkt die Länge des Arrays pro Kategorie in jeder Spalte gleich ist. Dadurch wird gewährleistet, dass jeweils alle Werte einer Zeile zueinander gehören. Standardmäßig werden Nullwerte bei einer \bib{JMESPath}"=Projektion allerdings herausgefiltert und nicht berücksichtigt. Um dies zu umgehen, kann man sich Multiselect"=Listen bedienen, die mit dem Pipe"=Operator dann im Nachgang wieder glättet werden. Als Beispiel kann man das komplexe Element \texttt{TradeNames} betrachten.
-\begin{lstlisting}[language=json,caption={Beispiel eines komplexen Datenelements},label=code:comp]
-{
-    "TradeNames": [
-        {
-            "TradeName": "englishName",
-            "TradeNameLanguage": "EN"
-        },
-        {
-(*\label{line:nol}*)            "TradeName": "noLanguageGiven"
-        },
-        {
-            "TradeName": "deutscherName",
-            "TradeNameLanguage": "DE"
-        }
-    ],
-    (*\color{black}$\ldots$*)
-}
-\end{lstlisting}
-Um für jedes Objekt eine neue Zeile zu erzeugen, in der sowohl \texttt{TradeName} als auch \texttt{TradeNameLanguage} in einer eigenen Spalte angegeben werden, bieten sich die folgenden \bib{JMESPath}"=Ausdrücke an:
-\begin{itemize}
-\item{\texttt{<TradeNames[].[TradeName] | []>}}
-\item{\texttt{<TradeNames[].[TradeNameLanguage] | []>}}
-\end{itemize}
-Durch die zusätzlichen eckigen Klammern um die Datenelemente \texttt{TradeName} und \texttt{TradeNameLanguage} wird anstatt einer normalen Projektion eine Multiselect"=Liste erzeugt, die in diesem Fall aus ein"=elementigen Arrays besteht, weil nur ein Datenelement gesucht ist. Jedes Auswertungsteilergebnis ist dabei enthalten, auch wenn es \texttt{null} beträgt\nbs --\nbs in diesem Beispiel die nicht vorhandene Angabe der Sprache im zweiten Objekt (Zeile\nbs\ref{line:nol}). Mit \texttt{|[]} wird das erzeugte Array von Arrays wieder geglättet. Alternativ kann mit der eingebauten Funktion \texttt{map} gearbeitet werden. Der Ausdruck \texttt{map(\&TradeNameLanguage, TradeNames[])} führt zu demselben Ergebnis, da auch hier eine neue Liste erzeugt wird, die die gleiche Länge wie die ursprüngliche Liste hat. Jedes Objekt in \texttt{TradeNames} wird auf die \texttt{TradeNameLanguage} abgebildet, falls vorhanden\nbs --\nbs ansonsten auf \texttt{null}. Im Excel"=Template wird der Nullwert dann als leere Zelle interpretiert. 
-
-Liegen fehlerhafte Produktdaten vor oder können \bib{JMESPath}"=Ausdrücke nicht interpretiert werden, bricht das Programm mit einer Fehlermeldung ab und die Informationen zum Produkt bzw. zur Spalte im Arbeitsblatt werden geloggt. Ursprünglich war die Logik so, dass Produkte mit Datenfehlern (z.\,B. ein fehlender, verpflichtender Wert) aus der Excel"=Vorlage gelöscht und geloggt, alle restlichen Produkte aber eingetragen wurden. Dadurch konnte immer eine valide Excel"=Datei erzeugt werden, die möglicherweise aber nur zu einem Bruchteil ausgefüllt war. Die Rücksprache im Team ergab, dass das erfolgreiche Durchlaufen trotz einzelner Fehler dazu führt, dass diese übersehen werden. Anstatt lediglich Einträge im Log zu hinterlassen, wird nun eine Exception geworfen. 
-
-Die Implementation des \texttt{DeviceWriters}, um die Daten eines Produktes in die Arbeitsmappe zu schreiben, folgt bei beiden Ansätzen identischen Prinzipien. Ansatz\nbs\ref{IMD} ist etwas umfangreicher und es wurden einige Details optimiert, daher wird zur Veranschaulichung an dieser Stelle auf das später folgende Aktivitätsdiagramm\nbs\ref{fig:akt1} verwiesen. 
-
-Konnten alle Produktdaten erfolgreich in die Arbeitsmappe eingetragen werden, wird das ausgefüllte Excel"=Template in der Klasse \texttt{ExcelWriter} in einen OutputStream geschrieben. Dabei kann es sich beispielsweise um eine Datei handeln, die dann erzeugt wird. 
-
-
-
-
-%\clearpage
-
-\section{Ansatz mit Mapping-Datei} \label{IMD}
-
-Die Implementierung für den Ansatz mit der extra YAML"=Datei für die Projektion von Produktdaten in die Excel"=Datei ist in Abbildung\nbs\ref{fig:seq2} in einem Sequenzdiagramm dargestellt. Er ist ähnlich aufgebaut wie Ansatz\nbs\ref{IED}. Im Konstruktor werden wie bisher die Excel"=Vorlage geladen und die Produktdaten deserialisiert. Zusätzlich wird nun die Mapping"=Datei eingelesen und direkt validiert (siehe Abschnitt\nbs\ref{JSch}). Um die Produktdaten in die Arbeitsmappe zu schreiben, wird ebenfalls wieder über die Arbeitsblätter, die Produkte und die einzelnen Spalten iteriert. Dies geschieht in der Klasse \texttt{DeviceWriter}. 
-
-\begin{figure}[h]
+Um von der Listenseite zur Detail-Seite zu navigieren, muss die logische Ablauffunktion für das List Item in der Listenseite aufgebaut werden, dabei geht es um ein Component tap Event. Das Event wird ausgelöst, wenn das List Item vom Benutzer angeklickt wird. Der Aufbau der logischen Ablauffunktion kann Abbildung 3.14 entnommen werden. 
+\begin{figure}[htbp]
  \centering
- \includegraphics[width=0.95\textwidth]{Bilder/Sequenzdiagramm2}
- \caption[Sequenzdiagramm für Ansatz\nbs\ref{MD}]{Sequenzdiagramm}
- \label{fig:seq2}
+ \includegraphics[width=0.9\textwidth]{Bilder/appgyver/3_14_Logik_ListItem.JPG}
+ \caption{Logische Ablauffunktion für List Items}
 \end{figure}
 
-Eine interne Verbesserung zur Implementierung des vorherigen Ansatzes besteht darin, dass die Produktdaten, die auf behördenspezifische Werte abgebildet werden sollen, direkt als erstes vor den verschiedenen Schleifendurchläufen transformiert werden. Das gilt auch für die Datums"~ und Zeitformate. Dabei wird für jedes gewünschte Excel"=Format ein \texttt{CellStyle} angelegt, in einer Hashtabelle gespeichert und später auf diejenigen Zellen angewendet, die ein Datum im angegebenen Format enthalten (sollen). 
-Für jeden in der Mapping"=Datei angegebenen Arbeitsblatt"=Titel werden die folgenden vier Schritte durchgeführt: 
-\begin{enumerate}
-\item Das zugehörige Arbeitsblatt in der Excel"=Vorlage suchen: Kann kein Arbeitsblatt mit dem angegebenen Namen gefunden werden, wird ein Fehler geworfen und die Transformationsengine bricht ab.
-\item Die Angaben zum Arbeitsblatt aus der Mapping"=Datei per Datenbindung in ein Objekt der Klasse \texttt{SheetMapping} übertragen: Hierauf wird im folgenden Abschnitt\nbs\ref{DB} noch näher eingegangen. 
-\item Die Variablen aus \texttt{SheetMapping} abrufen, unter anderem die Startzeile, die verschiedenen Spaltennamen mit deren \bib{JSONata}"=Ausdrücken sowie eine Liste aller verpflichtenden Spalten: Wurden dabei syntaktisch falsche Werte übergeben, wird ebenfalls ein Fehler geworden. 
-\item Jedes Produkt in eine oder ggf. mehrere Zeilen des Excel"=Arbeitsblatts schreiben: Dabei wird wie in Kapitel\nbs\ref{ED} vorgegangen, indem spaltenweise der \bib{JSONata}"=Ausdruck ermittelt und dann im richtigen Format in die passende Zelle geschrieben wird. Dies wird in Abschnitt\nbs\ref{WOD} erläutert.
-\end{enumerate}
+Eine „Open page“-Ablauffunktionskomponente ist erforderlich, um die Detailseite zu öffnen. Die Ausgangspunkte der Ablauffunktionskomponente " Open page" sind mit der Ablauffunktionskomponente "Set app variable" verknüpft. Mit dieser Komponente werden die Daten in dem List Item mit der neu angelegten App-Variable verbunden. Die Werte der Properties von der App-Variable werden mit den jeweiligen Property-Werten in Wiederholung von List Item gesetzt. Dabei handelt es sich um die Werte der Data-Variablen \textit{Products1}. Da die Werte der Date-Variablen \textit{Product1} mit dem OData Service verbunden wurden, wird der Wert aus dem Backend in die App-Variable eingesetzt.
 
-\subsection[Datenbindung]{Datenbindung in SheetMapping}\label{DB}
-Alle JSON"=Daten zu einem Arbeitsblatt werden dank der Bibliothek \bib{Jackson} an eine Instanz der Klasse \texttt{SheetMapping} gebunden, wie der Codeausschnitt\nbs\ref{code:db} zeigt. Man spricht hier von Daten"=Deserialisierung, da JSON"=Knoten in Java"=Objekte umgewandelt werden. 
-Die Datenbindung an ein Objekt hat gegenüber der Speicherung im Baummodell den Vorteil, dass Abfragen deutlich bequemer durchführbar sind und einfacher mit den Daten gearbeitet werden kann. Anstatt wiederholt die Pfade des Baumes abzulaufen, können Parameter direkt referenziert werden.
-
-\begin{lstlisting}[emph={jsonReader}]
-ObjectMapper jsonReader = new ObjectMapper();
-jsonReader
-		.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-\end{lstlisting}
-\begin{lstlisting}[emph={jsonReader, sheetName, injextableValues, e, message, sheetMappings, log}, firstnumber=last, caption={Datenbindung für Arbeitsblätter der Mapping-Datei}, label=code:db]
-private SheetMapping getSheetMapping(ObjectMapper jsonReader, String sheetName) throws TransformationException {
-	InjectableValues injectableValues = (*\label{line:sn}*)
-			new InjectableValues.Std().addValue(String.class, sheetName);
-	try {
-		return jsonReader
-				.reader(injectableValues)
-				.treeToValue(sheetMappings.get(sheetName), SheetMapping.class);
-	} catch (JsonProcessingException | IllegalArgumentException e) {
-		String message = String.format("Sheet called \"%s\" could not be filled, because the mapping cannot be parsed properly.", sheetName);
-		log.error(message);
-		throw new TransformationException(message, e);
-	}
-}
-\end{lstlisting}
-Umgesetzt wird die Anbindung durch Annotationen in der Klasse \texttt{SheetMapping}. Mit \texttt{@JacksonInject} wird der Name des Arbeitsblatts zur Klasse hinzugefügt, um diese Info den Fehlermeldungen mitgeben zu können. Dies wird in Zeile\nbs\ref{line:sn} im Code\nbs\ref{code:db} vorbereitet. Mit \texttt{@JsonProperty} werden alle weiteren Attribute gesetzt, die im Anschluss aufgelistet sind. 
-\begin{itemize}
-\item die Kategorie \texttt{category} als \texttt{String}:\\
-Falls kein komplexes Datenelement angegeben wurde, auf welches sich das Arbeitsblatt bezieht, beträgt der Wert \texttt{null}. 
-\item die Startzeile \texttt{row} als \texttt{Integer}:\\
-Die Zeile muss größer als 0 sein, ansonsten bricht die Transformationsengine mit einer Fehlermeldung ab. Außerdem wird sie um eins reduziert, da die Bibliothek \bib{Apache POI} mit 0"=basierten Zeilennummern arbeitet, während die Zeilen in Excel bei 1 beginnen. 
-\item die Spalten \texttt{columns} als \texttt{HashMap <String, String>} mit dem Spaltennamen als Schlüssel und dem \bib{JSONata}"=Ausdruck als Wert:\\
-In der zugehörigen Getter"=Methode werden die Spaltennamen zunächst auf syntaktische Korrektheit überprüft (1-2 Buchstaben von A bis Z) und dann in die entsprechende 0"=basierte Spaltenzahl umgewandelt, mit welcher \bib{Apache POI} rechnet. Die Funktion ist im Code\nbs\ref{code:sgcol} in Zeile\nbs\ref{line:pc1}--\nbs\ref{line:pc2} dargestellt. Außerdem werden die \bib{JSONata}"=Ausdrücke mittels der Bibliothek \bib{JSONata4Java} geparsed und in \texttt{Expressions} umgewandelt. So wird also der Typ \texttt{Map <Integer, Expressions>} zurückgegeben. Tritt ein Fehler im Spaltennamen oder während des \bib{JSONata} Parsens auf, wird eine \texttt{TransformationException} geworfen.
-\item die verpflichtenden Spalten \texttt{mandatoryColumns} als \texttt{HashSet <String>}:\\
-Bevor die Menge der Spalten herausgegeben wird, werden auch hier die Spaltennamen in Zahlen, beginnend bei 0, umgerechnet und gegebenenfalls ein Fehler geworfen.   
-\end{itemize}
-Im folgenden Codeausschnitt\nbs\ref{code:sgcol} ist exemplarisch die Implementierung für die obligatorischen Spalten dargestellt. Alle gewöhnlichen Setter"~ und Getter"=Methoden ohne besondere Funktionalitäten werden einfachheitshalber mit Hilfe von \bib{Lombok}"=Annotationen deklariert, wie z.\,B. in Zeile\nbs\ref{line:setter}.
-\begin{lstlisting}[emph={mandatoryColumns, columnLetter, mandatoryColumnsParsed, message, columnNumber, sheetName, log},
-caption=Setter / Getter für verbindliche Spalten in \texttt{SheetMapping}, label=code:sgcol]
-$$@JsonProperty$$("mandatoryColumns")
-$$@Setter$$ (*\label{line:setter}*)
-private Set<String> mandatoryColumns = new HashSet<String>();
-
-//Getter
-public Set<Integer> getParsedMandatoryColumns() throws TransformationException {
-	Set<Integer> mandatoryColumnsParsed = new HashSet<Integer>();
-	mandatoryColumns.forEach((columnLetter) -> {
-		mandatoryColumnsParsed.add(parseCol(columnLetter));
-	});
-	return mandatoryColumnsParsed;
-}
-
-private Integer parseCol(String columnLetter) throws TransformationException { (*\label{line:pc1}*)
-	columnLetter = columnLetter.toUpperCase();
-	if (!columnLetter.matches("[A-Z]{1,2}")) {
-		String message = String.format(
-				"Yaml file describing agency template is not filled correctly: in sheet \"%s\", column %s is not a valid excel column name.",
-				sheetName, columnLetter);
-		log.error(message);
-		throw new TransformationException(message);
-	}
-	int columnNumber = 0;
-	for (int i = 0; i < columnLetter.length(); i++) {
-		columnNumber = columnNumber * 26 + columnLetter.charAt(i) - 'A' + 1;
-	}
-	return columnNumber - 1;
-} (*\label{line:pc2}*)
-\end{lstlisting}
-Die \texttt{TransformationException} ist eine benutzerdefinierte Ausnahme (siehe dazu\nbs\cite[S.\,32f]{java:lifesci} und\nbs\cite[S.\,309--338]{java:tut}), welche möglichst alle checked Exceptions zusammenfasst, die bei der Transformation entstehen können. Ausgenommen sind ungeprüfte Laufzeit"=Fehler. NullPointer"=Exceptions werden mittels \bib{Lombok} erzeugt, falls ein Eingabeparameter \texttt{null} ist. Betrachtet man die Transformationsengine im Zusammenspiel mit der restlichen Plattform, wird so direkt ersichtlich, dass ein Fehler innerhalb der Transformationsengine aufgetreten ist und im Log kann die genaue Ursache nachgelesen werden. 
-
-\subsection{Produktdaten schreiben}\label{WOD}
-Die spaltenweise Auswertung des \bib{JSONata}"=Ausdrucks und das Füllen der Zelle in der Excel"=Vorlage funktioniert ganz anlog zu Abschnitt\nbs\ref{IED}. Es ergibt sich das Aktivitätsdiagramm aus Abbildung\nbs\ref{fig:akt1} für die Methode \texttt{writeOneDevice} der Klasse \texttt{DeviceWriter}, um\nbs --\nbs wie der Name schon sagt\nbs --\nbs die Daten zu einem Produkt in ein Arbeitsblatt zu schreiben. 
-
-\begin{figure}[!hbt]
+\begin{figure}[htbp]
  \centering
- \includegraphics[width=\textwidth]{Bilder/Aktivitaetsdiagramm}
- \caption[Aktivitätsdiagramm für \texttt{writeOneDevice} aus Ansatz\nbs\ref{MD}]{Aktivitätsdiagramm für \texttt{writeOneDevice}}
- \label{fig:akt1}
+ \includegraphics[width=0.4\textwidth]{Bilder/appgyver/3_15_set_app_variable.JPG}
+ \caption{Wert zuweisen für App-Variable appVarRecord in „Set app variable“ Ablauffunktionskomponente}
 \end{figure}
 
-Um den Prozess im Aktivitätsdiagramm nachvollziehen zu können, wird zunächst der Unterschied zwischen einfachen und komplexen Datenelementen näher erläutert. 
-Einfache Datenelemente stehen in einer 1\,:\,1"=Beziehung zum Produkt, das heißt es liegt nur eine einzige Ausprägung vor, die dem Datenelement zugeordnet ist. Dies kann als String, Zahl oder Wahrheitswert sein. Ein Spezialfall bildet der in Abschnitt\nbs\ref{ED} erwähnte \texttt{ProduktionIdentifier}, welcher in einem Array von Strings unterschiedliche einfache Elemente zusammenfasst. Er wird jedoch bereits über den \bib{JSONata}"=Ausdruck abgefangen und in einen Wahrheitswert umgewandelt, sodass hierfür keine zusätzliche Logik implementiert werden muss. Die komplexen Datenelemente bestehen hingegen aus einem Array von Objekten, welche wiederum einfache Datenelemente enthalten. Ein Beispiel wurde bereits in Quelltext\nbs\ref{code:comp} gegeben. Sie stehen also in einer 1\,:\,$n$"~Beziehung, d.\,h. ein Produkt kann mehrere unterschiedliche Ausprägungen / Einträge für ein komplexes Datenelement haben. In Excel können alle einfachen Elemente in einem Arbeitsblatt in einer Zeile aneinander gereiht werden, da ein Element genau einer Zelle entspricht. Die komplexen Elemente werden in der Regel in zusätzlichen, "`relationalen"' Arbeitsblättern dargestellt, in denen jedes Objekt des Arrays des komplexen Elements einer Zeile entspricht. Ein Produkt füllt in diesem Fall also $n$ Zeilen, wobei $n\geq0$ gilt. Falls für ein Produkt keine Daten bzgl. eines komplexen Elements vorliegen (d.\,h. $n=0$), wird es im entsprechenden relationalen Arbeitsblatt auch nicht aufgelistet, ansonsten wird über alle $n$\nbs Objekte im Array iteriert.
+Auf der Detailseite werden sechs Input-Felder erstellt. Die Werte der Input-Felder sind mit dem entsprechenden Property-Wert der App-Variablen appVarRecord verbunden, nämlich dem Titel, der Materialnummer, dem Preis, der Produkt-ID und der Beschreibung sowie dem Bestand. Außerdem werden drei Buttons für 3 Component tap Events auf der Detailseite erstellt: Der „Back“-Button wird verwendet, um zurück zur Listenseite zu navigieren. Um dies zu implementieren, muss lediglich eine Logikablauffunktion mit der Komponente „Navigation back“ erstellt werden (vgl. Abb. 3.16). Der „Edit“-Button wird zum Aktualisieren der Produktinformationen genutzt. Dazu ist die in Abbildung 3.16 dargestellte Ablauffunktion mit der Komponente „Update record“ erforderlich. Die Ablauffunktionskomponente ist mit der Datenressource Products (vgl. Abb. 3.11) und der App-Variablen \textit{appVarRecord} verknüpft. Die „Update record“-Komponente hat zwei Ausgänge: Der obere ist mit einer „Alert“-Ablauffunktionskomponente verlinkt, die zur Anzeige von „Update Record ID“ dient, der untere ist mit einer „Toast“-Ablauffunktion verbunden, die nur benutzt wird, wenn die Aktualisierung des Datensatzes nicht erfolgreich abgeschlossen werden kann. Der „Delete“-Button in Kombination mit der „Delete record“-Komponente wird zum Löschen eines Produkts eingesetzt.
 
-Die Methode \texttt{writeOneDevice} beginnt mit der Initialisierung verschiedener Flags und Counter, die im weiteren Verlauf Verwendung finden. Danach wird zunächst die aktuelle Zeile anhand der \texttt{rowNumber} im aktuellen Arbeitsblatt zur Bearbeitung ausgewählt. 
-Die Liste der Spalten für das jeweilige Arbeitsblatt entsprechend der Mapping"=Datei wird geladen und im Folgenden durchlaufen. Dabei wird spaltenweise der \bib{JSONata}"=Ausdruck evaluiert (falls dies möglich ist), sowie die aktuelle Zelle ausgewählt und gefüllt. Beim Füllen werden zunächst mögliche Wahrheitswerte in behördenspezifische Werte umgewandelt und dann wird per Switch"=Statement über den Datentyp die Zelle typgerecht mit dem Ergebnis der \bib{JSONata}"=Auswertung beschrieben. Es werden primitive Datentypen, wie Booleans und die unterschiedlichen Zahlenwerte, sowie Strings unterstützt. Liegen bei Strings spezielle Datums"~ oder Zeitangaben vor, muss die Excel"=Zelle zusätzlich in ihrem Style formatiert werden. Ansonsten kann die Zelle über die entsprechende \bib{Apache POI}"=Methode \texttt{setCellValueAs<Type>} beschrieben werden. Eine Ausnahme ergibt sich jedoch, wenn der \bib{JSONata}"=Ausdruck ein Array zurückliefert. In dem Fall handelt es sich um ein komplexes Datenelement\nbs --\nbs hier muss überprüft werden, ob überhaupt Einträge vorliegen. Wenn dies der Fall ist, wird über den \texttt{arrayIndex} iteriert und für jeden Eintrag eine neue Zeile geschrieben, bis das gesamte Array durchlaufen ist. Die restlichen simplen Dateneinträge aus anderen Spalten werden einfach wiederholt. Ist das komplexe Datenelement allerdings leer, wird geprüft, ob es mit der Kategorie übereinstimmt und ggf. die Zeile gelöscht. Dies trifft zu, wenn ein Produkt beispielsweise gar nicht sterilisierbar ist, sodass auch keine Sterilisationsmethoden vorliegen können. In diesem Fall soll das entsprechende Produkt auch nicht im zugehörigen Arbeitsblatt aufgelistet werden. Liefert ein \bib{JSONata}"=Ausdruck kein Ergebnis oder beträgt \texttt{null}, obwohl die Spalte verpflichtend ist, kommt es zur Fehlermeldung. Ansonsten werden alle Spalten durchgegangen und beim erfolgreichen Ausfüllen wird die aktualisierte \texttt{rowNumber} für das nächste Produkt zurückgegeben. 
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.9\textwidth]{Bilder/appgyver/3_16_button_logic.jpg}
+ \caption{Logische Ablauffunktion für Edit-, Back- und Delete-Button}
+\end{figure}
 
-Auch hier ist bei Arrays bei der Wahl des \bib{JSONata}"=Ausdrucks Vorsicht geboten. Es muss bedacht werden, dass nicht vorhandene Datenelemente von komplexen Eltern explizit mit \texttt{null} besetzt werden müssen, anstatt sie implizit wegzulassen. Der \bib{JSONata}"=Ausdruck wird dadurch ein wenig komplizierter, was man in den Zeilen\nbs\ref{line:ml1} und\nbs\ref{line:ml2} des YAML"=Codes\nbs\ref{code:md1} sieht. \texttt{TradeNames.TradeName} muss beispielsweise zu \texttt{TradeNames.(\$exists(TradeName) ? TradeName : null)} erweitert werden. Dadurch wird gewährleistet, dass in jeder Zeile die einander zugehörigen Informationen stehen und sich in den relationalen Arbeitsblättern keine Verschiebungen ergeben, sondern die Zellen der unterschiedlichen Spalten zueinander ausgerichtet sind. 
+\subsection{Maske zum Erstellen eines einzelnen Produkts}
+Zunächst muss eine Seite mit dem Namen „Create New Record“ erstellt werden. Diese Seite besteht aus fünf Input-Feldern, einem „Save“-Button sowie einem „Back“-Button. Eine neue Data-Variable mit dem Variablentyp „New data record“ wird erstellt, die ebenfalls mit der Data-Ressource Products verbunden wird. Data-Variable mit dem Typ "New data record" initialisiert eine leere Data-Variable, die beim Erstellen eines Formulars zum Anlegen von Datensätzen im Backend zu verwenden ist. Die Werte der Input-Felder werden mit den entsprechenden Property-Werten der Data-Variablen verknüpft. Da die Produkt-ID als UUID definiert ist und vom System generiert wird, muss das Input-Feld dafür nicht erstellt werden.
 
-Sind alle Produktdaten erfolgreich in alle Arbeitsblätter geschrieben worden, wird wie in Abschnitt\nbs\ref{IED} im letzten Schritt die ausgefüllte Excel"=Datei erzeugt und als OutputStream zurückgegeben. 
+Um den Datensatz speichern zu können, wird eine Ablauffunktion mit der Komponente „Create record“ für den „Save“-Button benötigt. Ähnlich wie die Ablauffunktionskomponente „Update record“ ist die Komponente „Create record“ mit der Datenressource Products und der App-Variablen appVarRecord verbunden. Sie hat ebenfalls zwei Ausgänge: einen für die Bestätigung der erfolgreichen Erstellung von Datensätzen und einen anderen für die Anzeige des Fehlers (vgl. Abb. 3.11). Der „Back“-Button kann für die Navigation zurück zur Listenseite genutzt werden.
 
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.9\textwidth]{Bilder/appgyver/3_17_logik_Save_Button.jpg}
+ \caption{Logische Ablauffunktion für Save-Button}
+\end{figure}
 
+Wie bereits in Kapitel 2.4.2 vorgestellt, lassen sich die AppGyver-Baustein in 3 Schichten des MVC-Modells unterteilen, nämlich in View-, Controller- und Model-Schichten. Auf der View-Schicht wurden für den Anwendungsfall insgesamt 3 Seiten- und 21 View-Komponenten erstellt, darunter 3 Seitentitel, ein List Item, 11 Input-Felder sowie 7 Buttons. Damit die Buttons und das List Item dynamisch funktionieren, wurden in der Controller-Schicht 8 logische Ablauffunktionen mit Componente tap Event erstellt. In der Model-schicht wurden 2 Daten-Variablen und eine App-Variable erstellt, um die Daten vom Odata-Service zu holen, die Daten zu aktualisieren und sie an verschiedene Seiten zu übertragen.
 
+Ein wichtiges Konzept im AppGyver ist die Binding von Komponenten an Daten, die in Variablen gespeichert sind. Mit nur wenigen Klicks kann Beispielweise eine View-Component Property direkt mit einer Data-Variable in Binding treten. Die Binding wird automatisch aufgelöst, wenn neue Daten aus dem Backend abgerufen und in der Date-Variable gespeichert werden. Die View-Component Property wird aktualisiert und die neuen Daten wird in View angezeigt \cite{appg:bd}.
 
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=1.0\textwidth]{Bilder/appgyver/3_18_appgyver_list.jpg}
+ \caption{Listenseite, Detailseite und „Create new record“-Seite der AppGyver-Anwendung}
+\end{figure}
 
+\section{SAPUI5}
+\subsection{Erstellung einer Anwendung mit dem UI5-Generator}
+In Kapitel 2.5 wurden SAPUI5 und die Einrichtung der Entwicklungsumgebung für die Implementierung von SAPUI5-Anwendungen kurz vorgestellt. In diesem Abschnitt wird nun die Erstellung der SAPUI5-Applikation näher beschrieben.
+Mit Hilfe des easy-ui5-Generators lässt sich ein grundlegendes SAPUI5-Anwendungsgerüst erstellen. Da die Entwicklung der Applikaton auf dem neuesten Stand der Technik erfolgen soll, wird TypeScript für das Coding verwendet. TypeScript ist eine Design-Time-Programmiersprache, die JavaScript um eine starke Typisierung erweitert. Das UI5-Typescript-Tooling nutzt den Babel-Compiler (JavaScript Compiler), um den TypeScript-Code in ausführbaren JavaScript-Code umzuwandeln \cite{pm:gswt}. Dabei läuft ein Prozess im Hintergrund, der die Quellen im src-Ordner überwacht und die transpilierten Dateien in den webapp-Ordner kopiert. 
 
+Zur Erzeugung des Applikations-Gerüsts wird der Befehl \textit{yo easy-ui5 ts-app} in der Command-Prompt-Konsole ausgeführt. Dieser Befehl führt dazu, dass eine UI5-TypeScript-Anwendung basierend auf den folgenden Parametern erstellt wird:
 
+\begin{lstlisting}[language=bash]
+? How do you want to name this application? products
+? Which namespace do you want to use? fanfan.products 
+? Which framework do you want to use? SAPUI5 
+? Which framework version do you want to use? 1.108.4 
+? Who is the author of the application? Tan Fangfang 
+? Would you like to create a new directory for the application? Yes
+\end{lstlisting}
 
+Nach Eingabe der Parameter müssen noch alle externen Bibliotheken via npm install installiert werden und dann kann die Entwicklung beginnen.
 
+Der Generator erzeugt die grundlegende Projektstruktur eines SAPUI5-Projekts. Das MVC-Pattern findet sich auch im Dateisytem wieder. So liegen die Controller im Verzeichnis controller, die Views im gleichnamigen Verzeichnis und es ist ebenfalls ein model-Verzeichnis vorgehsehen. Dies wird jedoch im Projekt nicht verwendet, sondern es werden auf Standard Odata- und JSONModel zurückgegriffen \cite{sud:ao}.
 
+Daneben sind noch eine Reihe an Konfigurationsdateien vorhanden, wie package.json oder manifest.json: 
 
+\begin{lstlisting}[language=bash]
+project-root
+|- src
+   |- controller
+      |- App.controller.ts
+      |- BaseController.ts
+      |- Main.controller.ts
+   |- i18n
+   |- model
+   |- view
+      |- App.view.xml
+      |- Main.view.xml
+   |- Component.ts
+   |- manifest.json
+   |- index.html
+|- [...]
+|- package.json
+|- README.md
+|- ui5.yaml
+\end{lstlisting}
 
+Die Datei „manifest.json“ enthält die Grundkonfiguration der Anwendung, die für die Ausführung benötigt wird. Alle Modelle, Bibliotheken und Komponenten, die in der „manifest.json“-Datei konfiguriert sind, werden beim Starten der Anwendung automatisch geladen und instanziiert. Die „rootView“- und „routing“-Konfigurationen definieren die Hauptansicht der Anwendung, die nach Öffnen im Browser angezeigt wird, und die Navigation zwischen den Ansichten.
+
+In der Datei „App.view.xml“ wird die Benutzeroberfläche der Hauptansicht der Anwendung definiert. SAPUI5 unterstützt mehrere View-Typen (XML, HTML, JavaScript, JSON). In diesem Projekt wird das XML-Format verwendet. Für jede Ansicht, die in der Anwendung verwendet wird, soll eine eigene View-Datei erstellt werden, und jede View wird von einem separaten Controller gesteuert. 
+
+Das Öffnen der Webanwendung erfolgt durch Aufrufen der index.html-Seite   über einen Webserver im Browser.  Das UI5-Tooling bringt bereits einen lokalen Webserver mit, der via npm run start gestartet werden kann.  Abbildung 3.19 zeigt das Aussehen der erzeugten Anwendung, die bereits erste Inhalte hat, die angepasst und ersetzt werden müssen. Während die Anwendung läuft, kann der Code in VS-Code geändert und die Änderungen direkt danach direkt im Browser angesehen werden. 
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.4\textwidth]{Bilder/ui5 freestyle/3_19_ui5_demo.png}
+ \caption{Aussehen der UI5 Demo-Anwendung}
+\end{figure}
+
+In den nächsten Abschnitten wird die Implementierung der UI5-Anwendung nun im Detail beschrieben. 
+
+\subsection{OData Service einbinden}
+
+In Kapitel 3.2.1 wurde die Bereitstellung der OData-Services und der Destination in der SAP-BTP-Umgebung vorgestellt. Die SAPUI5-Anwendung muss diese Destination ebenfalls integrieren, um die OData-Services hinter der Destination konsumieren zu können. 
+
+Leider lässt sich der OData-Server lokal nicht einfach im Browser einbinden, da dies zu einem Cross-Origin-Resource-Sharing (CORS)-Problem führt. Die Anwendung läuft unter der Domäne „localhost“ und moderne Browser erlauben es nicht, Daten via XMLHttPrequest von einer anderen Domäne zu laden (es sei denn, diese sendet entsprechende http-Header mit) \cite{sud:s25}. Um dieses Problem zu vermeiden, wird der Request über einen lokalen Reverse-Proxy (SAP Approuter) geleitet, der über das UI5-Tooling in das Projekt integriert werden muss. Dies ist zwar in wenigen Konfigurationschritten durchführbar, es zeigt aber bereits, dass auch gleich funktionierende Dinge (Zugriff auf die OData-Services via Destination) in SAPUI5 aufwendiger zu implementieren sind und die beiden LCNC-Toolings (Fiori Elements mit CAP und SAP AppGyver) derlei Dinge vom Entwickler fernhalten.
+
+Der Zugriff auf die Daten in SAPUI5 erfolgt auf Basis eines ODataModels. Zwar ließen sich die Daten auch manuell als JSON abrufen, die Nutzung des ODataModels bietet jedoch den Vorteil, dass dies die http-Kommunikation komplett vom Entwickler fernhält. Zudem bietet das ODataModel weitere Features wie Databinding an, mit dem Daten sehr einfach an View-Controls gebunden und dargestellt werden können. 
+
+Das ODataModel wird in der Component.ts-Datei erstellt und damit beim Starten der Anwendung initial in allen Controllern und Views bekannt gemacht.
+
+\begin{lstlisting}[emph={oData}][belowskip=-0.8 \baselineskip]
+const oData = new ODataModel({
+  serviceUrl: "public/",
+  synchronizationMode: "None",
+  operationMode: "Server",
+});
+this.setModel(oData);
+\end{lstlisting}
+
+\subsection{Listenansicht zur Anzeige aller Produkte}
+
+Die Listenansicht soll alle Produkte in einer Liste darstellen und es dem User ermöglichen, in die Einzelansicht eines Produkts zu springen. Da die Applikation nach dem Erstellen bereits über eine View verfügt, wird dies in der Main-View realisiert. Zentrales Element bildet die List-Control, welche Daten in einer Liste darstellen kann. Abbildung 3.20 zeigt die Benutzeroberfläche der Listenansicht der Produkte.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.8\textwidth]{Bilder/ui5 freestyle/3_20_Listeansicht.png}
+ \caption{Benutzeroberfläche der Listenansicht der Produkte}
+\end{figure}
+
+SAPUI5-Controls sind UI-Elemente, die das Aussehen und Verhalten kapseln. In SAPUI5 stehen mehr als 100 Controls wie z.B. Buttons, Inputs, Texte, Tabellen, Messages, Dialoge, Listen usw. zur Verfügung. Eine Control kann andere Controls aggregieren und diese dient dann als Container. Die List-Control ist ein Container für entsprechende Listenelemente. Die Steuerung der View wird im entsprechenden Controller „Main.controller.ts“ implementiert. 
+
+\begin{lstlisting}[language=XML][belowskip=-0.8 \baselineskip]
+<List mode="Delete" delete="onDeletePress" items="{path:'/Products'}" id="productsList">
+  <headerToolbar>
+     <OverflowToolbar width="100%">
+	<Title text="The list of the Products" />
+	<ToolbarSpacer />
+	<Button icon ="sap-icon://camera" text="Scan" press="onScanNavi"/>
+     <Button icon="sap-icon://add" text="Create" ariaHasPopup="Dialog" press="pressAddInList" />
+     <SearchField width="200px" placeholder="SearchProduct" search="mySearchProduct" />
+     </OverflowToolbar>
+  </headerToolbar>
+<items>
+  <StandardListItem title="{title}" type="Navigation" info="{price}" press="onItemPress"/>
+</items>
+</List>
+\end{lstlisting}  
+
+Das Coding zeigt den Ausschnitt der Listendefinition. Jede Control verfügbar über bereitgestellte Eigenschaften (Properties) und Events, die im XML angegeben werden können. Mit der Eigenschaft \textit{mode="Delete"} wird beispielsweise automatisch ein Lösch-Button in der Liste hinzugefügt. Das Event \textit{delete=“onDeletePress“} verweist dahingehend dann auf die Callback-Funktion onDeletePress in der Klasse \textit{„Main.controller.ts“}, welche das Löschen dann programmatisch vornehmen muss:
+
+\begin{lstlisting}[emph={event, UI5Event, listItem}]
+public onDeletePress(event: UI5Event) {
+    const listItem = event.getParameter("listItem") as ColumnListItem;
+    const context = listItem.getBindingContext() as Context;
+    context.delete();
+} 
+\end{lstlisting}
+
+In dieser Methode zeigt sich, dass in SAPUI5 durch die Models und das Databinding weder die Daten direkt aus den UI-Controls abrufen noch direkt mit dem OData-Service kommuniziert werden muss. Es wird an dieser Stelle lediglich der BindingContext (die Information zum Binding selber) benötigt und diese aus dem Model gelöscht. Das sorgt dann automatisch dafür, dass das Model einen DELETE-Request zum OData-Service sendet und das Produkt aus der Datenbank entfernt wird.
+
+Gleiches gilt auch für das initiale Setzen des Bindings. In obigem Coding zur Listenansicht ist zu sehen, dass in der Liste lediglich ein StandardListItem definiert wird. Dies dient dabei als Template für alle Produkte, die aus dem OData-Service ausgelesen werden. Über das Aggregation-Binding der Aggregation items (\textit{items="\{path:'/Products'\}"}) werden alle Produkte, sich in unter dem Pfad abrufen lasssen gebunden und für jedes Produkt wird ein „StandardListItem“ erzeugt, das den Titel und Preis anzeigt \cite{sud:s19}.
+
+\begin{lstlisting}[language=XML]
+<StandardListItem title="{title}" type="Navigation" info="{price}" press="onItemPress"/>
+\end{lstlisting}
+
+Ein weiteres wichtiges Event ist das press-Event eines StandardListItems. Klickt ein User auf ein Produkt, so soll er auf die Dateilseite weitergeleitet werden. Das zugehörige Coding zeigt, dass an dieser Stelle auf den Router zugegriffen wird. In SAPUI5 sorgt der Router dafür, dass URL-Pfade auf Views/Controller gemappt werden und ermöglicht es, dass das Framekwork im Hintergrund die notwendigen Controller/Views instanziiert.
+
+\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}]
+public onItemPress(event: UI5Event){
+    var item = event.getSource();
+    var context = item.getBindingContext();
+    var path = context.getPath().substr(1);
+    this.navTo("detail", {path: path});
+}
+\end{lstlisting}
+
+Auch hier wird auf das Binding zurückgegriffen, um Informationen zum Produkt auszulesen, die an die Detailseite übergeben werden.
+
+\subsection{Einzelansicht für ein Produkt}
+Damit die Navigation funktioniert, müssen für die Einzelansicht ein View („Detail.view.xml“) und ein Controller erstellt werden. In der View werden alle Merkmale, wie der Name, die Beschreibung, die Materialnummer, der Preis und der Bestand eines Produkts in den Input Controls angezeigt.
+
+\begin{lstlisting}[language=XML]
+<Label text="Title" />    		
+<Input value="{title}" width="1000px" />
+<Label text="Description" /> 		
+<Input value="{description}" width="1000px" />
+<Label text="Material Number" />	
+<Input value="{materialNumber}" width="1000px" />
+<Label text="Price" />			
+<Input value="{price}" width="1000px" />
+<Label text="Stock" />		
+<Input value="{stock}" width="1000px" />
+\end{lstlisting}
+Damit die Werte angezeigt werden können, wird in der View wieder ein Binding verwendet (ElementBinding), dass ein komplettes Produkt an die View bindet. Dann ist es ausreichend, lediglich die Attribute zu benennen und das ODataModel lädt die relevanten Daten automatisch.
+
+Abbildung 3.21 kann die finale Benutzeroberfläche der Einzelansicht für ein Produkt entnommen werden.
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.8\textwidth]{Bilder/ui5 freestyle/3_21_Einzelansicht.png}
+ \caption{Benutzeroberfläche der Einzelansicht}
+\end{figure}
+
+\subsection{Maske zum Pflegen eines einzelnen Produkts}
+
+Für die Zusammenstellung der Maske zur Pflege eines Produkts werden Label-, Input- und Button-Controls und das Element „Fragment“ verwendet.  Fragmente sind leichtgewichtige UI-Komponenten, die wiederverwendbar sind, aber keinen Controller haben \cite{sud:s16}. Daher kann ein Fragment als ein Container für andere UI5-Controls betrachtet werden. Das UI-Design dieses Fragments ist in der Datei „createProductDialog.fragment.xml“ gespeichert.
+
+\begin{lstlisting}[language=XML]
+<content>
+  <VBox class="sapUiMediumMargin">
+    <Label text="Title" />
+    <Input value="{listInputModel>/recipient/title}" width="200px" />
+    <Label text="Material Number" />
+    <Input value="{listInputModel>/recipient/materialNumber}" width="200px" />
+    <Label text="Description" />
+    <Input value="{listInputModel>/recipient/description}" width="200px" />
+    <Label text="Price" />
+    <Input value="{listInputModel>/recipient/price}" width="200px" />
+    <Label text="Stock" />
+    <Input value="{listInputModel>/recipient/stock}" width="200px" />
+  </Vbox>
+</content>
+<beginButton>
+  <Button text="Cancel" ariaHasPopup="Dialog" press="closeDialog" />
+</beginButton>
+<endButton>
+   <Button text="Add" ariaHasPopup="Dialog" press="pressAddInProductsList" />
+</endButton>
+\end{lstlisting}
+
+In der Fragment-Implementierungsdatei werden mehrere Eingabefelder und zwei Buttons, „Cancel“ und „Add“ erstellt. Wird das press-Event des „Add“-Buttons geworfen, so wird die Methode \textit{pressAddInProductsList} aufgerufen, um den Datensatz, der in das Eingabefeld eingegeben wurden, in den OData-Service zu übernehmen. Die Eingabewerte aller Eingabefelder werden zunächst via Binding an ein lokales JSON-Model übergeben. In der \textit{pressAddInProductsList}-Methode werden die Werte aus dem lokalen Model ausgelesen und ein neues OData-Binding erzeugt, dass die Daten automatisch an den OData-Endpunkt sendet.
+
+\begin{lstlisting}[emph={var, ODataListBinding, materialNumber, items, recipient, listInputModel, title, id, description, price, stock }]
+public pressAddInProductsList() {
+    var title = this.getView().getModel("listInputModel").getProperty("/recipient/title");
+    var id = this.getView().getModel("listInputModel").getProperty("/recipient/id");
+    var description = this.getView().getModel("listInputModel").getProperty("/recipient/description");
+    var materialNumber = this.getView().getModel("listInputModel").getProperty("/recipient/materialNumber");
+    var price = this.getView().getModel("listInputModel").getProperty("/recipient/price");
+    var stock = this.getView().getModel("listInputModel").getProperty("/recipient/stock");
+
+    const context = (<ODataListBinding>(
+      this.getView().byId("productsList").getBinding("items")
+      )).create({
+        title: title,
+        id: id,
+        description: description,
+        materialNumber: parseInt(materialNumber),
+        price: price,
+        stock: stock,
+    });
+    this.closeDialog();
+}
+\end{lstlisting}
+
+Da das Formular zum Anlegen in einem Dialog geöffnet wird, muss dieser nach dem Absenden dann auch wieder geschlossen werden. Abbildung 3.22 zeigt das Dialogfenster zum Einfügen eines neuen Produkts.
+
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.6\textwidth]{Bilder/ui5 freestyle/3_22_Maske.png}
+ \caption{Maske zum Pflegen eines einzelnen Produkts}
+\end{figure}
 
 
 

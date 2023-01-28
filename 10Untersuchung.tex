@@ -3,8 +3,8 @@
 %                          06.09.2022                        %
 %---------------------------------------------------------%
 %                            Konzept.tex                     %
-%                        by Carina Möller                   %
-%                    cary_moeller@gmx.de              %
+%                         by Fangfang Tan                    %
+%         fangfang.tan@informatik.hs-fulda.de      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Untersuchung weiteren Funktionen} \label{UF}
@@ -26,27 +26,52 @@ In Fiori Elements ist es nicht notwendig, die Suchfilter-Funktion zusätzlich zu
 
 In AppGyver ist die Integration eines Suchfilters durch das manuelle Hinzufügen von Bausteinen möglich. Dabei ist jedoch zu erwähnen, dass der Filter komplett client-seitig funktioniert und zunächst alle Daten vom Backend geladen werden. Das sorgt dafür, dass bei großen Datenmengen längere Ladezeiten entstehen können. Die Implementierung in AppGyver ist wie folgt:
 
-Ein List Item wurde bereits in Kapitel 3.2.2 mit der angelegten Daten-Variable „Product1“ verbunden und wiederholt. Mit der Ablauffunktionkomponente „set app Variable“ wurde der List Item ebenfalls mit die in Abschnitt 3.2.2 erstellte App-Variable eingebunden. Für den Filter wird ein Input-Field per Drag and Drop in der Benutzeroberfläche integriert. Da die Suche über den Produkttitel erfolgen soll, wird der Wert des Input-Fields an die App-Variable Property „title“ gebunden. In den Advanced Properties des List Items befindet sich ein Visible-Flag, mit dem die Sichtbarkeit des List Items eingestellt werden kann. Der Schalter kann auf true oder false gesetzt werden. Bei false wird das List Item nicht gerendert. Über dieses Flag kann der Filter implementiert werden: Eine Contains-Formel wird an die Visible-Eigenschaft gehangen, die true zurückgibt, wenn der Text den angegebenen Textabschnitt enthält. Andernfalls gibt die Formel false zurück und das Produkt wird ausgeblendet. Um die Groß- und Kleinschreibung nicht zu berücksichtigen, können alle Zeichenketten in Kleinbuchstaben umgewandelt werden (lowercase-Formel):
+Ein List Item wurde bereits in Kapitel 3.2.2 mit der angelegten Daten-Variable \textit{Product1} verbunden und wiederholt. Mit der Ablauffunktionkomponente „set app Variable“ wurde der List Item ebenfalls mit die in Abschnitt 3.2.2 erstellte App-Variable eingebunden. Für den Filter wird ein Input-Field per Drag and Drop in der Benutzeroberfläche integriert. Da die Suche über den Produkttitel erfolgen soll, wird der Wert des Input-Fields an die App-Variable Property \textit{title} gebunden. In den Advanced Properties des List Items befindet sich ein Visible-Flag, mit dem die Sichtbarkeit des List Items eingestellt werden kann. Der Schalter kann auf true oder false gesetzt werden. Bei false wird das List Item nicht gerendert. Über dieses Flag kann der Filter implementiert werden: Eine Contains-Formel wird an die Visible-Eigenschaft gehangen, die true zurückgibt, wenn der Text den angegebenen Textabschnitt enthält. Andernfalls gibt die Formel \textit{false} zurück und das Produkt wird ausgeblendet. Um die Groß- und Kleinschreibung nicht zu berücksichtigen, können alle Zeichenketten in Kleinbuchstaben umgewandelt werden (lowercase-Formel):
 
-\textit{CONTAINS(LOWERCASE(repeated.current.Title),LOWERCASE(appVars}
+\textit{\scriptsize CONTAINS(LOWERCASE(repeated.current.Title),LOWERCASE(appVars.appVarRecord.Title))}
 
-\textit{.appVarRecord.Title))}
 
-Abbildung 4.1 zeigt eine beispielhafte  Suche nach dem Begriff „fix“.
-
+Abbildung 4.1 zeigt eine beispielhafte  Suche nach dem Begriff \textit{fix}.
 \begin{figure}[htbp]
  \centering
- \includegraphics[width=0.6\textwidth]{Bilder/appgyver/4_1_Suchfilter_in_AppGyver.jpg}
+ \includegraphics[width=0.5\textwidth]{Bilder/appgyver/4_1_Suchfilter_in_AppGyver.jpg}
  \caption{Suchfilter in AppGyver}
 \end{figure}
 
 In SAPUI5 ist die Integration eines Suchfilters durch das Hinzufügen von weiteren Controls und einem Filter auf dem AggregationBinding der Liste möglich. Das SearchField-Control verfügt bereits über das notwendige Verhalten und die zu konfigurierenden Eigeschaften und Events. Das Search-Event wird ausgelöst, wenn der Benutzer Werte in das Suchfeld eingegeben hat und dies per Button-Druck oder Drücken der Enter-Taste bestätigt. (Siehe Quelltext 4.1) 
+\lstset{
+  numbers=none, 
+  basicstyle=\scriptsize,
+  xleftmargin=.02\textwidth,
+  backgroundcolor=\color{mygrey2},
+}
+\begin{lstlisting}[language=XML,  caption=Implementierung von Suchfilter in der \texttt{Main.view.xml}]
+<List items="{path:'/Products'}" id="productsList">
+	<headerToolbar>
+		<OverflowToolbar width="100%">
+			<SearchField width="200px" 
+				placeholder="SearchProduct" 
+				search="mySearchProduct" />
+		</OverflowToolbar>
+	</headerToolbar>
+</List>
+\end{lstlisting}
 
-To be done Quelltext 4.1 Implementtation von Suchfilter in View
-
-Das Search-Event wird im Controller in der Methode „mySearchProduct“ implementiert. Über das UI5Event-Object kann dort der Suchwert als Parameter abgerufen werden. Mittels manuellem Zugriff auf die Tabelle kann das ODataListBinding angesprochen und durch die Verwendung von Filtern auf den Suchwert gefiltert werden. Dem Coding ist zu entnehmen, dass wir nur auf die Title-Eigenschaft filtern. Direkt beim Setzen des Filters wird das ODataModel das Binding aktualisieren, die gefilterten Daten vom OData-Backend anfragen und die Liste an Produkten in der UI aktualisieren.
+Das Search-Event wird im Controller in der Methode \textit{mySearchProduct} implementiert. Über das UI5Event-Object kann dort der Suchwert als Parameter abgerufen werden. Mittels manuellem Zugriff auf die Tabelle kann das ODataListBinding angesprochen und durch die Verwendung von Filtern auf den Suchwert gefiltert werden. Dem Coding ist zu entnehmen, dass wir nur auf die Title-Eigenschaft filtern. Direkt beim Setzen des Filters wird das ODataModel das Binding aktualisieren, die gefilterten Daten vom OData-Backend anfragen und die Liste an Produkten in der UI aktualisieren.
  
-To be done Quelletext 4.2 Implementation von Suchfilter in Controller
+\begin{lstlisting}[emph={event, UI5Event, query, productsList, items, table, binding, filters},  caption=Implementation von Suchfilter in der \texttt{Main.controller.ts}]
+public mySearchProduct(event:UI5Event){
+const query = event.getParameter("query");
+MessageBox.show(query);
+const table = this.getView().byId("productsList");
+const binding = table.getBinding("items") as ODataListBinding;
+const filters = [];
+if(query){
+	filters.push(new Filter("title", FilterOperator.Contains, query))
+}
+binding.filter(filters);
+}
+\end{lstlisting}
 
 \section{Integration von Paginierung}
 
@@ -62,25 +87,25 @@ SAP AppGyver bietet für Listenansichten keine native Unterstützung einer Pagin
  
 \begin{figure}[htbp]
  \centering
- \includegraphics[width=0.6\textwidth]{Bilder/appgyver/4_3_Paging_definieren.jpg}
+ \includegraphics[width=0.5\textwidth]{Bilder/appgyver/4_3_Paging_definieren.jpg}
  \caption{Paging definieren in Ablauffunktion „Get record collection“}
 \end{figure}
 
-Damit die Paginierung funktioniert, müssen muss die Logik der Buttons noch hinzugefügt werden. Für beide Buttons gibt es eine eigene Ablauffunktion. Abbildung 4.4 zeigt die Logik der Buttons. Für PREV-Button wird den Wert der App-Variable „pageNumber“ mit folgender Formel ermittelt:
+Damit die Paginierung funktioniert, müssen muss die Logik der Buttons noch hinzugefügt werden. Für beide Buttons gibt es eine eigene Ablauffunktion. Abbildung 4.4 zeigt die Logik der Buttons. Für PREV-Button wird den Wert der App-Variable „pageNumber“ mit folgender Formel ermittelt: 
 
-\textit{SUBTRACT(appVars.pageNumber, 1)}
+\textit{\footnotesize SUBTRACT(appVars.pageNumber, 1)} 
 
-Für NEXT-Button wird antstatt der SUBSTACT-Function die ADD-Function verwendet:
+Für NEXT-Button wird antstatt der SUBSTACT-Function die ADD-Function verwendet: 
 
-\textit{ADD(appVars.pageNumber, 1)}
+\textit{\footnotesize ADD(appVars.pageNumber, 1)}
 
-Damit der PREV-Button auf Seite 1 und der NEXT-Button auf der Letzen Seite ausgeblendet werden, muss die Sichtbarkeit der Buttons über das Visible-Flag gesteuert werden. Hier wird jeweils auf eine Formel verwiesen. Die Formel für PREV-Button lautet: 
+Damit der PREV-Button auf Seite 1 und der NEXT-Button auf der Letzen Seite ausgeblendet werden, muss die Sichtbarkeit der Buttons über das Visible-Flag gesteuert werden. Hier wird jeweils auf eine Formel verwiesen. Die Formel für PREV-Button lautet:  
 
-\textit{NOT(IS\_EQUAL(appVars.pageNumber, 1))}
+\textit{\footnotesize NOT(IS\_EQUAL(appVars.pageNumber, 1))}
 
 Die Formel für NEXT-Button sieht wie folgt aus:
 
-\textit{MULTIPLY(appVars.pageNumber, 4) <= appVars.recordCount}
+\textit{\footnotesize MULTIPLY(appVars.pageNumber, 4) <= appVars.recordCount}
 
 \begin{figure}[htbp]
  \centering
@@ -92,13 +117,15 @@ Abbildung 4.5 zeigt die Benutzeroberfläche in der AppGyver-Anwendung, nachdem d
 
 \begin{figure}[htbp]
  \centering
- \includegraphics[width=0.8\textwidth]{Bilder/appgyver/4_5_AppGyver_pagnierung.jpg}
+ \includegraphics[width=1.0\textwidth]{Bilder/appgyver/4_5_AppGyver_pagnierung.jpg}
  \caption{Benuteroberfläche nach Paginierung in AppGyver }
 \end{figure}
 
-Die Integration der Paginierung in SAPUI5 ist sehr einfach, denn die entsprechenden List-Controls haben das Verhalten bereits implementiert. Setzt man die Eigenschaft „growing“ auf „true“, dann wird das Nachladeverhalten bei Scrollen aktiviert. Eine weitere Property „growingThreshold“ kann hinzugefügt werden, um die Anzahl der Listeneinträge auf einer Seite zu bestimmen. Quelltext 4.3 zeigt nur mit 2 Zeile Code kann der Paginierung in SAPUI5 implementiert werden.
-
-to be done Quelltext 4.3 Implementation von Paginierung in SAPUI5
+Die Integration der Paginierung in SAPUI5 ist sehr einfach, denn die entsprechenden List-Controls haben das Verhalten bereits implementiert. Setzt man die Eigenschaft \textit{growing} auf \textit{true}, dann wird das Nachladeverhalten bei Scrollen aktiviert. Eine weitere Property \textit{growingThreshold} kann hinzugefügt werden, um die Anzahl der Listeneinträge auf einer Seite zu bestimmen. Quelltext 4.3 zeigt nur mit 2 Zeile Code kann der Paginierung in SAPUI5 implementiert werden.
+\begin{lstlisting}[language=XML,  caption=Implementation von Paginierung in der \texttt{Main.view.xml}]
+<List growing="true" growingThreshold="8">
+</List>
+\end{lstlisting}
 
 \section{Integration von Bild- und PDF-Datei}
 
@@ -122,7 +149,7 @@ Es gibt verschiedene Möglichkeiten, Bilder an die Benutzeroberfläche zu binden
 
 \begin{figure}[htbp]
  \centering
- \includegraphics[width=0.8\textwidth]{Bilder/appgyver/4_6_Image_binding_in_AppGyver.jpg}
+ \includegraphics[width=0.7\textwidth]{Bilder/appgyver/4_6_Image_binding_in_AppGyver.jpg}
  \caption{Image Binding in AppGyver}
 \end{figure}
 
@@ -130,13 +157,16 @@ Die Integration von PDF-Dateien in AppGyver erfordert ebenfalls nur einen gering
 
 \begin{figure}[htbp]
  \centering
- \includegraphics[width=0.8\textwidth]{Bilder/appgyver/4_7_Logik_Load-PDF-Button.jpg}
+ \includegraphics[width=0.7\textwidth]{Bilder/appgyver/4_7_Logik_Load-PDF-Button.jpg}
  \caption{Logik für Load-PDF-Button in AppGyver}
 \end{figure}
 
 Für die Integration von Bild- und PDF-Dateien in UI5 stehen Standard-Controls zur Verfügung, die mit geringem Konfigurationsaufwand einsetzbar sind. Für Bilder kann in SAPUI5 die Control „Image“ der sap.m-Library verwendet werden. Via „src“-Property kann ein relativer oder absoluter Pfad zur URL hinterlegt werden. Zudem kann man auch die Größe („width“-Eigenschaft) oder Höhe („height“-Eigenschaft) bestimmen. Mit der Standard Control „PDFViewer“ kann man PDF-Dateien integrieren. Hier gibt es eine „source“-Eigenschaft, die den Pfad zu der anzuzeigenden PDF-Datei enthält. Quelltext 4.4 zeigt die Implementierung von Bild- und PDF-Datei Integration in UI5 auf Basis einer XML-View.
-
-To be done Quelltext 4.4 Implementierung Bild- und PDF Datei Integration in SAPUI5
+\begin{lstlisting}[language=XML,  caption=Implementierung Bild- und PDF Datei Integration in SAPUI5]
+<Image src="https://prod.pictures.autoscout24.net/listing-images/0693be87-aaad-4dc8-99c5-a69b3bd48b81_1934e390-16f2-4e47-b248-02e9cc9b746b.jpg"
+           width="200px" height="150px"/>
+<PDFViewer source="https://www.uni-muenster.de/imperia/md/content/zns/dokumente/beispielexpos___kowi_empirisch.pdf"/>
+\end{lstlisting}
 
 \section{Integration von Barcode-Scanner-Funktion}
 
@@ -155,12 +185,41 @@ Die AppGyver-Anwendung kann sowohl als Webanwendung, als auch als mobile Anwendu
 In SAPUI5 existieren mehrere Barcode-Scanner-Controls.  Der Barcode Scanner Button (Namespace: sap.ndc) ist nur für die Nutzung auf mobilen Endgeräten vorgesehen (\textit{ndc} steht für \textit{native device capabilities}) und kann nur in Applikationen genutzt werden, die in der SAP Fiori Client-App geöffnet werden. Die neuere Komponente Barcode Scanner Dialog (Namespace: sap.ui.webc.fiori) kann dagegen auf allen Endgeräten im Browser eingesetzt werden.
 
 Die Integration in eine Anwendung erfolgt durch Integration der jeweiligen Control in die View. In folgendem Beispiel wird ein BarcodeScannerButton integriert. Die Control stellt dann entsprechende Events bereit (\textit{scanSuccess} und \textit{scanFail}), die nach erfolgreicher oder fehlerhaftem Scan-Vorgang geworden werden. 
-
-to be Done: Quelltext 4.5 Implementierung Barcode-Scanner in XML View
+\begin{lstlisting}[language=XML,  caption=Implementierung Barcode-Scanner in View \texttt{Barcode.view.xml}]
+<mvc:View controllerName="tff.Products.controller.Barcode" displayBlock="true" xmlns:ndc="sap.ndc" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+<VBox class="sapUiSmallMargin">
+		<ndc:BarcodeScannerButton
+			id="button"
+			scanSuccess="onScanSuccess"
+			scanFail="onScanError"
+			dialogTitle="Barcode Scanner Button Sample"
+		/>
+		<HBox class="sapUiTinyMarginTop">
+			<Label text="Scan Result:"/>
+			<Text id="result" text="" class="sapUiTinyMarginBegin"/>
+		</HBox>
+	</VBox>
+</mvc:View>
+\end{lstlisting}
 
 Im Controller kann die Callback-Funktion dann den Wert des Barcodes oder den Fehler aus den Event-Parametern auslesen. In folgendem Beispiel werden die Informationen auf dem Bildschirm in Form eines MessageToasts ausgegeben. 
+\begin{lstlisting}[emph={event, cancelled, duration, text, Scan failed, Scan cancelled},  caption=Implementierung Barcode-Scanner in Controller \texttt{Barcode.control.ts}]
+public onScanSuccess(oEvent) : void {
+	if (oEvent.getParameter("cancelled")) {
+		MessageToast.show("Scan cancelled", { duration:1000 });
+	} else {
+		if (oEvent.getParameter("text")) {
+			oScanResultText.setText(oEvent.getParameter("text"));
+		} else {
+			oScanResultText.setText('');
+		}
+	}
+}
 
-to be Done: Quelltext 4.6 Implementierung Barcode-Scanner in Controller
+public onScanError(oEvent) : void {
+	MessageToast.show("Scan failed: " + oEvent, { duration:1000 });
+}
+\end{lstlisting}
 
 \section{Nutzung nativer mobiler Funktionen}
 
@@ -201,7 +260,7 @@ Bei der Veröffentlichung als Webanwendung mit dem Build Service, wird die Anwen
 
 \section{Freie Gestaltungsmöglichkeit}
 
-Fiori-Elements basieren auf den SAP Fiori Design Guidelines und den fest definierten Floorplans(siehe Kapitel 2.6.1). Zwar sind durch die Extension-Points und dem Hinzufügen eigener Controls geringe Abweichungen im Layout möglich, die Gestaltungsmöglichkeiten bleiben jedoch sehr beschränkt. Durch die Auswahl eines eigenen SAPUI5-Themes oder dem Überschreiben von CSS-Anweisungen könnte das Aussehen weiterhin beeinfluss werden. Die Grundidee hinter Fiori Elements, leicht zu erstellende sowie gleich aussehende und funktionierende Standard-Apps, steht jedoch generell im Widerspruch zur Idee der freien Gestaltungsmöglichkeiten.
+Fiori-Elements basieren auf den SAP Fiori Design Guidelines und den fest definierten Floorplans (siehe Kapitel 2.6.1). Zwar sind durch die Extension-Points und dem Hinzufügen eigener Controls geringe Abweichungen im Layout möglich, die Gestaltungsmöglichkeiten bleiben jedoch sehr beschränkt. Durch die Auswahl eines eigenen SAPUI5-Themes oder dem Überschreiben von CSS-Anweisungen könnte das Aussehen weiterhin beeinfluss werden. Die Grundidee hinter Fiori Elements, leicht zu erstellende sowie gleich aussehende und funktionierende Standard-Apps, steht jedoch generell im Widerspruch zur Idee der freien Gestaltungsmöglichkeiten.
 
 In AppGyver ist es möglich, die Anwendungen nach dem Designvorlieben eines Nutzers zu entwickeln. Der Themen-Editor in Composer Pro ermöglicht die Auswahl, sowie die Anpassung von Themen für die Anwendungen. Ein Theme bezeichnet dabei das grundlegende visuelle Erscheinungsbild einer Anwendung und definiert Schriftgröße und -art, Farben der UI-Elemente sowie Hintergrundbilder\cite{hel:the}. Themes besitzen zudem Inhaltspaletten und semantischen Farben, mit denen eine Anwendung gezielt Formattierungen bereitstellen kann\cite{appg:the}. Als grundlegende Themes stehen in AppGyver zwei Themes bereit: 
 
@@ -215,10 +274,11 @@ Im AppGyver Composer Pro haben alle View-Components Style-Klassen und Layout-Par
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=1.0\textwidth]{Bilder/appgyver/4_9_1_gestaltung.jpg}
- \caption{Gestaltung von Weather-App, Barcode-Scanner-App  und Product-List-App}
+ \caption[1]{Gestaltung von Weather-App, Barcode-Scanner-App\footnotemark und Product-List-App\footnotemark }
 \end{figure}
-
-to be done: footnote
+\addtocounter{footnote}{-1}
+\stepcounter{footnote}\footnotetext{Weather-App wurde nach dem Youtube AppGyver-Tutorial von Iyad Helwani erstellt. URL: https://www.youtube.com/watch?v=ktb8so0mKmI\&t=1819s} 
+\stepcounter{footnote}\footnotetext{Barcode-Scanner-App wurde nach SAP Tutorial von Daniel Wroblewski erstellt. URL: https://developers.sap.com/tutorials/appgyver-create-application.html}
 
 SAPUI5 orientiert sich zunächst ebenfalls an den SAP Fiori Guidelines. Anders als in Fiori Elements ist man jedoch beim Aufbau einer Anwendung in „freestyle“-Apps komplett frei. Auch das Design lässt sich anpassen, hier gibt es zwei Möglichkeiten:
 

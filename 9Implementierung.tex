@@ -181,8 +181,8 @@ Eine „Open page“-Ablauffunktionskomponente ist erforderlich, um die Detailse
 
 \begin{figure}[htbp]
  \centering
- \includegraphics[width=0.4\textwidth]{Bilder/appgyver/3_15_set_app_variable.JPG}
- \caption{Wert zuweisen für App-Variable \textit{appVarRecord} in „Set app variable“ Ablauffunktionskomponente}
+ \includegraphics[width=0.5\textwidth]{Bilder/appgyver/3_15_set_app_variable.JPG}
+ \caption{Wert zuweisen für App-Variable \textit{appVarRecord} in \textit{Set app variable} Ablauffunktionskomponente}
 \end{figure}
 
 Auf der Detailseite werden sechs Input-Felder erstellt. Die Werte der Input-Felder sind mit dem entsprechenden Property-Wert der App-Variablen \textit{appVarRecord} verbunden, nämlich dem Titel, der Materialnummer, dem Preis, der Produkt-ID und der Beschreibung sowie dem Bestand. Außerdem werden drei Buttons für 3 Component tap Events auf der Detailseite erstellt: Der „Back“-Button wird verwendet, um zurück zur Listenseite zu navigieren. Um dies zu implementieren, muss lediglich eine Logikablauffunktion mit der Komponente „Navigation back“ erstellt werden (vgl. Abb. 3.16). Der „Edit“-Button wird zum Aktualisieren der Produktinformationen genutzt. Dazu ist die in Abbildung 3.16 dargestellte Ablauffunktion mit der Komponente „Update record“ erforderlich. Die Ablauffunktionskomponente ist mit der Datenressource Products (vgl. Abb. 3.11) und der App-Variablen \textit{appVarRecord} verknüpft. Die „Update record“-Komponente hat zwei Ausgänge: Der obere ist mit einer „Alert“-Ablauffunktionskomponente verlinkt, die zur Anzeige von „Update Record ID“ dient, der untere ist mit einer „Toast“-Ablauffunktion verbunden, die nur benutzt wird, wenn die Aktualisierung des Datensatzes nicht erfolgreich abgeschlossen werden kann. Der „Delete“-Button in Kombination mit der „Delete record“-Komponente wird zum Löschen eines Produkts eingesetzt.
@@ -221,9 +221,15 @@ Mit Hilfe des easy-ui5-Generators lässt sich ein grundlegendes SAPUI5-Anwendung
 
 Zur Erzeugung des Applikations-Gerüsts wird der Befehl \textit{yo easy-ui5 ts-app} in der Command-Prompt-Konsole ausgeführt. Dieser Befehl führt dazu, dass eine UI5-TypeScript-Anwendung basierend auf den folgenden Parametern erstellt wird:
 
-\begin{lstlisting}[language=bash]
+\lstset{
+  numbers=none, 
+  basicstyle=\scriptsize,
+  xleftmargin=.02\textwidth,
+  backgroundcolor=\color{mygrey2},
+}
+\begin{lstlisting}[language=bash, caption=Eingabe der Paramtern des UI5-Generators]
 ? How do you want to name this application? products
-? Which namespace do you want to use? fanfan.products 
+? Which namespace do you want use? fanfan.products 
 ? Which framework do you want to use? SAPUI5 
 ? Which framework version do you want to use? 1.108.4 
 ? Who is the author of the application? Tan Fangfang 
@@ -232,11 +238,9 @@ Zur Erzeugung des Applikations-Gerüsts wird der Befehl \textit{yo easy-ui5 ts-a
 
 Nach Eingabe der Parameter müssen noch alle externen Bibliotheken via npm install installiert werden und dann kann die Entwicklung beginnen.
 
-Der Generator erzeugt die grundlegende Projektstruktur eines SAPUI5-Projekts. Das MVC-Pattern findet sich auch im Dateisytem wieder. So liegen die Controller im Verzeichnis controller, die Views im gleichnamigen Verzeichnis und es ist ebenfalls ein model-Verzeichnis vorgehsehen. Dies wird jedoch im Projekt nicht verwendet, sondern es werden auf Standard Odata- und JSONModel zurückgegriffen \cite{sud:ao}.
+Der Generator erzeugt die grundlegende Projektstruktur eines SAPUI5-Projekts. Das MVC-Pattern findet sich auch im Dateisytem wieder. So liegen die Controller im Verzeichnis controller, die Views im gleichnamigen Verzeichnis und es ist ebenfalls ein model-Verzeichnis vorgehsehen. Dies wird jedoch im Projekt nicht verwendet, sondern es werden auf Standard Odata- und JSONModel zurückgegriffen \cite{sud:ao}. Daneben sind noch eine Reihe an Konfigurationsdateien vorhanden, wie package.json oder manifest.json: 
 
-Daneben sind noch eine Reihe an Konfigurationsdateien vorhanden, wie package.json oder manifest.json: 
-
-\begin{lstlisting}[language=bash]
+\begin{lstlisting}[language=bash,  caption=Die grundlegende Projektstruktur eines SAPUI5-Projekts]
 project-root
 |- src
    |- controller
@@ -281,7 +285,7 @@ Der Zugriff auf die Daten in SAPUI5 erfolgt auf Basis eines ODataModels. Zwar li
 
 Das ODataModel wird in der Component.ts-Datei erstellt und damit beim Starten der Anwendung initial in allen Controllern und Views bekannt gemacht.
 
-\begin{lstlisting}[emph={oData}][belowskip=-0.8 \baselineskip]
+\begin{lstlisting}[emph={oData},  caption=Auszüge aus der Klasse \texttt{Component}]
 const oData = new ODataModel({
   serviceUrl: "public/",
   synchronizationMode: "None",
@@ -291,7 +295,6 @@ this.setModel(oData);
 \end{lstlisting}
 
 \subsection{Listenansicht zur Anzeige aller Produkte}
-
 Die Listenansicht soll alle Produkte in einer Liste darstellen und es dem User ermöglichen, in die Einzelansicht eines Produkts zu springen. Da die Applikation nach dem Erstellen bereits über eine View verfügt, wird dies in der Main-View realisiert. Zentrales Element bildet die List-Control, welche Daten in einer Liste darstellen kann. Abbildung 3.20 zeigt die Benutzeroberfläche der Listenansicht der Produkte.
 
 \begin{figure}[htbp]
@@ -300,16 +303,16 @@ Die Listenansicht soll alle Produkte in einer Liste darstellen und es dem User e
  \caption{Benutzeroberfläche der Listenansicht der Produkte}
 \end{figure}
 
-SAPUI5-Controls sind UI-Elemente, die das Aussehen und Verhalten kapseln. In SAPUI5 stehen mehr als 100 Controls wie z.B. Buttons, Inputs, Texte, Tabellen, Messages, Dialoge, Listen usw. zur Verfügung. Eine Control kann andere Controls aggregieren und diese dient dann als Container. Die List-Control ist ein Container für entsprechende Listenelemente. Die Steuerung der View wird im entsprechenden Controller „Main.controller.ts“ implementiert. 
+SAPUI5-Controls sind UI-Elemente, die das Aussehen und Verhalten kapseln. In SAPUI5 stehen mehr als 100 Controls wie z.B. Buttons, Inputs, Texte, Tabellen, Messages, Dialoge, Listen usw. zur Verfügung. Eine Control kann andere Controls aggregieren und diese dient dann als Container. Die List-Control ist ein Container für entsprechende Listenelemente. Die Steuerung der View wird im entsprechenden Controller \textit{Main.controller.ts} implementiert. 
 
-\begin{lstlisting}[language=XML][belowskip=-0.8 \baselineskip]
+\begin{lstlisting}[language=XML,  caption=Auszüge aus der View \texttt{Main.view.xml}]
 <List mode="Delete" delete="onDeletePress" items="{path:'/Products'}" id="productsList">
   <headerToolbar>
      <OverflowToolbar width="100%">
 	<Title text="The list of the Products" />
 	<ToolbarSpacer />
 	<Button icon ="sap-icon://camera" text="Scan" press="onScanNavi"/>
-     <Button icon="sap-icon://add" text="Create" ariaHasPopup="Dialog" press="pressAddInList" />
+         <Button icon="sap-icon://add" text="Create" ariaHasPopup="Dialog" press="pressAddInList" />
      <SearchField width="200px" placeholder="SearchProduct" search="mySearchProduct" />
      </OverflowToolbar>
   </headerToolbar>
@@ -319,9 +322,9 @@ SAPUI5-Controls sind UI-Elemente, die das Aussehen und Verhalten kapseln. In SAP
 </List>
 \end{lstlisting}  
 
-Das Coding zeigt den Ausschnitt der Listendefinition. Jede Control verfügbar über bereitgestellte Eigenschaften (Properties) und Events, die im XML angegeben werden können. Mit der Eigenschaft \textit{mode="Delete"} wird beispielsweise automatisch ein Lösch-Button in der Liste hinzugefügt. Das Event \textit{delete=“onDeletePress“} verweist dahingehend dann auf die Callback-Funktion onDeletePress in der Klasse \textit{„Main.controller.ts“}, welche das Löschen dann programmatisch vornehmen muss:
+Das Coding zeigt den Ausschnitt der Listendefinition. Jede Control verfügbar über bereitgestellte Eigenschaften (Properties) und Events, die im XML angegeben werden können. Mit der Eigenschaft \textit{mode="Delete"} wird beispielsweise automatisch ein Lösch-Button in der Liste hinzugefügt. Das Event \textit{delete=“onDeletePress“} verweist dahingehend dann auf die Callback-Funktion onDeletePress in der Klasse \textit{Main.controller.ts}, welche das Löschen dann programmatisch vornehmen muss:
 
-\begin{lstlisting}[emph={event, UI5Event, listItem}]
+\begin{lstlisting}[emph={event, UI5Event, listItem},  caption=Auszüge aus der Controller \texttt{Main.control.ts}]
 public onDeletePress(event: UI5Event) {
     const listItem = event.getParameter("listItem") as ColumnListItem;
     const context = listItem.getBindingContext() as Context;
@@ -331,15 +334,15 @@ public onDeletePress(event: UI5Event) {
 
 In dieser Methode zeigt sich, dass in SAPUI5 durch die Models und das Databinding weder die Daten direkt aus den UI-Controls abrufen noch direkt mit dem OData-Service kommuniziert werden muss. Es wird an dieser Stelle lediglich der BindingContext (die Information zum Binding selber) benötigt und diese aus dem Model gelöscht. Das sorgt dann automatisch dafür, dass das Model einen DELETE-Request zum OData-Service sendet und das Produkt aus der Datenbank entfernt wird.
 
-Gleiches gilt auch für das initiale Setzen des Bindings. In obigem Coding zur Listenansicht ist zu sehen, dass in der Liste lediglich ein StandardListItem definiert wird. Dies dient dabei als Template für alle Produkte, die aus dem OData-Service ausgelesen werden. Über das Aggregation-Binding der Aggregation items (\textit{items="\{path:'/Products'\}"}) werden alle Produkte, sich in unter dem Pfad abrufen lasssen gebunden und für jedes Produkt wird ein „StandardListItem“ erzeugt, das den Titel und Preis anzeigt \cite{sud:s19}.
+Gleiches gilt auch für das initiale Setzen des Bindings. In obigem Coding zur Listenansicht ist zu sehen, dass in der Liste lediglich ein StandardListItem definiert wird. Dies dient dabei als Template für alle Produkte, die aus dem OData-Service ausgelesen werden. Über das Aggregation-Binding der Aggregation items (\textit{items="\{path:'/Products'\}"}) werden alle Produkte, sich in unter dem Pfad abrufen lasssen gebunden und für jedes Produkt wird ein \textit{StandardListItem} erzeugt, das den Titel und Preis anzeigt \cite{sud:s19}.
 
-\begin{lstlisting}[language=XML]
+\begin{lstlisting}[language=XML,  caption=Auszüge aus der View \texttt{Main.view.xml}]
 <StandardListItem title="{title}" type="Navigation" info="{price}" press="onItemPress"/>
 \end{lstlisting}
 
 Ein weiteres wichtiges Event ist das press-Event eines StandardListItems. Klickt ein User auf ein Produkt, so soll er auf die Dateilseite weitergeleitet werden. Das zugehörige Coding zeigt, dass an dieser Stelle auf den Router zugegriffen wird. In SAPUI5 sorgt der Router dafür, dass URL-Pfade auf Views/Controller gemappt werden und ermöglicht es, dass das Framekwork im Hintergrund die notwendigen Controller/Views instanziiert.
 
-\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}]
+\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=Auszüge aus der Controller \texttt{Main.control.ts}]
 public onItemPress(event: UI5Event){
     var item = event.getSource();
     var context = item.getBindingContext();
@@ -351,9 +354,8 @@ public onItemPress(event: UI5Event){
 Auch hier wird auf das Binding zurückgegriffen, um Informationen zum Produkt auszulesen, die an die Detailseite übergeben werden.
 
 \subsection{Einzelansicht für ein Produkt}
-Damit die Navigation funktioniert, müssen für die Einzelansicht ein View („Detail.view.xml“) und ein Controller erstellt werden. In der View werden alle Merkmale, wie der Name, die Beschreibung, die Materialnummer, der Preis und der Bestand eines Produkts in den Input Controls angezeigt.
-
-\begin{lstlisting}[language=XML]
+Damit die Navigation funktioniert, müssen für die Einzelansicht ein View \textit{Detail.view.xml} und ein Controller erstellt werden. In der View werden alle Merkmale, wie der Name, die Beschreibung, die Materialnummer, der Preis und der Bestand eines Produkts in den Input Controls angezeigt.
+\begin{lstlisting}[language=XML, caption=Auszüge aus der View \texttt{Detail.view.xml}]
 <Label text="Title" />    		
 <Input value="{title}" width="1000px" />
 <Label text="Description" /> 		
@@ -365,9 +367,7 @@ Damit die Navigation funktioniert, müssen für die Einzelansicht ein View („D
 <Label text="Stock" />		
 <Input value="{stock}" width="1000px" />
 \end{lstlisting}
-Damit die Werte angezeigt werden können, wird in der View wieder ein Binding verwendet (ElementBinding), dass ein komplettes Produkt an die View bindet. Dann ist es ausreichend, lediglich die Attribute zu benennen und das ODataModel lädt die relevanten Daten automatisch.
-
-Abbildung 3.21 kann die finale Benutzeroberfläche der Einzelansicht für ein Produkt entnommen werden.
+Damit die Werte angezeigt werden können, wird in der View wieder ein ElementBinding verwendet, dass ein komplettes Produkt an die View bindet. Dann ist es ausreichend, lediglich die Attribute zu benennen und das ODataModel lädt die relevanten Daten automatisch. Abbildung 3.21 kann die finale Benutzeroberfläche der Einzelansicht für ein Produkt entnommen werden.
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=0.8\textwidth]{Bilder/ui5 freestyle/3_21_Einzelansicht.png}
@@ -376,9 +376,9 @@ Abbildung 3.21 kann die finale Benutzeroberfläche der Einzelansicht für ein Pr
 
 \subsection{Maske zum Pflegen eines einzelnen Produkts}
 
-Für die Zusammenstellung der Maske zur Pflege eines Produkts werden Label-, Input- und Button-Controls und das Element „Fragment“ verwendet.  Fragmente sind leichtgewichtige UI-Komponenten, die wiederverwendbar sind, aber keinen Controller haben \cite{sud:s16}. Daher kann ein Fragment als ein Container für andere UI5-Controls betrachtet werden. Das UI-Design dieses Fragments ist in der Datei „createProductDialog.fragment.xml“ gespeichert.
+Für die Zusammenstellung der Maske zur Pflege eines Produkts werden Label-, Input- und Button-Controls und das Element \textit{Fragment} verwendet.  Fragmente sind leichtgewichtige UI-Komponenten, die wiederverwendbar sind, aber keinen Controller haben \cite{sud:s16}. Daher kann ein Fragment als ein Container für andere UI5-Controls betrachtet werden. Das UI-Design dieses Fragments ist in der Datei \textit{createProductDialog.fragment.xml} gespeichert.
 
-\begin{lstlisting}[language=XML]
+\begin{lstlisting}[language=XML, caption=Auszüge aus der Fragment \texttt{createProductDialog.fragment.xml}]
 <content>
   <VBox class="sapUiMediumMargin">
     <Label text="Title" />
@@ -401,9 +401,9 @@ Für die Zusammenstellung der Maske zur Pflege eines Produkts werden Label-, Inp
 </endButton>
 \end{lstlisting}
 
-In der Fragment-Implementierungsdatei werden mehrere Eingabefelder und zwei Buttons, „Cancel“ und „Add“ erstellt. Wird das press-Event des „Add“-Buttons geworfen, so wird die Methode \textit{pressAddInProductsList} aufgerufen, um den Datensatz, der in das Eingabefeld eingegeben wurden, in den OData-Service zu übernehmen. Die Eingabewerte aller Eingabefelder werden zunächst via Binding an ein lokales JSON-Model übergeben. In der \textit{pressAddInProductsList}-Methode werden die Werte aus dem lokalen Model ausgelesen und ein neues OData-Binding erzeugt, dass die Daten automatisch an den OData-Endpunkt sendet.
+In der Fragment-Implementierungsdatei werden mehrere Eingabefelder und zwei Buttons, \textit{Cancel} und \textit{Add} erstellt. Wird das press-Event des \textit{Add}-Buttons geworfen, so wird die Methode \textit{pressAddInProductsList} aufgerufen, um den Datensatz, der in das Eingabefeld eingegeben wurden, in den OData-Service zu übernehmen. Die Eingabewerte aller Eingabefelder werden zunächst via Binding an ein lokales JSON-Model übergeben. In der \textit{pressAddInProductsList}-Methode werden die Werte aus dem lokalen Model ausgelesen und ein neues OData-Binding erzeugt, dass die Daten automatisch an den OData-Endpunkt sendet.
 
-\begin{lstlisting}[emph={var, ODataListBinding, materialNumber, items, recipient, listInputModel, title, id, description, price, stock }]
+\begin{lstlisting}[emph={var, ODataListBinding, materialNumber, items, recipient, listInputModel, title, id, description, price, stock}, caption=Auszüge aus der Controller \texttt{Main.control.ts}]
 public pressAddInProductsList() {
     var title = this.getView().getModel("listInputModel").getProperty("/recipient/title");
     var id = this.getView().getModel("listInputModel").getProperty("/recipient/id");

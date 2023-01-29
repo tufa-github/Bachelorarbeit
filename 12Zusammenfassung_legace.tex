@@ -1,0 +1,47 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Contents: Bachelorarbeit, HS Fulda        %
+%                          31.08.2022                        %
+%---------------------------------------------------------%
+%                    Zusammenfassung.tex              %
+%                        by Carina Möller                   %
+%                    cary_moeller@gmx.de              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Zusammenfassung und Ausblick} \label{ZF}
+
+Die Bachelorarbeit hat sich damit beschäftigt, Lösungsansätze für eine generische Transformationsengine zu entwickeln und zu evaluieren. Diese hat den Zweck, ausgewählte Daten medizinischer Produkte im JSON"=Format in von Gesundheitsbehörden vorgegebene Excel"=Dateien zu schreiben. Die finale Version der Transformationsengine wurde bereits in die bestehende Struktur der \xblackout{UDI Platform} des Unternehmens \xblackout{p36} eingebunden und kommt dort bald zum Einsatz.
+
+Zunächst wurde besonders in Kapitel\nbs\ref{UDI} das regulatorische Umfeld in den Life"=Sciences näher beleuchtet, in dem die Transformationsengine operiert. Dies befindet sich zur Zeit weltweit in einem Umbruch. Viele Behörden sind dabei, einen Umstrukturierungsprozess zu starten, um die sogenannte UDI, eine eindeutige Produktkennung, verpflichtend einzuführen. Die Hersteller von Medizinprodukten sind damit aktuell vor neue Herausforderungen gestellt, bei denen das Unternehmen \xblackout{p36} sie mit ihrer \xblackout{UDI Platform} unterstützt, um die neuen Regularien umzusetzen und die geforderten Produktdaten UDI"=konform bei den Behörden zu hinterlegen. Hier kristallisiert sich der Sinn hinter der Transformationsengine heraus\nbs --\nbs während große Gesundheitsministerien eine Machine"=to"=Machine"=Schnittstelle zu ihrer Datenbank anbieten, muss bei kleinen Ländern der Upload via Excel"=Datei erfolgen. 
+
+Da die Transformationsengine für verschiedene Behörden mit teilweise unterschiedlichen Anforderungen gleichermaßen nutzbar sein soll, muss die Lösung vor allem generisch sein. Um dies zu gewährleisten, müssen die Informationen darüber, welche Daten genau in welcher Spalte von welchem Arbeitsblatt der Excel"=Vorlage eingefügt werden sollen, ausgelagert werden und dürfen kein spezifischer Teil der Engine sein. Die Abbildung bzw. Projektion von den Spalten zu den Produktdaten ist dabei der behördenspezifische Teil, der individuell von den \xblackout{Solution Managern bei p36} angepasst werden kann. \\
+Die erste Idee bestand darin, die Abbildung direkt in die Excel"=Vorlage zu verlagern. Das Konzept wurde in Kapitel\nbs\ref{ED} detailliert beschrieben und anschließend in Kapitel\nbs\ref{IED} implementiert. Da jedoch längere Ausdrücke in den kleinen Excel"=Zellen schnell unleserlich werden, entstand die zweite Idee einer externen Mapping"=Datei, in der die Abbildung übersichtlich definiert werden kann. Dabei hat sich letztendlich das YAML"=Format durchgesetzt. Das Konzept ist in Kapitel\nbs\ref{MD} erläutert, die Umsetzung erfolgte ausführlich in Kapitel\nbs\ref{IMD}. Für eine unkomplizierte Integration in die Plattform wurde dabei besonderen Wert darauf gelegt, bereits eingebundene Bibliotheken wiederzuverwenden. 
+
+Um die gewünschten Produktdaten zu selektieren, wird sich einer JSON"=Abfragesprache bedient. Diese Ausdrücke werden in der Transformationsengine ausgewertet und dann in die jeweiligen Arbeitsblätter geschrieben. In Kapitel\nbs\ref{JQL} werden die bekanntesten Abfragesprachen vorgestellt, von denen im weiteren Verlauf der Entwicklung einige ausgetestet wurden. Am Ende hat sich dabei \bib{JSONata} als die optimale Sprache für \xblackout{p36} herausgestellt (vgl. Kapitel\nbs\ref{JAS}), die durch großem Umfang trotz kompakter Syntax besticht. Außerdem bestehen bei den Mitarbeitern schon Vorkenntnisse im Umgang mit \bib{JSONata} aus anderen Projekten.
+
+Nachdem das grobe Konzept feststand und implementiert war, konnten verschiedene Komplexitäten hinzugefügt werden. Zum einen müssen zusätzliche behördenspezifische Mappings für Wahrheitswerte oder auch Wertelisten einzelner Datenelemente ermöglicht werden. Zum anderen ergab sich eine Schwierigkeit bei fehlenden Pfaden von komplexen Datenelementen, die in einer 1\,:\,$n$"=Beziehung zum Produkt stehen und in weiteren Arbeitsblättern mehrzeilig abgebildet werden. Auch Datumsformate werden in Excel wie gewünscht dargestellt. Die YAML"=Datei wird per JSON"=Schema validiert. Diese und weitere Anforderungen und Funktionalitäten wurden sukzessive und inkrementell in die Transformationsengine eingebaut\nbs --\nbs entsprechend dem methodisches Vorgehen bei der Entwicklung nach dem Prinzip von Scrum (worauf Kapitel\nbs\ref{SCRUM} näher eingangen ist).\\
+Darüber hinaus wurden Modultests für die Funktionalitäten der einzelnen Klassen geschrieben. Im Zuge dessen konnte auch der Massen"=Upload erfolgreich getestet werden, denn die Hersteller sind daran interessiert bis zu 10.000 Produkte gleichzeitig hochzuladen, siehe Kapitel\nbs\ref{MUT}. 
+
+Insgesamt ist eine generische Transformationsengine entstanden, die als Eingabe die Produktdaten in Form eines JSON"=Strings sowie die Mapping"=Datei und die Excel"=Vorlage als InputStream nimmt, und die ausgefüllte Excel"=Datei als Ausgabe liefert. In den letzten Wochen wurde sie sogar schon in die \xblackout{UDI Platform} eingebaut und die umgebende Logik zur Benutzung implementiert, sodass der Integration von neuen Behörden wie Taiwan und Saudi"=Arabien nahezu nichts mehr im Weg steht\nbs --\nbs sofern diese ihre Excel"=Templates zeitnah veröffentlichen.\\
+Grundsätzlich befinden sich enorm viele medizinische Regulierungsbehörden aktuell in einer Umbruchphase und weltweit werden in den nächsten Jahren immer mehr Länder auf ein UDI"=System umstellen\nbs --\nbs langfristig vermutlich auf ein global einheitliches System. Bis dahin wird die Transformationsengine aber bis auf Weiteres für viele kleinere Märkte zum Einsatz kommen. \\
+Ich bin gespannt, wie sie sich dabei mit echten Daten innerhalb der \xblackout{UDI Platform} verhält und auch, ob die Abbildung in der Mapping"=Datei in der Praxis so einfach definiert werden kann wie erhofft. Dies konnte bisher nur mit theoretischen, selbstgeschrieben Excel"=Vorlagen und Produktdaten ohne weiteren Kontext getestet werden. 
+
+Als Ausblick kann zusätzlich herausgestellt werden, dass sich die Mapping"=Datei beliebig erweitern lässt. Hier ist beispielsweise die Angabe einer maximalen Anzahl an Zeilen pro Arbeitsblatt oder -mappe denkbar, bei deren Überschreiten automatisch eine weitere Datei generiert wird.\\
+Man könnte auch die YAML"=Datei als Form in Frage stellen und stattdessen für mehr Benutzerfreundlichkeit die Definition der Abbildung über eine graphische Benutzeroberfläche eingeben, die dann zum Beispiel per Rest"=API direkt in der Plattform landet. Hierbei stellt sich letztendlich die Frage, ob der Aufwand in Relation zum Nutzen steht.\\
+Einige Behörden bieten Schnittstellen zu ihrer Datenbank an, die mit XML arbeiten. Anstatt Excel"=Dateien könnten durch eine Adaption der Transformationsengine auch XML"=Dateien entsprechend der behördlichen Vorgaben erzeugt werden. Die EUDAMED lässt zum Beispiel den XML"=Massen"=Upload bestehend aus bis zu 300 einzelnen Datensätzen zu, wobei in diesem Fall natürlich die Verwendung der vorhandenen M2M"=Schnittstelle effektiver ist, vgl.\nbs\cite{udi:eudamed}.
+
+Betrachtet man die in dieser Bachelorarbeit erarbeiteten Themen in einem übergeordneten Zusammenhang, lässt sich anmerken, dass obwohl sich JSON großer Beliebtheit erfreut und vielfältig eingesetzt wird, es zum Beispiel keine einheitliche Standardabfragesprache dafür gibt, genauso wenig wie eine native Schnittstelle in Java, die sich gegen die Drittanbieter"=Bibliotheken durchsetzen kann, vgl.\nbs\cite{json:libs1} und\nbs\cite{json:libs2}. Die Vielzahl der Sprachen und Bibliotheken, die sich über die Zeit entwickelt haben, ist enorm. Das Positive daran ist, dass die Chance groß ist, dass es für jeden Anwendungsfall bereits die optimale Bibliothek gibt. Andererseits verkümmern viele dieser Bibliotheken wieder, wenn die Entwickler die Projekte nicht mehr weiterverfolgen. Reutter et al. visieren in ihren Fachpublikationen stattdessen eine Vereinheitlichung an, basierend auf der Definition eines formalen JSON"=Datenmodells inklusive Abfragesprache\nbs\cite{jql:dm} sowie einem entsprechend formal verankerten JSON"=Schema\nbs\cite{json:schema:def}. Es bleibt abzuwarten, ob sich dieser Vorschlag durchsetzen kann oder nur als weitere Möglichkeit in die bestehende Vielfalt einreiht. Noch einen Schritt weiter wird dagegen in\nbs\cite{json:ukr} gegangen mit der Beschreibung eines universelleren Schemas, das JSON als Spezialfall von allgemein durch Knoten strukturierte Datenformate validiert und verarbeitet. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

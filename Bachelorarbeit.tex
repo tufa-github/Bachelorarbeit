@@ -10,11 +10,9 @@
 %PDF Metadaten
 \begin{filecontents*}[overwrite]{\jobname.xmpdata}
 \Title{Low code Applikation Entwicklung mit SAP AppGyver im Vergleich zu nativen Fiori Entwicklung}
-\Author{Fangfang Tan}
-%\Author{anonyme Version} %für die anonyme Version das hier verwenden und den Namen auskommentieren... 
+%\Author{Fangfang Tan}
+\Author{anonyme} %für die anonyme Version das hier verwenden und den Namen auskommentieren... 
 \Language{de-DE}
-\Subject{In dieser Arbeit werden Lösungsansätze entwickelt, implementiert und evaluiert, um auf möglichst effektive und generische Art Daten von Medizinprodukten in Excel-Dateien zu schreiben. Die Vorlagen für die Excel-Dateien entstammen dem regulatorischen Umfeld und sind fest vorgegeben, während die Produktdaten im JSON-Format vorliegen. Die Transformation wird über eine Abbildung zwischen den Produktdaten und den Excel-Zellen definiert und mit einer geeigneten JSON-Abfragesprache realisiert. Die Transformationsengine stellt dabei einen kleinen Teil des Prozesses zur UDI-Konformität dar.} %AbstractText
-\Keywords{Transformationsengine\sep JSON\sep Excel\sep UDI\sep generisch}
 \end{filecontents*}
 
 %Hier gehts erst wirklich los
@@ -62,9 +60,9 @@
 
 %anonyme Version
 \newtoggle{anonym}
-%\toggletrue{anonym}	%für anonyme Version das hier einkommentieren
-\togglefalse{anonym}	%für richtige Version das hier einkommentieren
-\StopCensoring		%für richtige Version das hier einkommentieren
+\toggletrue{anonym}	%für anonyme Version das hier einkommentieren
+%\togglefalse{anonym}	%für richtige Version das hier einkommentieren
+%\StopCensoring		%für richtige Version das hier einkommentieren
 
 % verschiedene Farben für CodeAbschnitte
 \definecolor{mygrey}{rgb}{0.46,0.45,0.48}
@@ -332,8 +330,11 @@
 %------ title, preamble, table of contents etc ------
 %\frontmatter %geht nur bei book nicht bei report
 \pagenumbering{Roman}
-
-\include{1Titelblatt}
+\iftoggle{anonym}{
+   \include{1Titelblattanonym}
+}{
+   \include{1Titelblatt}
+}
 
 \thispagestyle{empty} %keine seitenzahlen
 \clearpage %Seitenumbruch
@@ -341,7 +342,7 @@
 %\includepdf[pages=-]{Erklaerung.pdf}
 \iftoggle{anonym}{
 }{
-   %\include{2Sperrvermerk}
+   \include{2Sperrvermerk}
    \include{3Erklaerung}
    \include{4Danksagung}
 }
@@ -367,30 +368,17 @@
 %besser is es package parskip zu verwenden, so werden bei listen die abstände nicht verändert
 
 \include{7Einleitung}
-%\thispagestyle{empty} \cleardoublepage %leere Seite
 \include{8Grundlagen}
-%\include{9Konzept}
 \include{9Implementierung}
 \include{10Untersuchung}
 \include{11Bewertung}
 \include{12Schluss}
 
-%\thispagestyle{empty} \cleardoublepage 
-%\include{12Zusammenfassung}
-%\thispagestyle{empty} \cleardoublepage
-
 
 %------ appendix ------
 \appendix                %\backmatter ändert kapitel umstellung nicht
-%\include{Literatur_alt}
-%\bibliographystyle{plaindin} %plain = numbers; alpha = author(3 letters) + year
-%hier wird es kompliziert... mir hat es nicht gefallen, wie das literaturverzeichnis formatiert war, das habe ich dann selbst angepasst
-%also alphadin hab ich dann in alphadin2 angepasst und stattdessen hier verwendet... weiß nicht genau wo die bei dir gespeichert ist
-%bei mir in dem ordner unten aufgeführt, ich schicke dir die modifizierte datei mit... kann man beliebig dran rumspielen...
-%for modifications: C:\Users\CarinaMöller\AppData\Local\Programs\MiKTeX\bibtex\bst\din1505
 \bibliographystyle{alphadin2} %din = capital letters for author, url = normal, mit url
 \bibliography{13Literatur}
-%\printbibliography %mit biblatex
 \include{14Anhang} %Anhang idR nach Literaturverzeichnis, kann aber auch davor
 %------ end of document ------
 \end{document}

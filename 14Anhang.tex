@@ -3,108 +3,528 @@
 %                          31.08.2022                        %
 %---------------------------------------------------------%
 %                           Anhang.tex                     %
-%                        by Carina Möller                   %
-%                    cary_moeller@gmx.de              %
+%                        by Fangfang Tan                    %
+%         fangfang.tan@informatik.hs-fulda.de      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{JSON-Schema} \label{AJS}
+\chapter{Quellencode der SAPUI5 Anwendung - Products Information}
 
-JSON"=Schema wird verwendet, um die Struktur von JSON"=Dateien zu validieren. Bei der Transformationsengine wird dieses Prinzip bei der Mapping"=Datei aus Kapitel\nbs\ref{MD} angewendet\nbs--\nbs besonders in Abschnitt\nbs\ref{JSch} wird detailiert auf JSON"=Schema eingegangen. Das verwendete Schema ist in der Datei \texttt{MappingJsonSchema.json} gespeichert und wie folgt definiert: 
-\vspace{0.7em}
 \begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
-\begin{lstlisting}[language=json, caption={JSON-Schema für die Mapping-Datei}, label=code:schema]
+\begin{lstlisting}[language=json, caption={Manifest Datei des UI5 Projekts in JSON Fromat}]
 {
-	"$schema": "https*B:B*//json-schema.org/draft-06/schema#",
-	"title": "jsonataExcelMapping",
-	"description": "A mapping for JSONata input into excel template",
-	"type": "object",
-	"properties": {
-		"SheetMappings": {
-			"description": "mappings for the sheets in the excel template",
-			"type": "object",
-			"additionalProperties": {
-				"description": "different sheetNames",
-				"type": "object",
-				"properties": {
-					"row": {
-						"description": "start row in excel sheet where the device data shall be written",
-		 				"type": "integer",
-		 				"minimum": 1
-					},
-					"category": {
-						"description": "category of the sheet (complex data element key)",
-						"type": "string"
-					},
-					"columns": {
-						"description": "different columns to be filled",
-						"type": "object",
-						"patternProperties": {
-							(*"\texttt{\textasciicircum}[a-zA-Z]\{1,2\}\$"*): {
-								"description": "the key is the column letter in excel format, the value is the JSONata expression to filter the right device data for this column",
-								"type": "string"
-							}
-						},
-						"additionalProperties": false*R,R*
-						"minProperties": 1
-					},
-					"mandatoryColumns": {
-						"type": "array",
-						"description": "a list of those columns that are required to be filled",
-						"default": [],
-						"items": {
-							"type": "string",
-							(*"pattern"\color{red}: \color{black}"\texttt{\textasciicircum}[a-zA-Z]\{1,2\}\$"*)
-						}
-					}
-				},
-				"required": [ "row", "columns" ]
-			}
-		},
-		"ElementMappings": {
-			"description": "mappings for booleans, date formats and/or specific data elements",
-			"type": "object",
-			"properties": {
-				"Boolean": {
-					"description": "mapping for boolean values in this template",
-		 			"type": "object",
-					"properties": {
-						"true": {
-							"description": "mapping of true in this agency",
-							"type": ["number", "string", "boolean"]
-						},
-						"false": {
-							"description": "mapping of false in this agency",
-							"type": ["number", "string", "boolean"]
-						}
-					},
-					"additionalProperties": false*R,R*
-					"required": ["false", "true"]
-				},
-				"Date": {
-					"description": "mapping for date or time formats",
-					"type": "object",
-					"additionalProperties": {
-						(*"description"\color{red}: \color{black}"key: date format for \xblackout{p36} / value: date format in excel for agency*)",
-						"type": "string"
-					} 
-				}
-			},
-			"additionalProperties": {
-				"description": "data element key",
-				"type": "object",
-				"additionalProperties": {
-					(*"description"\color{red}: \color{black}"key: element value for \xblackout{p36} / value: element value for agency*)",
-					"type": ["number", "string", "boolean"]
-				}
-			}	
+	"_version": "1.12.0",
+
+	"sap.app": {
+		"id": "tff.Products",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
 		}
 	},
-	"required": [ "SheetMappings" ]
+
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "tff.Products.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+
+		"dependencies": {
+			"minUI5Version": "1.105.3",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.ui.unified": {},
+				"sap.m": {}
+			}
+		},
+
+		"handleValidation": true,
+
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "tff.Products.i18n.i18n"
+				}
+			}
+		},
+
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "tff.Products.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "main",
+					"target": "main"
+				},
+				{
+					"pattern": "detail/{path}",
+					"name": "detail",
+					"target": "detail"
+				},
+				{
+					"pattern": "barcode",
+					"name": "barcode",
+					"target": "barcode"
+				}
+			],
+			"targets": {
+				"main": {
+					"viewId": "main",
+					"viewName": "Main"
+				},
+				"detail": {
+					"viewId": "detail",
+					"viewName": "Detail"
+				},
+				"barcode": {
+					"viewId": "barcode",
+					"viewName": "Barcode"
+				}
+			}
+		}
+	}
+}
+\end{lstlisting} 
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[language=XML,  caption={Main View der Anwendung in XML Format}]
+<mvc:View controllerName="tff.Products.controller.Main" displayBlock="true" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<Page title="Products Information">
+		<List mode="Delete" delete="onDeletePress" growing="true" growingThreshold="8" items="{path:'/Products'}" id="productsList">
+			<headerToolbar>
+				<OverflowToolbar width="100%">
+					<Title text="The list of the Products" />
+					<ToolbarSpacer />
+					<Button icon ="sap-icon://camera" text="Scan" press="onScanNavi"/>
+					<Button icon="sap-icon://add" text="Create" ariaHasPopup="Dialog" press="pressAddInList" />
+					<SearchField width="200px" placeholder="SearchProduct" search="mySearchProduct" />
+				</OverflowToolbar>
+			</headerToolbar>
+			<items>
+				<StandardListItem title="{title}" type="Navigation" info="{price}" press="onItemPress"/>
+			</items>
+		</List>
+	</Page>
+</mvc:View>
+\end{lstlisting}
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[language=XML,  caption={Detail View der Anwendung in XML Format}]
+<mvc:View
+	controllerName="tff.Products.controller.Detail"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+   <Page title="Product Detail Page" showNavButton="true" navButtonPress="onNaviBack">
+    <VBox>  
+            <Label text="Title" />
+            <Input value="{title}" width="1000px" />
+            <Label text="Description" />
+            <Input value="{description}" width="1000px" />
+            <Label text="Material Number" />
+            <Input value="{materialNumber}" width="1000px" />
+            <Label text="Price" />
+            <Input value="{price}" width="1000px" />
+            <Label text="Stock" />
+            <Input value="{stock}" width="1000px" />  
+     </VBox>   
+    <Image src="./images/seatImage.jpg" width="200px" height="150px"/>
+    <Image src="https://prod.pictures.autoscout24.net/listing-images/0693be87-aaad-4dc8-99c5-a69b3bd48b81_1934e390-16f2-4e47-b248-02e9cc9b746b.jpg"
+           width="200px" height="150px"/>
+    <PDFViewer source="https://www.uni-muenster.de/imperia/md/content/zns/dokumente/beispielexpos___kowi_empirisch.pdf"/>
+    </Page>
+</mvc:View>
+\end{lstlisting}
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[language=XML,  caption={CreateProductDialog fragment der Anwendung in XML Format}]
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Dialog id="myProductView" title="" class="sapUiResponsivePadding--header sapUiResponsivePadding--footer" initialFocus="email">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <Label text="Title" />
+                <Input value="{listInputModel>/recipient/title}" width="200px" />
+                <Label text="Material Number" />
+                <Input value="{listInputModel>/recipient/materialNumber}" width="200px" />
+                <Label text="Description" />
+                <Input value="{listInputModel>/recipient/description}" width="200px" />
+                <Label text="Price" />
+                <Input value="{listInputModel>/recipient/price}" width="200px" />
+                <Label text="Stock" />
+                <Input value="{listInputModel>/recipient/stock}" width="200px" />
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="Cancel" ariaHasPopup="Dialog" press="closeDialog" />
+        </beginButton>
+        <endButton>
+            <Button text="Add" ariaHasPopup="Dialog" press="pressAddInProductsList" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
+\end{lstlisting}
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[language=XML,  caption={Barcode View der Anwendung in XML Format}]
+<mvc:View controllerName="tff.Products.controller.Barcode" displayBlock="true" xmlns:ndc="sap.ndc" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+<VBox class="sapUiSmallMargin">
+		<ndc:BarcodeScannerButton
+			id="button"
+			scanSuccess="onScanSuccess"
+			scanFail="onScanError"
+			dialogTitle="Barcode Scanner Button Sample"/>
+		<HBox class="sapUiTinyMarginTop">
+			<Label text="Scan Result:"/>
+			<Text id="result" text="" class="sapUiTinyMarginBegin"/>
+		</HBox>
+	</VBox>
+</mvc:View>
+\end{lstlisting}
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[language=XML,  caption={App view der Anwendung in XML Format}]
+<mvc:View
+	controllerName="tff.Products.controller.App"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App id="app" />
+</mvc:View>
+\end{lstlisting}
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=Main Controller der Anwendung]
+import MessageBox from "sap/m/MessageBox";
+import BaseController from "./BaseController";
+import formatter from "../model/formatter";
+import Dialog from "sap/m/Dialog";
+import Contextf from "sap/ui/model/odata/v4/Context";
+import Fragment from "sap/ui/core/Fragment";
+import DateTimeOffset from "sap/ui/model/odata/type/DateTimeOffset";
+import UI5Event from "sap/ui/base/Event";
+import ColumnListItem from "sap/m/ColumnListItem";
+import Context from "sap/ui/model/odata/v4/Context";
+import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
+import Filter from "sap/ui/model/Filter";
+import FilterOperator from "sap/ui/model/FilterOperator";
+
+/**
+ * @namespace tff.Products.controller
+ */
+export default class Main extends BaseController {
+  private formatter = formatter;
+  private addDialog: Dialog;
+
+  public closeDialog() {
+    this.addDialog.close();
+  }
+
+  public pressAddInProductsList() {
+    var title = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/title");
+    var id = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/id");
+    var description = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/description");
+    var materialNumber = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/materialNumber");
+    var price = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/price");
+    var stock = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/stock");
+
+    const context = (<ODataListBinding>(
+      this.getView().byId("productsList").getBinding("items")
+    )).create({
+      title: title,
+      id: id,
+      description: description,
+      materialNumber: parseInt(materialNumber),
+      price: price,
+      stock: stock,
+    });
+    this.closeDialog();
+  }
+
+  public async pressAddInList() {
+    var title = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/title");
+    var id = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/id");
+    var description = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/description");
+    var materialNumber = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/materialNumber");
+    var price = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/price");
+    var stock = this.getView()
+      .getModel("listInputModel")
+      .getProperty("/recipient/stock");
+
+    if (!this.addDialog) {
+      this.addDialog = <Dialog>await Fragment.load({
+		name: "tff.Products.view.createProductDialog",
+        controller: this,
+      });
+      this.getView().addDependent(this.addDialog);
+    }
+    this.addDialog.open();
+  }
+
+  public onDeletePress(event: UI5Event) {
+    const listItem = event.getParameter("listItem") as ColumnListItem;
+    const context = listItem.getBindingContext() as Context;
+    context.delete();
+  }
+
+  public sayHello(): void {
+    MessageBox.show("Hello World!");
+  }
+
+  public mySearchProduct(event:UI5Event){
+	const query = event.getParameter("query");
+	MessageBox.show(query);
+	const table = this.getView().byId("productsList");
+	const binding = table.getBinding("items") as ODataListBinding;
+	const filters = [];
+	if(query){
+		filters.push(new Filter("title", FilterOperator.Contains, query))
+	}
+	binding.filter(filters);
+  }
+
+  public onItemPress(event: UI5Event){
+    var item = event.getSource();
+    var context = item.getBindingContext();
+    var path = context.getPath().substr(1);
+    this.navTo("detail", {path: path});
+  }
+
+  public onScanNavi(){
+    var router = this.getOwnerComponent().getRouter();
+    router.navTo("barcode");
+  }
+}
+\end{lstlisting}
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=Detail Controller der Anwendung]
+import BaseController from "./BaseController";
+import UI5Event from "sap/ui/base/Event";
+
+/**
+ * @namespace tff.Products.controller
+ */
+export default class App extends BaseController {
+
+	public onInit() : void {
+		var route = this.getRouter();
+		route.getRoute("detail").attachPatternMatched(this._onRouteMatched,this);
+	}
+	public _onRouteMatched(event: UI5Event) {
+		var path = event.getParameter("arguments"). path;
+		this.getView().bindElement({path:"/" + path});
+	}
+	public onNaviBack() {
+		this.onNavBack();
+	}
+}
+\end{lstlisting}
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=Base Controller der Anwendung]
+import Controller from "sap/ui/core/mvc/Controller";
+import UIComponent from "sap/ui/core/UIComponent";
+import AppComponent from "../Component";
+import Model from "sap/ui/model/Model";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import Router from "sap/ui/core/routing/Router";
+import History from "sap/ui/core/routing/History";
+
+/**
+ * @namespace tff.Products.controller
+ */
+export default abstract class BaseController extends Controller {
+
+	/**
+	 * Convenience method for accessing the component of the controller's view.
+	 * @returns The component of the controller's view
+	 */
+	public getOwnerComponent(): AppComponent {
+		return (super.getOwnerComponent() as AppComponent);
+	}
+
+	/**
+	 * Convenience method to get the components' router instance.
+	 * @returns The router instance
+	 */
+	public getRouter() : Router {
+		return UIComponent.getRouterFor(this);
+	}
+
+	/**
+	 * Convenience method for getting the i18n resource bundle of the component.
+	 * @returns The i18n resource bundle of the component
+	 */
+	public getResourceBundle(): ResourceBundle | Promise<ResourceBundle> {
+		const oModel = this.getOwnerComponent().getModel("i18n") as ResourceModel;
+		return oModel.getResourceBundle();
+	}
+
+	/**
+	 * Convenience method for getting the view model by name in every controller of the application.
+	 * @param [sName] The model name
+	 * @returns The model instance
+	 */
+	public getModel(sName?: string) : Model {
+		return this.getView().getModel(sName);
+	}
+
+	/**
+	 * Convenience method for setting the view model in every controller of the application.
+	 * @param oModel The model instance
+	 * @param [sName] The model name
+	 * @returns The current base controller instance
+	 */
+	public setModel(oModel: Model, sName?: string) : BaseController {
+		this.getView().setModel(oModel, sName);
+		return this;
+	}
+
+	/**
+	 * Convenience method for triggering the navigation to a specific target.
+	 * @public
+	 * @param sName Target name
+	 * @param [oParameters] Navigation parameters
+	 * @param [bReplace] Defines if the hash should be replaced (no browser history entry) or set (browser history entry)
+	 */
+	public navTo(sName: string, oParameters?: object, bReplace?: boolean) : void {
+		this.getRouter().navTo(sName, oParameters, undefined, bReplace);
+	}
+
+	/**
+	 * Convenience event handler for navigating back.
+	 * It there is a history entry we go one step back in the browser history
+	 * If not, it will replace the current entry of the browser history with the main route.
+	 */
+	public onNavBack(): void {
+		const sPreviousHash = History.getInstance().getPreviousHash();
+		if (sPreviousHash !== undefined) {
+			window.history.go(-1);
+		} else {
+			this.getRouter().navTo("main", {}, undefined, true);
+		}
+	}
+
 }
 \end{lstlisting}
 \end{mdframed}
 
 
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=Barcode Controller der Anwendung]
+/**
+ * @namespace tff.Products.controller
+ */
+export default class Main extends BaseController {
+	private formatter = formatter;
+	private oScanResultText;
+
+	public onScanSuccess(oEvent) : void {
+		if (oEvent.getParameter("cancelled")) {
+			MessageToast.show("Scan cancelled", { duration:1000 });
+		} else {
+			if (oEvent.getParameter("text")) {
+				oScanResultText.setText(oEvent.getParameter("text"));
+			} else {
+				oScanResultText.setText('');
+			}
+		}
+	}
+
+	public onScanError(oEvent) : void {
+		MessageToast.show("Scan failed: " + oEvent, { duration:1000 });
+	}
+
+	public onAfterRendering() : void {
+		oScanResultText = this.getView().byId("result");
+		var oScanButton = this.getView().byId("button");
+		if (oScanButton) {
+			$(oScanButton.getDomRef()).on("click", function(){
+				oScanResultText.setText('');
+			});
+		}
+	}
+}
+\end{lstlisting}
+\end{mdframed}
+
+
+
+\begin{mdframed}[backgroundcolor=mygrey2, leftmargin=0.5cm, hidealllines=true, innerleftmargin=3pt, innerrightmargin=0cm, innertopmargin=0cm, innerbottommargin=-3cm, splitbottomskip=0]
+\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=App Controller der Anwendung]
+import BaseController from "./BaseController";
+/**
+ * @namespace tff.Products.controller
+ */
+export default class App extends BaseController {
+	public onInit() : void {
+		// apply content density mode to root view
+		this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+	}
+}
+\end{lstlisting}
+\end{mdframed}
 
 
 

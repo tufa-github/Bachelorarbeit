@@ -40,7 +40,7 @@ Dabei ist zu unterscheiden zwischen Backend- und Frontend-Funktionalität. SAPUI
 \section{Fiori Elements}
 \subsection{Dev Space erstellen}
 
-Für die Entwicklung mit Fiori Elements wird das Business Application Studio als Entwicklungsumgebung genutzt. Wie bereits in Abschnitt 2.4.2 erwähnt, stellt das BAS Dev Spaces für unterschiedliche Entwicklungsszenarien bereit. Die komplette Anwendung ließe sich auch als klassisches Entwicklungsprojekt auf- und umsetzen, im Sinne der Arbeit wird jedoch das “Low-Code-Based Full-Stack Cloud-Application” Preset für den Dev Space gewählt, um Zugriff auf die LCNC-Funktionalitäten zu bekommen. 
+Für die Entwicklung mit Fiori Elements wird das Business Application Studio als Entwicklungsumgebung genutzt. Wie bereits in Abschnitt 2.6.2 erwähnt, stellt das BAS Dev Spaces für unterschiedliche Entwicklungsszenarien bereit. Die komplette Anwendung ließe sich auch als klassisches Entwicklungsprojekt auf- und umsetzen, im Sinne der Arbeit wird jedoch das “Low-Code-Based Full-Stack Cloud-Application” Preset für den Dev Space gewählt, um Zugriff auf die LCNC-Funktionalitäten zu bekommen. 
 
 \begin{figure}[htbp]
  \centering
@@ -279,7 +279,7 @@ In den nächsten Abschnitten wird die Implementierung der UI5-Anwendung nun im D
 
 In Kapitel 3.2.2 wurde die Bereitstellung der OData-Services und der Destination in der SAP-BTP-Umgebung vorgestellt. Die SAPUI5-Anwendung muss diese Destination ebenfalls integrieren, um die OData-Services hinter der Destination konsumieren zu können. 
 
-Leider lässt sich der OData-Server lokal nicht einfach im Browser einbinden, da dies zu einem Cross-Origin-Resource-Sharing (CORS)-Problem führt. Die Anwendung läuft unter der Domäne „localhost“ und moderne Browser erlauben es nicht, Daten via XMLHttpPrequest von einer anderen Domäne zu laden (es sei denn, diese sendet entsprechende http-Header mit) \cite{sud:s25}. Um dieses Problem zu vermeiden, wird der Request über einen lokalen Reverse-Proxy (SAP Approuter) geleitet, der über das UI5-Tooling in das Projekt integriert werden muss. Dies ist zwar in wenigen Konfigurationschritten durchführbar, es zeigt aber bereits, dass auch gleich funktionierende Dinge (Zugriff auf die OData-Services via Destination) in SAPUI5 aufwendiger zu implementieren sind und die beiden LCNC-Toolings (Fiori Elements mit CAP und SAP AppGyver) derlei Dinge vom Entwickler fernhalten.
+Leider lässt sich der OData-Server lokal nicht einfach im Browser einbinden, da dies zu einem Cross-Origin-Resource-Sharing (CORS)-Problem führt. Die Anwendung läuft unter der Domäne „localhost“ und moderne Browser erlauben es nicht, Daten via XMLHttpRequest von einer anderen Domäne zu laden (es sei denn, diese sendet entsprechende http-Header mit) \cite{sud:s25}. Um dieses Problem zu vermeiden, wird der Request über einen lokalen Reverse-Proxy (SAP Approuter) geleitet, der über das UI5-Tooling in das Projekt integriert werden muss. Dies ist zwar in wenigen Konfigurationschritten durchführbar, es zeigt aber bereits, dass auch gleich funktionierende Dinge (Zugriff auf die OData-Services via Destination) in SAPUI5 aufwendiger zu implementieren sind und die beiden LCNC-Toolings (Fiori Elements mit CAP und SAP AppGyver) derlei Dinge vom Entwickler fernhalten.
 
 Der Zugriff auf die Daten in SAPUI5 erfolgt auf Basis eines ODataModels. Zwar ließen sich die Daten auch manuell als JSON abrufen, die Nutzung des ODataModels bietet jedoch den Vorteil, dass dies die http-Kommunikation komplett vom Entwickler fernhält. Zudem bietet das ODataModel weitere Features wie Databinding an, mit dem Daten sehr einfach an View-Controls gebunden und dargestellt werden können. 
 
@@ -340,7 +340,7 @@ Gleiches gilt auch für das initiale Setzen des Bindings. In obigem Coding zur L
 <StandardListItem title="{title}" type="Navigation" info="{price}" press="onItemPress"/>
 \end{lstlisting}
 
-Ein weiteres wichtiges Event ist das press-Event eines StandardListItems. Klickt ein User auf ein Produkt, so soll er auf die Dateilseite weitergeleitet werden. Das zugehörige Coding zeigt, dass an dieser Stelle auf den Router zugegriffen wird. In SAPUI5 sorgt der Router dafür, dass URL-Pfade auf Views/Controller gemappt werden und ermöglicht es, dass das Framekwork im Hintergrund die notwendigen Controller/Views instanziiert.
+Ein weiteres wichtiges Event ist das press-Event eines StandardListItems. Klickt ein User auf ein Produkt, so soll er auf die Detailseite weitergeleitet werden. Das zugehörige Coding zeigt, dass an dieser Stelle auf den Router zugegriffen wird. In SAPUI5 sorgt der Router dafür, dass URL-Pfade auf Views/Controller gemappt werden und ermöglicht es, dass das Framekwork im Hintergrund die notwendigen Controller/Views instanziiert.
 
 \begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=Auszüge aus der Controller \texttt{Main.control.ts}]
 public onItemPress(event: UI5Event){

@@ -26,7 +26,7 @@ In Fiori Elements ist es nicht notwendig, die Suchfilter-Funktion zusätzlich zu
 
 In AppGyver ist die Integration eines Suchfilters durch das manuelle Hinzufügen von Bausteinen möglich. Dabei ist jedoch zu erwähnen, dass der Filter komplett client-seitig funktioniert und zunächst alle Daten vom Backend geladen werden. Das sorgt dafür, dass bei großen Datenmengen längere Ladezeiten entstehen können. Die Implementierung in AppGyver ist wie folgt:
 
-Ein List Item wurde bereits in Kapitel 3.2.2 mit der angelegten Daten-Variable \textit{Product1} verbunden und wiederholt. Mit der Ablauffunktionkomponente „set app Variable“ wurde der List Item ebenfalls mit die in Abschnitt 3.2.2 erstellte App-Variable eingebunden. Für den Filter wird ein Input-Field per Drag and Drop in der Benutzeroberfläche integriert. Da die Suche über den Produkttitel erfolgen soll, wird der Wert des Input-Fields an die App-Variable Property \textit{title} gebunden. In den Advanced Properties des List Items befindet sich ein Visible-Flag, mit dem die Sichtbarkeit des List Items eingestellt werden kann. Der Schalter kann auf true oder false gesetzt werden. Bei false wird das List Item nicht gerendert. Über dieses Flag kann der Filter implementiert werden: Eine Contains-Formel wird an die Visible-Eigenschaft gehangen, die true zurückgibt, wenn der Text den angegebenen Textabschnitt enthält. Andernfalls gibt die Formel \textit{false} zurück und das Produkt wird ausgeblendet. Um die Groß- und Kleinschreibung nicht zu berücksichtigen, können alle Zeichenketten in Kleinbuchstaben umgewandelt werden (lowercase-Formel):
+Ein List Item wurde bereits in Kapitel 3.2.3 mit der angelegten Daten-Variable \textit{Product1} verbunden und wiederholt. Mit der Ablauffunktionkomponente „set app Variable“ wurde der List Item ebenfalls mit die in Abschnitt 3.2.3 erstellte App-Variable eingebunden. Für den Filter wird ein Input-Field per Drag and Drop in der Benutzeroberfläche integriert. Da die Suche über den Produkttitel erfolgen soll, wird der Wert des Input-Fields an die App-Variable Property \textit{title} gebunden. In den Advanced Properties des List Items befindet sich ein Visible-Flag, mit dem die Sichtbarkeit des List Items eingestellt werden kann. Der Schalter kann auf true oder false gesetzt werden. Bei false wird das List Item nicht gerendert. Über dieses Flag kann der Filter implementiert werden: Eine Contains-Formel wird an die Visible-Eigenschaft gehangen, die \textit{true} zurückgibt, wenn der Text den angegebenen Textabschnitt enthält. Andernfalls gibt die Formel \textit{false} zurück und das Produkt wird ausgeblendet. Um die Groß- und Kleinschreibung nicht zu berücksichtigen, können alle Zeichenketten in Kleinbuchstaben umgewandelt werden (lowercase-Formel):
 
 \textit{\scriptsize CONTAINS(LOWERCASE(repeated.current.Title),LOWERCASE(appVars.appVarRecord.Title))}
 
@@ -91,7 +91,7 @@ SAP AppGyver bietet für Listenansichten keine native Unterstützung einer Pagin
  \caption{Paging definieren in Ablauffunktion „Get record collection“}
 \end{figure}
 
-Damit die Paginierung funktioniert, müssen muss die Logik der Buttons noch hinzugefügt werden. Für beide Buttons gibt es eine eigene Ablauffunktion. Abbildung 4.4 zeigt die Logik der Buttons. Für PREV-Button wird den Wert der App-Variable „pageNumber“ mit folgender Formel ermittelt: 
+Damit die Paginierung funktioniert, muss die Logik der Buttons noch hinzugefügt werden. Für beide Buttons gibt es eine eigene Ablauffunktion. Abbildung 4.4 zeigt die Logik der Buttons. Für PREV-Button wird den Wert der App-Variable „pageNumber“ mit folgender Formel ermittelt: 
 
 \textit{\footnotesize SUBTRACT(appVars.pageNumber, 1)} 
 
@@ -145,7 +145,7 @@ Um die Medienressourcen zu lesen, sollte die GET-Anfrage in der Form \textit{/En
 
 Die Integration von Bild-Dateien in AppGyver ist relativ einfach zu implementieren. Hierzu gibt es in AppGyver ein Standard-View-Component Image. Mit Drag and Drop kann diese Komponente zur Benutzeroberfläche hinzugefügt werden. 
 
-Es gibt verschiedene Möglichkeiten, Bilder an die Benutzeroberfläche zu binden. (Abbildung 4.6) Mit „static image“ lässt sich ein lokales Bild auswählen und direkt hochladen. Wenn die Datei unter einer externen URL erreichbar ist, kann diese per "Formula" eingegeben werden. Weiterhin ist es möglich, auch Bilder aus Datenstrukturen auszulesen. Zudem gibt es im Marketplace verschiedene Ablauffunktionen, um die Kamera eines (mobilen) Endgeräts zu öffnen und ein Foto zu machen („Take photo“) oder ein Bild aus der Bibliothek des Geräts auszuwählen („Pick image from library“).
+Es gibt verschiedene Möglichkeiten, Bilder an die Benutzeroberfläche zu binden. (Abbildung 4.6) Mit „static image“ lässt sich ein lokales Bild auswählen und direkt hochladen. Wenn die Datei unter einer externen URL erreichbar ist, kann diese per „Formula“ eingegeben werden. Weiterhin ist es möglich, auch Bilder aus Datenstrukturen auszulesen. Zudem gibt es im Marketplace verschiedene Ablauffunktionen, um die Kamera eines (mobilen) Endgeräts zu öffnen und ein Foto zu machen („Take photo“) oder ein Bild aus der Bibliothek des Geräts auszuwählen („Pick image from library“).
 
 \begin{figure}[htbp]
  \centering
@@ -170,7 +170,7 @@ Für die Integration von Bild- und PDF-Dateien in UI5 stehen Standard-Controls z
 
 \section{Integration von Barcode-Scanner-Funktion}
 
-Die native Integration einer Barcode-Scanner-Funktion in Fiori-Elements ist nicht vorgesehen. Über eine Extension könnte ein Button in der UI platziert werden, die eine solche Funktion bereitstellt. Die Logik dafür entspricht der SAPUI5-Implementierung (s. unten).
+Die native Integration einer Barcode-Scanner-Funktion in Fiori-Elements ist nicht vorgesehen. Über eine Extension könnte ein Button in der UI platziert werden, die eine solche Funktion bereitstellt. Die Logik dafür entspricht der SAPUI5-Implementierung (siehe unten).
 
 In AppGyver existiert eine Ablauffunktionskomponente „Scan QR/Barcode“, welche die direkte Integration einer Barcode-Scan-Funktion ermöglicht. Das triggern der Scan-Funktion kann über einen Button angestoßen werden. Abbildung 4.6 zeigt die Logik für einen Scan-Button. Die Scan QR/barcode Ablauffunktionskomponente kann dann mit dem Event „Component tap“ verbunden werden. Die Ablauffunktion hat mehrere Ausgänge: Es ist möglich, den Textinhalt des gescannten QR-Barcodes zu erhalten. Weiterhin kann man ebenfalls eventuell auftretende Fehler erhalten. Nachfolgende Abbildung zeigt die exemplarische Integration und Ausgabe von gefundenen Barcodes oder Fehlern in einem Dialog.
 
@@ -225,7 +225,7 @@ public onScanError(oEvent) : void {
 
 Der Zugriff auf native mobile Funktionen, wie z.B. Sensor-Informationen des Smartphones, wird heute von modernen Browsern untersützt und ermöglicht die Nutzung in Applikationen.
 
-SAP Fiori Elements-Apps greifen standardmäßig nicht auf native Funktionen zurück. Hier können über Extensions Funktionalitäten hinzugefügt werden, was jedoch einen Programmieraufwand mit sich bringt (s. SAPUI5 unten).
+SAP Fiori Elements-Apps greifen standardmäßig nicht auf native Funktionen zurück. Hier können über Extensions Funktionalitäten hinzugefügt werden, was jedoch einen Programmieraufwand mit sich bringt (siehe SAPUI5 unten).
 
 SAP AppGyver unterstützt den Zugriff auf Sensordaten durch die Bereitstellung von Flow-Funktionen, sowie spezisischen Sensor-Variablen. Diese können bei der Erstellung einer Anwendung berücksichtigt werden. Folgende Sensoren werden unterstützt:
 

@@ -3,20 +3,88 @@
 %                          31.08.2022                        %
 %---------------------------------------------------------%
 %                    Zusammenfassung.tex              %
-%                        by Carina Möller                   %
-%                    cary_moeller@gmx.de              %
+%                        by Fangfang Tan                   %
+%                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Schluss und Ausblick}
 
-Die Ziele dieser Bachelorarbeit waren es, einen konkreten, kundenorientierten Anwendungsfall mit Fiori Elements in Verbindung mit CAP, SAP AppGyver und SAPUI5 zu entwickeln und dadurch die drei genannten Technologien im Hinblick auf die Vor- und Nachteile zu evaluieren, sowie eine Empfehlung für die Auswahl der Technologien zu liefern.
+Die Ziele dieser Bachelorarbeit waren es, einen konkreten, kundenorientierten Anwendungsfall mit Fiori Elements (in Verbindung mit CAP), SAP AppGyver und SAPUI5 zu entwickeln und dadurch die drei genannten Technologien im Hinblick auf die Vor- und Nachteile zu evaluieren, sowie eine Empfehlung für die Auswahl der Technologien zu liefern.
 
+In Kapitel 2 wurden einige Grundkonzepte für das Verständnis der Arbeit vorgestellt. Hier wurde zunächst der Fokus auf den No Code/Low Code-Ansatz, sowie die Architektur von SAP-Anwendungen auf SAP BTP gelegt. Danach erfolgte die Vorstellung einiger Grundlagen zu Fiori Elements, AppGyver und SAPUI5, sowie den gewählten Entwicklungsumgebungen .
 
+Um die Frage „Wie implementiert man eine benutzerspezifische Anwendung mit Fiori Elements, SAP AppGyver und SAPUI5?“ zu beantworten, wurde in Kapitel 3 der konkrete Entwicklungsprozess des Anwendungsfalls mit den drei benannten Tools beschrieben. Die Implementierungsschritte umfassten die Bereitstellung eines OData-Services mit Fiori Elements in Verbindung mit CAP im BAS, die Erstellung einer Listenansicht, einer Detailansicht sowie einer Maske zur Pflege eines einzelnen Produktes. Um die drei Technologien eingehender zu bewerten, wurden in Kapitel 4 weitere Funktionen untersucht, die über sich aus gängigen Kundenanforderungen ableiten lassen. Beispiele dafür sind die Integration von Suchfiltern, eine Paginierung, der Umgang mit Bild- und PDF-Dateien, sowie Barcode-Scanner-Funktionen. Die Möglichkeiten zum Deployment für unterschiedliche Endgeräte und die freien Gestaltungsmöglichkeiten wurden ebenfalls in Kapitel 4 untersucht. 
 
+Über die jeweiligen Ergebnisse hinaus konnte während der Implementierung festgestellt werden, dass AppGyver als LCNC-Werkzeug und SAPUI5 für die Pro-Entwicklung, diverse Architektur- und Anwendungskonzepte teilen:
 
+\begin{itemize}[noitemsep]
+\item SAPUI5 verwendet das MVC-Modell zur Aufteilung der Anwendungskomponenten. AppGyver benennt dies nicht explizit, die Komponenten lassen sich jedoch ebenfalls dieses Schichtenmodell unterteilen.
+\item Viele Komponenten einer Anwendung finden sich in beiden Welten wieder: 
+              \begin{itemize} [noitemsep]
+              \item UI Control (SAPUI5) – UI Component (AppGyver) 
+              \item Events (SAPUI5) – Events (AppGyver) 
+              \item Callback-Funkion im Controller (SAPUI5) – Ablauffunktion (AppGyver)
+              \end{itemize} 
+\item Sowohl in SAPUI5, als auch in AppGyver wird das Konzept des Data Bindings verwendet, um Daten an UI-Elemente zu binden und diese automatisch zu aktualisieren.
+\end{itemize}
 
+In Kapitel 5 erfolgte eine Bewertung der verwendeten Tools. Hierfür wurden zwei Bewertungsmatrizen erstellt. Eine Matrix diente dazu, die Umsetzung der Funktionalitäten zu bewerten. Dazu wurden zwei Kriterien herangezogen: die Umsetzbarkeit und der Umsetzungsaufwand. Die andere Matrix wurde verwendet, um die Technologie aus der Entwickler-Perspektive zu bewerten. Nach Durchführung der Bewertung erfolgte die Diskussion und Ableitung der Vor- und Nachteile der Technologien, sowie die Beantwortung der Frage, welche Technologie sich für welche Einsatzszenarien eignen.
 
+Die Vorteile von Fiori Elements in Kombination mit BAS können wie folgt zusammengefasst werden:
 
+ \begin{itemize} [noitemsep]
+ \item Sehr schnelle Umsetzung von Backend- und Frontend-Apps, basierend auf fest definierten Floorplans
+ \item Spezifische und komfortable Entwicklungsumgebung 
+ \item Integration von fortschrittlichen Entwicker-Tools (git)
+ \end{itemize} 
 
+Die Nachteile umfassen:
+\begin{itemize}[noitemsep]
+\item Großer Aufwand für Funktionalitäten außerhalb des Floorplans
+\item Keine Freiheitsgrade bei der Gestaltung der Apps
+\item Probleme mit Stabilität von BAS
+\item Wenig Dokumentation für Entwickler
+\end{itemize}
+
+Aus den Vor- und Nachteilen können Umsetzungsszenarien abgeleitet werden: SAP Fiori Elements eignet sich für einfache Standardanwendungen zur Darstellung von Daten in Listen oder einfachen CRUD-Anwendungen mit fest vorgegebenem Design in Teams von No-Code-Entwicklern. Es eignet sich aber auch für Standardanwendungen mit sehr geringer funktioneller Abweichung, die von Pro-Entwicklern hinzugefügt werden müssen in gemischten Teams oder in einem Team aus reinen Pro-Code-Entwicklern.
+
+Die Vorteile von AppGyver in Kombination mit Composer Pro lassen sich wie folgt zusammenfassen: 
+\begin{itemize}[noitemsep]
+\item Geringer Aufwand für die Implementierung von meisten Backend- und Frontendfunktionalitäten
+\item Flexibel im App-Design
+\item Geringer Einrichtungsaufwand der Entwicklungsumgebung
+\item Unabhängigkeit der Entwicklungsumgebung von Betriebssystem
+\item Stabilität von Composer Pro
+\end{itemize}
+
+Die Nachteile sind:
+\begin{itemize}[noitemsep]
+\item Bereitstellung von Services nicht möglich
+\item Geringe Anzahl an Ressourcen für Entwickler
+\item Spezifische Entwicklungsumgebung
+\item Debugger in Enterprise-Edition nicht verfügbar
+\item Version Management Tool in Community-Edition nicht verfügbar
+\end{itemize}
+
+SAP AppGyver bietet einen flexiblen Rahmen, mit dem sich fast alle Funktionalitäten mit relativ geringem Aufwand umsetzen lassen. Daher ist es für fast alle Anwendungsszenarien in Teams von (LCNC-)Entwicklern mit grundlegenden IT-Grundkenntnissen geeignet.
+
+SAPUI5 in Kombination mit Visual Studio Code dagegen richtet sich ausschließlich an Pro-Developer. Es besitzt folgende Stärken:
+
+\begin{itemize}[noitemsep]
+\item Flexibel im App-Design
+\item Weit verbreitete Entwicklungsumgebung
+\item Vielfältige Dokumentation für Entwickler
+\end{itemize}
+
+Die Nachteile sind:
+\begin{itemize}[noitemsep]
+\item Größerer Aufwand in der Umsetzung für viele Funktionalitäten
+\item Großer Einrichtungsaufwand in V- Code
+\item Hoher Lernaufwand für Anfänger
+\end{itemize}
+
+SAPUI5 ist damit eine sehr flexible Frontend-Technologie, jedoch ist der Implementierungsaufwand im Vergleich zu SAP AppGyver höher. Sie eignet sich demnach für komplexe Frontend-Anwendungsszenarien in Teams von Pro-Code-Entwicklern.
+
+Im Rahmen dieser Arbeit wurden nur ausgewählte Funktion einer Analyse und Bewertung unterzogen. Hier kann als Ausblick der Fokus auf zusätzliche Funktionen gelegt werden. Zum Beispiel sind die Authentifizierung und die Autorisierung sehr wichtige Themen für Geschäftsanwendungen, diese wurden im Rahmen der Thesis jedoch nicht berücksichtigt. Eine Analyse dieser Themen würde eine noch feinere Bewertung zulassen. Gleichfalls ließen sich auch die Anwendungsfälle weiter zeichnen. In Fiori Elements wurden für die Entwicklung der Anwendung nur die beiden Floorplans für Listenansicht und Detailseite verwendet. Mit der Overview Page und der Analytical List Page stehen jedoch auch Floorplan bereit, um analytische Anwendungsszenarien abzudecken. Zudem wurden im Kontext von SAP AppGyver und SAP Fiori Elements nur die LCNC-Funktionalitäten untersucht. Um SAP AppGyver noch flexibler zu machen, können komplett neue und eigene Komponenten vom Benutzer erstellt werden. Dies erfordert jedoch einen Programmieraufwand und ist nur von Pro Developern zu entwickeln. Auch für Fiori Elements wurde zwar auf die Erweiterungsfähigkeit hingewiesen, wie diese zu nutzen ist, wurde jedoch nicht weiter untersucht. Hier würde es sich anbieten, weitere Analysen und Bewertungen zu erarbeiten.
 
 

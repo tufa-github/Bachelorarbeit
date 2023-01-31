@@ -29,7 +29,7 @@ In Abschnitt 1.3 wurden die Anforderungen an die zu implementierende Anwendung b
   \caption{Umsetzungsanforderung der Technologie} 
 \end{table}
 
-Dabei ist zu unterscheiden zwischen Backend- und Frontend-Funktionalität. SAPUI5 verfügt grundsätzlich über keine Backend-Funktionalität. Mit SAP AppGyver können lokale Datenstrukturen erzeugt werden. Diese Funktion wird jedoch nicht genutzt, sondern ein zentraler OData-Service inklusive Datenbackend an anderer Stelle bereitgestellt. Hierfür wird auf die „Full Stack“-Anwendungen, bestehend aus Fiori Elements und SAP CAP, im SAP Application Studio zurückgegriffen. Das Fiori Elements-Frontend wird den erstellten OData-Service dann konsumieren. Das gleiche Datenmodell und der gleiche OData-Service werden dann ebenfalls von SAP AppGyver und SAPUI5 verwendet.  
+Dabei ist zwischen Backend- und Frontend-Funktionalität zu unterscheiden. SAPUI5 verfügt grundsätzlich über keine Backend-Funktionalität. Mit SAP AppGyver können lokale Datenstrukturen erzeugt werden. Diese Funktion wird jedoch nicht genutzt, stattdessen wird ein zentraler OData-Service inklusive Datenbackend an anderer Stelle bereitgestellt. Hierfür wird auf die „Full Stack“-Anwendungen, bestehend aus Fiori Elements und SAP CAP, im SAP Application Studio zurückgegriffen. Das Fiori Elements-Frontend wird den erstellten OData-Service dann konsumieren. SAP Appgyver und SAPUI5 nutzen hier das gleiche Datenmodell und den gleichen OData-Service. 
 
 \begin{figure}[htbp]
  \centering
@@ -116,7 +116,7 @@ Mithilfe der Page Map in BAS kann die UI-Anwendung angepasst werden. Zum Beispie
 
 \subsection{Deployment des OData-Services}
 
-Um auf den OData-Service auch aus den anderen Applikationen zuzugreifen und die UI-Anwendung bereitzustellen, muss ein Deployment aus BAS heraus erfolgen. Das Deployment erfolgt direkt auf die SAP BTP. Hierfür muss ein sogenannter „Space“ auf der SAP Business Technology Plattform vorliegen, sowie eine SAP HANA Cloud-Instanz bereitgestellt werden. Nachdem die Anwendungsbenutzeroberfläche in Business Application Studio erstellt worden ist, kann diese direkt aus BAS heraus deployed werden, wiederum ohne notwendiges Coding. Dazu muss man in BAS bei Cloud Foundry anmelden und das Cloud Foundry-Ziel angeben. Abbildung 3.9 zeigt, wie dies geht. 
+Um auf den OData-Service auch aus den anderen Applikationen zuzugreifen und die UI-Anwendung bereitzustellen, muss ein Deployment aus BAS heraus erfolgen. Das Deployment erfolgt direkt auf die SAP BTP. Hierfür muss ein sogenannter „Space“ auf der SAP Business Technology Plattform vorliegen, sowie eine SAP HANA Cloud-Instanz bereitgestellt werden. Nachdem die Anwendungsbenutzeroberfläche in Business Application Studio erstellt worden ist, kann diese, ohne der Notwendigkeit von zusätzlichem Coding, direkt aus dem BAS heraus deployed werden. Dazu muss man in BAS bei Cloud Foundry anmelden und das Cloud Foundry-Ziel angeben. Abbildung 3.9 zeigt, wie dies geht. 
 
 \begin{figure}[htbp]
  \centering
@@ -170,7 +170,7 @@ Zur Anzeige der Produkteliste muss die View-Component „List item“ mit dem er
 \subsection{Einzelansicht für ein Produkt}
 Die Einzelansicht enthält alle Properties zu einem Produkt, nämlich den Produkttitel, die Beschreibung, die Materialnummer, den Preis, den Bestand und die Produkt-ID. Für die Darstellung der Informationen muss eine Detailseite mit dem Namen „Product Details“ erstellt werden. Eine App-Variable \textit{appVarRecord} mit sechs Properties wird erstellt, damit die Daten an verschiedene Seiten der Anwendung übertragen werden können.
 
-Um von der Listenseite zur Detail-Seite zu navigieren, muss die logische Ablauffunktion für das List Item in der Listenseite aufgebaut werden, dabei geht es um ein Component tap Event. Das Event wird ausgelöst, wenn das List Item vom Benutzer angeklickt wird. Der Aufbau der logischen Ablauffunktion kann Abbildung 3.14 entnommen werden. 
+Um von der Listenseite zur Detail-Seite zu navigieren, muss die logische Ablauffunktion für das List Item in der Listenseite aufgebaut werden. Hierbei geht es um ein Tap-Event der Komponente. Das Event wird ausgelöst, wenn das List Item vom Benutzer angeklickt wird. Der Aufbau der logischen Ablauffunktion kann Abbildung 3.14 entnommen werden. 
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=0.9\textwidth]{Bilder/appgyver/3_14_Logik_ListItem.JPG}
@@ -204,9 +204,9 @@ Um den Datensatz speichern zu können, wird eine Ablauffunktion mit der Komponen
  \caption{Logische Ablauffunktion für Save-Button}
 \end{figure}
 
-Wie bereits in Kapitel 2.4.2 vorgestellt, lassen sich die AppGyver-Baustein in 3 Schichten des MVC-Modells unterteilen, nämlich in View-, Controller- und Model-Schichten. Auf der View-Schicht wurden für den Anwendungsfall insgesamt 3 Seiten- und 21 View-Komponenten erstellt, darunter 3 Seitentitel, ein List Item, 11 Input-Felder sowie 7 Buttons. Damit die Buttons und das List Item dynamisch funktionieren, wurden in der Controller-Schicht 8 logische Ablauffunktionen mit Componente tap Event erstellt. In der Model-schicht wurden 2 Daten-Variablen und eine App-Variable erstellt, um die Daten vom Odata-Service zu holen, die Daten zu aktualisieren und sie an verschiedene Seiten zu übertragen.
+Wie bereits in Kapitel 2.4.2 vorgestellt, lassen sich die AppGyver-Baustein in 3 Schichten des MVC-Modells unterteilen, nämlich in View-, Controller- und Model-Schichten. Auf der View-Schicht wurden für den Anwendungsfall insgesamt 3 Seiten- und 21 View-Komponenten erstellt, darunter 3 Seitentitel, ein List Item, 11 Input-Felder sowie 7 Buttons. Damit die Buttons und das List Item dynamisch funktionieren, wurden in der Controller-Schicht 8 logische Ablauffunktionen mit Componente tap Event erstellt. In der Model-Schicht wurden 2 Daten-Variablen und eine App-Variable erstellt, um die Daten vom Odata-Service zu holen, die Daten zu aktualisieren und sie an verschiedene Seiten zu übertragen.
 
-Ein wichtiges Konzept im AppGyver ist die Binding von Komponenten an Daten, die in Variablen gespeichert sind. Mit nur wenigen Klicks kann Beispielweise eine View-Component Property direkt mit einer Data-Variable in Binding treten. Die Binding wird automatisch aufgelöst, wenn neue Daten aus dem Backend abgerufen und in der Date-Variable gespeichert werden. Die View-Component Property wird aktualisiert und die neuen Daten wird in View angezeigt \cite{appg:bd}.
+Ein wichtiges Konzept im AppGyver ist die Binding von Komponenten an Daten, die in Variablen gespeichert sind. Mit nur wenigen Klicks kann Beispielweise eine View-Component Property direkt mit einer Data-Variable mittels Binding verbunden werden. Das Binding wird automatisch aufgelöst, wenn neue Daten aus dem Backend abgerufen und in der Date-Variable gespeichert werden. Die View-Component Property wird aktualisiert und die neuen Daten wird in View angezeigt \cite{appg:bd}.
 
 \begin{figure}[htbp]
  \centering
@@ -238,7 +238,7 @@ Zur Erzeugung des Applikations-Gerüsts wird der Befehl \textit{yo easy-ui5 ts-a
 
 Nach Eingabe der Parameter müssen noch alle externen Bibliotheken via npm install installiert werden und dann kann die Entwicklung beginnen.
 
-Der Generator erzeugt die grundlegende Projektstruktur eines SAPUI5-Projekts. Das MVC-Pattern findet sich auch im Dateisytem wieder. So liegen die Controller im Verzeichnis controller, die Views im gleichnamigen Verzeichnis und es ist ebenfalls ein model-Verzeichnis vorgehsehen. Dies wird jedoch im Projekt nicht verwendet, sondern es werden auf Standard Odata- und JSONModel zurückgegriffen \cite{sud:ao}. Daneben sind noch eine Reihe an Konfigurationsdateien vorhanden, wie package.json oder manifest.json: 
+Der Generator erzeugt die grundlegende Projektstruktur eines SAPUI5-Projekts. Das MVC-Pattern findet sich auch im Dateisytem wieder. So liegen die Controller im Verzeichnis controller, die Views im gleichnamigen Verzeichnis und es ist ebenfalls ein model-Verzeichnis vorgehsehen. Dies wird jedoch im Projekt nicht verwendet, sondern es werden auf Standard Odata- und JSONModel zurückgegriffen \cite{sud:ao}. Daneben sind noch eine Reihe an Konfigurationsdateien vorhanden. Beispiele hierfür sind die „package.json“-Datei, sowie die „manifest.json“-Datei. 
 
 \begin{lstlisting}[language=bash,  caption=Die grundlegende Projektstruktur eines SAPUI5-Projekts]
 project-root
@@ -261,7 +261,7 @@ project-root
 |- ui5.yaml
 \end{lstlisting}
 
-Die Datei „manifest.json“ enthält die Grundkonfiguration der Anwendung, die für die Ausführung benötigt wird. Alle Modelle, Bibliotheken und Komponenten, die in der „manifest.json“-Datei konfiguriert sind, werden beim Starten der Anwendung automatisch geladen und instanziiert. Die „rootView“- und „routing“-Konfigurationen definieren die Hauptansicht der Anwendung, die nach Öffnen im Browser angezeigt wird, und die Navigation zwischen den Ansichten.
+Die Datei „manifest.json“ enthält die Grundkonfiguration der Anwendung, die für die Ausführung benötigt wird. Alle Modelle, Bibliotheken, die in der „manifest.json“-Datei konfiguriert sind, werden beim Starten der Anwendung automatisch geladen und instanziiert. Die „rootView“- und „routing“-Konfigurationen definieren die Hauptansicht der Anwendung, die nach Öffnen im Browser angezeigt wird, und die Navigation zwischen den Ansichten.
 
 In der Datei „App.view.xml“ wird die Benutzeroberfläche der Hauptansicht der Anwendung definiert. SAPUI5 unterstützt mehrere View-Typen (XML, HTML, JavaScript, JSON). In diesem Projekt wird das XML-Format verwendet. Für jede Ansicht, die in der Anwendung verwendet wird, soll eine eigene View-Datei erstellt werden, und jede View wird von einem separaten Controller gesteuert. 
 
@@ -273,19 +273,19 @@ Das Öffnen der Webanwendung erfolgt durch Aufrufen der index.html-Seite   über
  \caption{Aussehen der UI5 Demo-Anwendung}
 \end{figure}
 
-In den nächsten Abschnitten wird die Implementierung der UI5-Anwendung nun im Detail beschrieben. 
+In den nächsten Abschnitten wird die Implementierung der UI5-Anwendung im Detail beschrieben. 
 
-\subsection{OData Service einbinden}
+\subsection{OData-Service einbinden}
 
 In Kapitel 3.2.2 wurde die Bereitstellung der OData-Services und der Destination in der SAP-BTP-Umgebung vorgestellt. Die SAPUI5-Anwendung muss diese Destination ebenfalls integrieren, um die OData-Services hinter der Destination konsumieren zu können. 
 
 Leider lässt sich der OData-Server lokal nicht einfach im Browser einbinden, da dies zu einem Cross-Origin-Resource-Sharing (CORS)-Problem führt. Die Anwendung läuft unter der Domäne „localhost“ und moderne Browser erlauben es nicht, Daten via XMLHttpRequest von einer anderen Domäne zu laden (es sei denn, diese sendet entsprechende http-Header mit) \cite{sud:s25}. Um dieses Problem zu vermeiden, wird der Request über einen lokalen Reverse-Proxy (SAP Approuter) geleitet, der über das UI5-Tooling in das Projekt integriert werden muss. Dies ist zwar in wenigen Konfigurationschritten durchführbar, es zeigt aber bereits, dass auch gleich funktionierende Dinge (Zugriff auf die OData-Services via Destination) in SAPUI5 aufwendiger zu implementieren sind und die beiden LCNC-Toolings (Fiori Elements mit CAP und SAP AppGyver) derlei Dinge vom Entwickler fernhalten.
 
-Der Zugriff auf die Daten in SAPUI5 erfolgt auf Basis eines ODataModels. Zwar ließen sich die Daten auch manuell als JSON abrufen, die Nutzung des ODataModels bietet jedoch den Vorteil, dass dies die http-Kommunikation komplett vom Entwickler fernhält. Zudem bietet das ODataModel weitere Features wie Databinding an, mit dem Daten sehr einfach an View-Controls gebunden und dargestellt werden können. 
+Der Zugriff auf die Daten in SAPUI5 erfolgt auf Basis eines OData-Models. Zwar ließen sich die Daten auch manuell als JSON abrufen, die Nutzung des OData-Models bietet jedoch den Vorteil, dass dies die http-Kommunikation komplett vom Entwickler fernhält. Zudem bietet das OData-Model weitere Features wie Databinding an, mit dem Daten sehr einfach an View-Controls gebunden und dargestellt werden können. 
 
-Das ODataModel wird in der Component.ts-Datei erstellt und damit beim Starten der Anwendung initial in allen Controllern und Views bekannt gemacht.
+Das OData-Model wird in der Component.ts-Datei erstellt und damit beim Starten der Anwendung initial in allen Controllern und Views bekannt gemacht.
 
-\begin{lstlisting}[emph={oData},  caption=Auszüge aus der Klasse \texttt{Component}]
+\begin{lstlisting}[emph={oData},  caption=Auszüge aus der \texttt{Component.ts}]
 const oData = new ODataModel({
   serviceUrl: "public/",
   synchronizationMode: "None",
@@ -303,7 +303,7 @@ Die Listenansicht soll alle Produkte in einer Liste darstellen und es dem User e
  \caption{Benutzeroberfläche der Listenansicht der Produkte}
 \end{figure}
 
-SAPUI5-Controls sind UI-Elemente, die das Aussehen und Verhalten kapseln. In SAPUI5 stehen mehr als 100 Controls wie z.B. Buttons, Inputs, Texte, Tabellen, Messages, Dialoge, Listen usw. zur Verfügung. Eine Control kann andere Controls aggregieren und diese dient dann als Container. Die List-Control ist ein Container für entsprechende Listenelemente. Die Steuerung der View wird im entsprechenden Controller \textit{Main.controller.ts} implementiert. 
+SAPUI5-Controls sind UI-Elemente, die das Aussehen und Verhalten kapseln. In SAPUI5 stehen mehr als 100 Controls wie z.B. Buttons, Inputs, Texte, Tabellen, Messages, Dialoge, Listen usw. zur Verfügung. Eine Control kann andere Controls aggregieren und dient anschließend als Container. Die List-Control ist ein Container für entsprechende Listenelemente. Die Steuerung der View wird im entsprechenden Controller \textit{Main.controller.ts} implementiert. 
 
 \begin{lstlisting}[language=XML,  caption=Auszüge aus der View \texttt{Main.view.xml}]
 <List mode="Delete" delete="onDeletePress" items="{path:'/Products'}" id="productsList">
@@ -322,9 +322,9 @@ SAPUI5-Controls sind UI-Elemente, die das Aussehen und Verhalten kapseln. In SAP
 </List>
 \end{lstlisting}  
 
-Das Coding zeigt den Ausschnitt der Listendefinition. Jede Control verfügbar über bereitgestellte Eigenschaften (Properties) und Events, die im XML angegeben werden können. Mit der Eigenschaft \textit{mode="Delete"} wird beispielsweise automatisch ein Lösch-Button in der Liste hinzugefügt. Das Event \textit{delete=“onDeletePress“} verweist dahingehend dann auf die Callback-Funktion onDeletePress in der Klasse \textit{Main.controller.ts}, welche das Löschen dann programmatisch vornehmen muss:
+Das Coding zeigt den Ausschnitt der Listendefinition. Jede Control verfügt über bereitgestellte Eigenschaften (Properties) und Events, die im XML angegeben werden können. Mit der Eigenschaft \textit{mode="Delete"} wird beispielsweise automatisch ein Lösch-Button in der Liste hinzugefügt. Das Event \textit{delete=“onDeletePress“} verweist dahingehend dann auf die Callback-Funktion onDeletePress in der Klasse \textit{Main.controller.ts}, welche das Löschen dann programmatisch vornehmen muss:
 
-\begin{lstlisting}[emph={event, UI5Event, listItem},  caption=Auszüge aus der Controller \texttt{Main.control.ts}]
+\begin{lstlisting}[emph={event, UI5Event, listItem},  caption=Auszüge aus der Controller \texttt{Main.controller.ts}]
 public onDeletePress(event: UI5Event) {
     const listItem = event.getParameter("listItem") as ColumnListItem;
     const context = listItem.getBindingContext() as Context;
@@ -332,7 +332,7 @@ public onDeletePress(event: UI5Event) {
 } 
 \end{lstlisting}
 
-In dieser Methode zeigt sich, dass in SAPUI5 durch die Models und das Databinding weder die Daten direkt aus den UI-Controls abrufen noch direkt mit dem OData-Service kommuniziert werden muss. Es wird an dieser Stelle lediglich der BindingContext (die Information zum Binding selber) benötigt und diese aus dem Model gelöscht. Das sorgt dann automatisch dafür, dass das Model einen DELETE-Request zum OData-Service sendet und das Produkt aus der Datenbank entfernt wird.
+In dieser Methode zeigt sich, dass in SAPUI5 durch die Models und das Databinding weder die Daten direkt aus den UI-Controls abrufen noch direkt mit dem OData-Service kommuniziert werden muss. Es wird an dieser Stelle lediglich der BindingContext (die Information zum Binding selber) benötigt und dieser aus dem Model gelöscht. Das sorgt dann automatisch dafür, dass das Model einen DELETE-Request zum OData-Service sendet und das Produkt aus der Datenbank entfernt wird.
 
 Gleiches gilt auch für das initiale Setzen des Bindings. In obigem Coding zur Listenansicht ist zu sehen, dass in der Liste lediglich ein StandardListItem definiert wird. Dies dient dabei als Template für alle Produkte, die aus dem OData-Service ausgelesen werden. Über das Aggregation-Binding der Aggregation items (\textit{items="\{path:'/Products'\}"}) werden alle Produkte, sich in unter dem Pfad abrufen lasssen gebunden und für jedes Produkt wird ein \textit{StandardListItem} erzeugt, das den Titel und Preis anzeigt \cite{sud:s19}.
 
@@ -342,7 +342,7 @@ Gleiches gilt auch für das initiale Setzen des Bindings. In obigem Coding zur L
 
 Ein weiteres wichtiges Event ist das press-Event eines StandardListItems. Klickt ein User auf ein Produkt, so soll er auf die Detailseite weitergeleitet werden. Das zugehörige Coding zeigt, dass an dieser Stelle auf den Router zugegriffen wird. In SAPUI5 sorgt der Router dafür, dass URL-Pfade auf Views/Controller gemappt werden und ermöglicht es, dass das Framekwork im Hintergrund die notwendigen Controller/Views instanziiert.
 
-\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=Auszüge aus der Controller \texttt{Main.control.ts}]
+\begin{lstlisting}[emph={event, UI5Event, listItem, detail, path}, caption=Auszüge aus der Controller \texttt{Main.controller.ts}]
 public onItemPress(event: UI5Event){
     var item = event.getSource();
     var context = item.getBindingContext();
@@ -367,7 +367,7 @@ Damit die Navigation funktioniert, müssen für die Einzelansicht ein View \text
 <Label text="Stock" />		
 <Input value="{stock}" width="1000px" />
 \end{lstlisting}
-Damit die Werte angezeigt werden können, wird in der View wieder ein ElementBinding verwendet, dass ein komplettes Produkt an die View bindet. Dann ist es ausreichend, lediglich die Attribute zu benennen und das ODataModel lädt die relevanten Daten automatisch. Abbildung 3.21 kann die finale Benutzeroberfläche der Einzelansicht für ein Produkt entnommen werden.
+Damit die Werte angezeigt werden können, wird in der View wieder ein ElementBinding verwendet, dass ein komplettes Produkt an die View bindet. Dann ist es ausreichend, lediglich die Attribute zu benennen und das OData-Model lädt die relevanten Daten automatisch. Abbildung 3.21 kann die finale Benutzeroberfläche der Einzelansicht für ein Produkt entnommen werden.
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=0.8\textwidth]{Bilder/ui5 freestyle/3_21_Einzelansicht.png}
@@ -401,9 +401,9 @@ Für die Zusammenstellung der Maske zur Pflege eines Produkts werden Label-, Inp
 </endButton>
 \end{lstlisting}
 
-In der Fragment-Implementierungsdatei werden mehrere Eingabefelder und zwei Buttons, \textit{Cancel} und \textit{Add} erstellt. Wird das press-Event des \textit{Add}-Buttons geworfen, so wird die Methode \textit{pressAddInProductsList} aufgerufen, um den Datensatz, der in das Eingabefeld eingegeben wurden, in den OData-Service zu übernehmen. Die Eingabewerte aller Eingabefelder werden zunächst via Binding an ein lokales JSON-Model übergeben. In der \textit{pressAddInProductsList}-Methode werden die Werte aus dem lokalen Model ausgelesen und ein neues OData-Binding erzeugt, dass die Daten automatisch an den OData-Endpunkt sendet.
+In der Fragment-Implementierungsdatei werden mehrere Eingabefelder und zwei Buttons, \textit{Cancel} und \textit{Add} erstellt. Wird das press-Event des \textit{Add}-Buttons geworfen, so wird die Methode \textit{pressAddInProductsList} aufgerufen, um den Datensatz, der in das Eingabefeld eingegeben wurde, in den OData-Service zu übernehmen. Die Eingabewerte aller Eingabefelder werden zunächst via Binding an ein lokales JSON-Model übergeben. In der \textit{pressAddInProductsList}-Methode werden die Werte aus dem lokalen Model ausgelesen und ein neues OData-Binding erzeugt, dass die Daten automatisch an den OData-Endpunkt sendet.
 
-\begin{lstlisting}[emph={var, ODataListBinding, materialNumber, items, recipient, listInputModel, title, id, description, price, stock}, caption=Auszüge aus der Controller \texttt{Main.control.ts}]
+\begin{lstlisting}[emph={var, ODataListBinding, materialNumber, items, recipient, listInputModel, title, id, description, price, stock}, caption=Auszüge aus der Controller \texttt{Main.controller.ts}]
 public pressAddInProductsList() {
     var title = this.getView().getModel("listInputModel").getProperty("/recipient/title");
     var id = this.getView().getModel("listInputModel").getProperty("/recipient/id");

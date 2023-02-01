@@ -10,11 +10,11 @@
 \chapter{Einleitung} \label{EL}
 
 \section{Problemstellung und Motivation}
-Seit die Branchenanalysten von Forrester Research im Jahr 2014 erstmals das Konzept von Low-Code erwähnten \cite{lcnc:ndp}, hat sich der zugehörige Markt rasant entwickelt. Immer mehr Unternehmen nutzen Low-Code-Plattformen, um Anwendungen schneller zu entwickeln und damit den digitalen Wandel zu beschleunigen. Die Analysten von Gartner erwarten, dass im Jahr 2025 rund 70\% der von Unternehmen entwickelten Anwendungen auf Low-Code- Technologien basieren werden \cite{lcnc:lcp}. 
+Seit die Branchenanalysten von Forrester Research im Jahr 2014 erstmals das Konzept von Low-Code erwähnten \cite{lcnc:ndp}, hat sich der zugehörige Markt rasant entwickelt. Immer mehr Unternehmen nutzen Low-Code-Plattformen, um Anwendungen schneller zu entwickeln und damit den digitalen Wandel zu beschleunigen. Die Analysten von Gartner erwarten, dass im Jahr 2025 rund 70\% der von Unternehmen entwickelten Anwendungen auf Low-Code Technologien basieren werden \cite{lcnc:lcp}. 
 
-Im Bereich der Enterprise Software werden die meisten Low-Code-Plattformen verwendet, um eine bestimmte Anwendungsform in einem spezifischen Kontext zu entwickeln. In der Studie „No-Code/Low-Code 2022“ im Magazin COMPUTERWOCHE, gibt die Mehrheit der gefragten Unternehmen an, dass sie Low-Code hauptsächlich in den Bereichen CRM (34\%) und ERP (31\%) einsetzen. Speziell ausgerichtete Low-Code Plattformen werden ebenfalls im HR-Umfeld (19\%)  verwendet, sowie für die Erstellung digitaler Workflows und Verwaltungsprozesse (jeweils 16\%). Nur 10\% der Befragten nutzen eine universell einsetzbare Plattform, die sich für übergreifende und flexible Geschäftsprozesse eignet. Laut Jürgen Erbeldinger, einem Low-Code-Experten der Low-Code-Plattform ESCRIBA, fehlt den Plattformen hierfür die entsprechende Tiefe \cite{lcnc:nclc}.
+Im Bereich der Enterprise Software werden die meisten Low-Code-Plattformen verwendet, um eine bestimmte Anwendungsform in einem spezifischen Kontext zu entwickeln. In der Studie „No-Code/Low-Code 2022“ im Magazin COMPUTERWOCHE, gibt die Mehrheit der gefragten Unternehmen an, dass sie Low-Code hauptsächlich in den Bereichen CRM (34\%) und ERP (31\%) einsetzen. Speziell ausgerichtete Low-Code-Plattformen werden ebenfalls im HR-Umfeld (19\%)  verwendet, sowie für die Erstellung digitaler Workflows und Verwaltungsprozesse (jeweils 16\%). Nur 10\% der Befragten nutzen eine universell einsetzbare Plattform, die sich für übergreifende und flexible Geschäftsprozesse eignet. Laut Jürgen Erbeldinger, einem Low-Code-Experten der Low-Code-Plattform ESCRIBA, fehlt den Plattformen hierfür die entsprechende Tiefe \cite{lcnc:nclc}.
 
-AppGyver betrachtet sich selbst als die weltweit erste professionelle Low-Code Plattform, die es ermöglicht, Anwendungen für unterschiedliche Geschäftsprozesse, Anwendungsszenarien und auch Endgeräte zu erstellen \cite{lcnc:appgyv}. Im Februar 2021 wurde AppGyver von dem Marktführer im Bereich Enterprise Software SAP übernommen und wird seitdem in deren Entwicklungsportfolio rund um die SAP Business Technology Plattform eingegliedert \cite{lcnc:ncp}, \cite{lcnc:appgyvint}. Seit dem 15. November 2022 wurde SAP AppGyver in SAP Build App umbenannt und ist nun Teil von SAP Build. AppGyver steht damit in Konkurrenz zu etablierten Tools und Frameworks zur Anwendungsentwicklung: SAPUI5 ist ein JavaScript-Framework und bildet die Grundlage nahezu aller heute entwickelten SAP-Oberflächen. Die Erstellung von SAPUI5-Anwendungen setzt jedoch ein tieferes technisches Verständnis voraus. Basierend auf SAPUI5 steht mit SAP Fiori Elements ein Framework zur Verfügung, welches durch Annotationen die einfache Erstellung von datengetriebenen Oberflächen erlaubt. Dank der guten Integration in die SAP eigenen Entwicklungsumgebungen, das SAP Business Application Studio, kann SAP Fiori Elements in Kombination mit dem SAP Application Programming Model auch im Bereich der Low-Code Entwicklung platziert werden \cite{lcnc:fiori}. Für Unternehmen ergibt sich in Zukunft nun die Fragestellung, welche Plattform und Tools im SAP-Umfeld eingesetzt werden sollten, um Anwendungen zu entwickeln. Die Aufgabe dieser Bachelorarbeit besteht darin, den Entwicklungsprozess von SAP AppGyver, SAPUI5, sowie Fiori Elements in Kombination mit dem SAP Application Programming Model zu bewerten, Vor- und Nachteile der jeweiligen Lösung herauszuarbeiten und dadurch ein Entscheidungsmatrix zu entwerfen, welche die Wahl zwischen diesen drei Technologien vereinfacht.
+AppGyver betrachtet sich selbst als die weltweit erste professionelle Low-Code-Plattform, die es ermöglicht, Anwendungen für unterschiedliche Geschäftsprozesse, Anwendungsszenarien und auch Endgeräte zu erstellen \cite{lcnc:appgyv}. Im Februar 2021 wurde AppGyver von dem Marktführer im Bereich Enterprise Software SAP übernommen und wird seitdem in deren Entwicklungsportfolio rund um die SAP Business Technology Plattform eingegliedert \cite{lcnc:ncp}, \cite{lcnc:appgyvint}. Seit dem 15. November 2022 wurde SAP AppGyver in SAP Build App umbenannt und ist nun Teil von SAP Build. AppGyver steht damit in Konkurrenz zu etablierten Tools und Frameworks zur Anwendungsentwicklung: SAPUI5 ist ein JavaScript-Framework und bildet die Grundlage nahezu aller heute entwickelten SAP-Oberflächen. Die Erstellung von SAPUI5-Anwendungen setzt jedoch ein tieferes technisches Verständnis voraus. Basierend auf SAPUI5 steht mit SAP Fiori Elements ein Framework zur Verfügung, welches durch Annotationen die einfache Erstellung von datengetriebenen Oberflächen erlaubt. Dank der guten Integration in die SAP eigenen Entwicklungsumgebungen, das SAP Business Application Studio, kann SAP Fiori Elements in Kombination mit dem SAP Application Programming Model auch im Bereich der Low-Code Entwicklung platziert werden \cite{lcnc:fiori}. Für Unternehmen ergibt sich in Zukunft nun die Fragestellung, welche Plattform und Tools im SAP-Umfeld eingesetzt werden sollten, um Anwendungen zu entwickeln. Die Aufgabe dieser Bachelorarbeit besteht darin, den Entwicklungsprozess von SAP AppGyver, SAPUI5, sowie Fiori Elements in Kombination mit dem SAP Application Programming Model zu bewerten, Vor- und Nachteile der jeweiligen Lösung herauszuarbeiten und dadurch ein Entscheidungsmatrix zu entwerfen, welche die Wahl zwischen diesen drei Technologien vereinfacht.
 
 Diese wissenschaftliche Arbeit wird dabei unterstützt durch die Firma \xblackout{p36 GmbH. P36, mit dem Sitz im Bad Hersfeld, wurde 2015 von Patrick Pfau und Robin Wennemuth} gegründet. Das mit \xblackout{27 Mitarbeitern} noch recht kleine, aber stark wachsende Softwareunternehmen besitzt einen starken Fokus auf die Entwicklung von Cloud-basierten Anwendungen im SAP-Umfeld \cite{lcnc:p36}.  Bei der Umsetzung der Anwendungen setzt \xblackout{p36} überwiegend auf die sehr technische SAPUI5-Entwicklung und evaluiert derzeit den Einsatz von Low-Code-Plattformen. \xblackout{p36} stellt deswegen einen, sich an reellen Kundenanforderungen orientierenden, Anwendungsfall zur Verfügung, der im Rahmen der Arbeit als Grundlage der Evaluierung dienen soll. 
 
@@ -80,12 +80,12 @@ In dieser Arbeit werden die drei genannten Technologien verwendet, um eine konkr
 
 Zusätzlich zu den umzusetzenden Funktionalitäten wird eine Reihe weiterer Funktionen ohne praktische Umsetzung untersucht, um SAPUI5, Fiori Elements und AppGyver tiefergehend zu evaluieren. Diese Funktionen umfassen:
 \begin{itemize}[noitemsep]
-\item Integration von Suchfilter und Paginierung
-\item Integration von Bild und PDF-Datei
-\item Integration von Barcode-Scanner-Funktionen
-\item Nutzung mobiler Funktionen wie Sensoren
-\item Möglichkeiten zum Deployment für unterschiedliche Endgeräte
-\item Freie Gestaltungsmöglichkeiten
+\item Integration von Suchfilter und Paginierung.
+\item Integration von Bild und PDF-Dateien.
+\item Integration einer Barcode-Scanner-Funktion.
+\item Nutzung mobiler Funktionen wie Sensoren.
+\item Möglichkeiten zum Deployment für unterschiedliche Endgeräte.
+\item Freie Gestaltungsmöglichkeiten.
 \end{itemize}
 
 \section{Aufbau der Arbeit}
@@ -95,10 +95,10 @@ Im 2. Kapitel werden zunächst die grundlegenden Konzepte erläutert. Der erste 
 
 Kapitel 3 bis 5 bilden den Hauptteil der Bachelorarbeit. Im dritten Kapitel wird der Umsetzungsprozess des Anwendungsfalls mit Fiori Elements, AppGyver und SAPUI5 beschrieben. Die zu beschreibenden Funktionen umfassen: 
 \begin{itemize}[noitemsep]
-\item Bereitstellung eines OData-Services zum Auslesen, Erstellen und Aktualisieren der Produkte
-\item Erstellung einer Listenansicht zur Anzeige aller Produkte
-\item Erstellung einer Einzelansicht für ein Produkt
-\item Erstellung einer Maske zum Pflegen eines einzelnen Produkts
+\item Bereitstellung eines OData-Services zum Auslesen, Erstellen und Aktualisieren der Produkte.
+\item Erstellung einer Listenansicht zur Anzeige aller Produkte.
+\item Erstellung einer Einzelansicht für ein Produkt.
+\item Erstellung einer Maske zum Pflegen eines einzelnen Produkts.
 \end{itemize}
 
 Im 4. Kapitel werden weitere Funktionen, ohne technische Implementierung, untersucht, um Fiori Elements, AppGyver und SAPUI5 eingehender zu bewerten. Basierend auf Kapitel 3 und Kapitel 4 konzentriert sich Kapitel 5 auf die Gegenüberstellung und Bewertung der drei Tools. Hierfür werden die Bewertungsmatrizen definiert, die Bewertung durchgeführt und anschließend die Bewertungsergebnisse diskutiert und interpretiert. Kapitel 6, das letzte Kapitel der Bachelorarbeit, enthält abschließend ein Fazit und einen Ausblick auf die künftige Forschung.

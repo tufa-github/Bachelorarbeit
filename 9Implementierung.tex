@@ -26,7 +26,7 @@ In Abschnitt 1.3 wurden die Anforderungen an die zu implementierende Anwendung b
 	Fiori Elements (inkl. SAP CAP)&X&X\\
 	\hline
 	\end{tabular}
-  \caption{Umsetzungsanforderung der Technologie} 
+  \caption{Umsetzungsanforderung der Technologien} 
 \end{table}
 
 Dabei ist zwischen Backend- und Frontend-Funktionalität zu unterscheiden. SAPUI5 verfügt grundsätzlich über keine Backend-Funktionalität. Mit SAP AppGyver können lokale Datenstrukturen erzeugt werden. Diese Funktion wird jedoch nicht genutzt, stattdessen wird ein zentraler OData-Service inklusive Datenbackend an anderer Stelle bereitgestellt. Hierfür wird auf die „Full Stack“-Anwendungen, bestehend aus Fiori Elements und SAP CAP, im SAP Application Studio zurückgegriffen. Das Fiori Elements-Frontend wird den erstellten OData-Service dann konsumieren. SAP Appgyver und SAPUI5 nutzen hier das gleiche Datenmodell und den gleichen OData-Service. 
@@ -34,7 +34,7 @@ Dabei ist zwischen Backend- und Frontend-Funktionalität zu unterscheiden. SAPUI
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=0.7\textwidth]{Bilder/architecture/apps_architektur.jpg}
- \caption{Umsetzungsarchitektur der Technologie}
+ \caption{Umsetzungsarchitektur der Technologien}
 \end{figure}
 
 \section{Fiori Elements}
@@ -104,14 +104,14 @@ Unter der User-Interfaces-Karte kann die Benutzeroberfläche der Anwendung defin
 \end{figure}
 
 Nach dem Klick auf den „Finish“-Button wird die UI-Application automatisch generiert. Auch hier wird im Hintergrund Quellcode abgelegt: Zum einen werden die OData-Annotationen in weiteren cds-Dateien abgelegt. Das Weiteren wird das Grundgerüst einer SAPUI5-Anwendung angelegt und mit der entsprechenden Konfiguration für SAP Fiori Elements versehen. Auch dies ist für den Entwickler nicht direkt in BAS einsehbar, bzw. es ist nicht notwendig sich mit dem Code auseinander zu setzen, es sei denn, man möchte gezielt Funktionen nutzen, die von den Wizards in BAS nicht unterstützt werden.
-Die finale Anwendung besteht aus einer Listenseite und einer Detailseite für jedes Produkt. Die Listenseite zeigt eine Liste aller Produkte. Wird auf ein Listenelement geklickt, so wird die Detailseite für das jeweilige Produkt geöffnet. Zudem kann ein neues Produkt hinzugefügt, ein Produkt gelöscht oder bearbeitet werden.  Während man über die Konfiguration einen Einfluss auf die Tabellenspalten und Inhalte der Einzelansicht nehmen kann, funktionieren Dinge wie Navigation, Daten laden, Datenbindung und auch das Speichern von neuen Datensätzen einfach so, ohne, dass vom Entwickler irgendeine komplexere Konfiguration vorgenommen werden muss. Allerdings kann man von den dem Standardverhalten auch nicht abweichen und jede Anwendung folgt dem grundlegenden Aufbau und Verhalten des ausgewählten Floorplans.
+Die finale Anwendung besteht aus einer Listenseite und einer Detailseite für jedes Produkt. Die Listenseite zeigt eine Liste aller Produkte. Wird auf ein Listenelement geklickt, so wird die Detailseite für das jeweilige Produkt geöffnet. Zudem kann ein neues Produkt hinzugefügt, ein Produkt gelöscht oder bearbeitet werden.  Während man über die Konfiguration einen Einfluss auf die Tabellenspalten und Inhalte der Einzelansicht nehmen kann, funktionieren Dinge wie Navigation, Daten laden, Datenbindung und auch das Speichern von neuen Datensätzen einfach so, ohne, dass vom Entwickler irgendeine komplexere Konfiguration vorgenommen werden muss. Allerdings kann man von dem Standardverhalten auch nicht abweichen und jede Anwendung folgt dem grundlegenden Aufbau und Verhalten des ausgewählten Floorplans.
 Mithilfe der Page Map in BAS kann die UI-Anwendung angepasst werden. Zum Beispiel können für die hier vorgestellte Anwendung das initiale Laden aktiviert werden und auch die Properties, die in der Liste angezeigt werden, können je nach Anforderung geändert werden. Dabei sind alle Parameter über UI-Masken konfigurierbar und an keiner Stelle muss ein eigenes Coding erfolgen.
 
 
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=1.0\textwidth]{Bilder/fiori_element/3_8_Fiori_Element_list.jpg}
- \caption{Listenseite, Detailseite und „neues Objekt anlegen- Seite der Fiori-Elements-Anwendung}
+ \caption{Listenseite, Detailseite und „neues Objekt anlegen Seite der Fiori-Elements-Anwendung}
 \end{figure}
 
 \subsection{Deployment des OData-Services}
@@ -170,7 +170,7 @@ Zur Anzeige der Produkteliste muss die View-Component „List item“ mit dem er
 \subsection{Einzelansicht für ein Produkt}
 Die Einzelansicht enthält alle Properties zu einem Produkt, nämlich den Produkttitel, die Beschreibung, die Materialnummer, den Preis, den Bestand und die Produkt-ID. Für die Darstellung der Informationen muss eine Detailseite mit dem Namen „Product Details“ erstellt werden. Eine App-Variable \textit{appVarRecord} mit sechs Properties wird erstellt, damit die Daten an verschiedene Seiten der Anwendung übertragen werden können.
 
-Um von der Listenseite zur Detail-Seite zu navigieren, muss die logische Ablauffunktion für das List Item in der Listenseite aufgebaut werden. Hierbei geht es um ein Tap-Event der Komponente. Das Event wird ausgelöst, wenn das List Item vom Benutzer angeklickt wird. Der Aufbau der logischen Ablauffunktion kann Abbildung 3.14 entnommen werden. 
+Um von der Listenseite zur Detail-Seite zu navigieren, muss die logische Ablauffunktion für das List Item in der Listenseite aufgebaut werden. Hierbei geht es um ein Component tap Event. Das Event wird ausgelöst, wenn das List Item vom Benutzer angeklickt wird. Der Aufbau der logischen Ablauffunktion kann Abbildung 3.14 entnommen werden. 
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=0.9\textwidth]{Bilder/appgyver/3_14_Logik_ListItem.JPG}

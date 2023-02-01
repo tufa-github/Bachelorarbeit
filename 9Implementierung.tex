@@ -221,25 +221,22 @@ Mit Hilfe des easy-ui5-Generators lässt sich ein grundlegendes SAPUI5-Anwendung
 
 Zur Erzeugung des Applikations-Gerüsts wird der Befehl \textit{yo easy-ui5 ts-app} in der Command-Prompt-Konsole ausgeführt. Dieser Befehl führt dazu, dass eine UI5-TypeScript-Anwendung basierend auf den folgenden Parametern erstellt wird:
 
+\begin{figure}[htbp]
+ \centering
+ \includegraphics[width=0.7\textwidth]{Bilder/ui5 freestyle/ui5generator_parameter.jpg}
+ \caption{Eingabe der Paramtern des UI5-Generators}
+\end{figure}
+
+Nach Eingabe der Parameter müssen noch alle externen Bibliotheken via npm install installiert werden und dann kann die Entwicklung beginnen.
+
+Der Generator erzeugt die grundlegende Projektstruktur eines SAPUI5-Projekts. Das MVC-Pattern findet sich auch im Dateisytem wieder. So liegen die Controller im Verzeichnis controller, die Views im gleichnamigen Verzeichnis und es ist ebenfalls ein model-Verzeichnis vorgehsehen. Dies wird jedoch im Projekt nicht verwendet, sondern es werden auf Standard Odata- und JSONModel zurückgegriffen \cite{sud:ao}. Daneben sind noch eine Reihe an Konfigurationsdateien vorhanden. Beispiele hierfür sind die „package.json“-Datei, sowie die „manifest.json“-Datei. 
+
 \lstset{
   numbers=none, 
   basicstyle=\scriptsize,
   xleftmargin=.02\textwidth,
   backgroundcolor=\color{mygrey2},
 }
-\begin{lstlisting}[language=bash, caption=Eingabe der Paramtern des UI5-Generators]
-? How do you want to name this application? products
-? Which namespace do you want use? fanfan.products 
-? Which framework do you want to use? SAPUI5 
-? Which framework version do you want to use? 1.108.4 
-? Who is the author of the application? Tan Fangfang 
-? Would you like to create a new directory for the application? Yes
-\end{lstlisting}
-
-Nach Eingabe der Parameter müssen noch alle externen Bibliotheken via npm install installiert werden und dann kann die Entwicklung beginnen.
-
-Der Generator erzeugt die grundlegende Projektstruktur eines SAPUI5-Projekts. Das MVC-Pattern findet sich auch im Dateisytem wieder. So liegen die Controller im Verzeichnis controller, die Views im gleichnamigen Verzeichnis und es ist ebenfalls ein model-Verzeichnis vorgehsehen. Dies wird jedoch im Projekt nicht verwendet, sondern es werden auf Standard Odata- und JSONModel zurückgegriffen \cite{sud:ao}. Daneben sind noch eine Reihe an Konfigurationsdateien vorhanden. Beispiele hierfür sind die „package.json“-Datei, sowie die „manifest.json“-Datei. 
-
 \begin{lstlisting}[language=bash,  caption=Die grundlegende Projektstruktur eines SAPUI5-Projekts]
 project-root
 |- src
@@ -265,7 +262,7 @@ Die Datei „manifest.json“ enthält die Grundkonfiguration der Anwendung, die
 
 In der Datei „App.view.xml“ wird die Benutzeroberfläche der Hauptansicht der Anwendung definiert. SAPUI5 unterstützt mehrere View-Typen (XML, HTML, JavaScript, JSON). In diesem Projekt wird das XML-Format verwendet. Für jede Ansicht, die in der Anwendung verwendet wird, soll eine eigene View-Datei erstellt werden, und jede View wird von einem separaten Controller gesteuert. 
 
-Das Öffnen der Webanwendung erfolgt durch Aufrufen der index.html-Seite   über einen Webserver im Browser.  Das UI5-Tooling bringt bereits einen lokalen Webserver mit, der via npm run start gestartet werden kann.  Abbildung 3.19 zeigt das Aussehen der erzeugten Anwendung, die bereits erste Inhalte hat, die angepasst und ersetzt werden müssen. Während die Anwendung läuft, kann der Code in VS-Code geändert und die Änderungen direkt danach direkt im Browser angesehen werden. 
+Das Öffnen der Webanwendung erfolgt durch Aufrufen der index.html-Seite   über einen Webserver im Browser.  Das UI5-Tooling bringt bereits einen lokalen Webserver mit, der via npm run start gestartet werden kann.  Abbildung 3.20 zeigt das Aussehen der erzeugten Anwendung, die bereits erste Inhalte hat, die angepasst und ersetzt werden müssen. Während die Anwendung läuft, kann der Code in VS-Code geändert und die Änderungen direkt danach direkt im Browser angesehen werden. 
 
 \begin{figure}[htbp]
  \centering
@@ -295,7 +292,7 @@ this.setModel(oData);
 \end{lstlisting}
 
 \subsection{Listenansicht zur Anzeige aller Produkte}
-Die Listenansicht soll alle Produkte in einer Liste darstellen und es dem User ermöglichen, in die Einzelansicht eines Produkts zu springen. Da die Applikation nach dem Erstellen bereits über eine View verfügt, wird dies in der Main-View realisiert. Zentrales Element bildet die List-Control, welche Daten in einer Liste darstellen kann. Abbildung 3.20 zeigt die Benutzeroberfläche der Listenansicht der Produkte.
+Die Listenansicht soll alle Produkte in einer Liste darstellen und es dem User ermöglichen, in die Einzelansicht eines Produkts zu springen. Da die Applikation nach dem Erstellen bereits über eine View verfügt, wird dies in der Main-View realisiert. Zentrales Element bildet die List-Control, welche Daten in einer Liste darstellen kann. Abbildung 3.21 zeigt die Benutzeroberfläche der Listenansicht der Produkte.
 
 \begin{figure}[htbp]
  \centering
@@ -367,7 +364,7 @@ Damit die Navigation funktioniert, müssen für die Einzelansicht ein View \text
 <Label text="Stock" />		
 <Input value="{stock}" width="1000px" />
 \end{lstlisting}
-Damit die Werte angezeigt werden können, wird in der View wieder ein ElementBinding verwendet, dass ein komplettes Produkt an die View bindet. Dann ist es ausreichend, lediglich die Attribute zu benennen und das OData-Model lädt die relevanten Daten automatisch. Abbildung 3.21 kann die finale Benutzeroberfläche der Einzelansicht für ein Produkt entnommen werden.
+Damit die Werte angezeigt werden können, wird in der View wieder ein ElementBinding verwendet, dass ein komplettes Produkt an die View bindet. Dann ist es ausreichend, lediglich die Attribute zu benennen und das OData-Model lädt die relevanten Daten automatisch. Abbildung 3.22 kann die finale Benutzeroberfläche der Einzelansicht für ein Produkt entnommen werden.
 \begin{figure}[htbp]
  \centering
  \includegraphics[width=0.8\textwidth]{Bilder/ui5 freestyle/3_21_Einzelansicht.png}
@@ -426,7 +423,7 @@ public pressAddInProductsList() {
 }
 \end{lstlisting}
 
-Da das Formular zum Anlegen in einem Dialog geöffnet wird, muss dieser nach dem Absenden dann auch wieder geschlossen werden. Abbildung 3.22 zeigt das Dialogfenster zum Einfügen eines neuen Produkts.
+Da das Formular zum Anlegen in einem Dialog geöffnet wird, muss dieser nach dem Absenden dann auch wieder geschlossen werden. Abbildung 3.23 zeigt das Dialogfenster zum Einfügen eines neuen Produkts.
 
 \begin{figure}[htbp]
  \centering
